@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "631136688347",
+    "firebase_url": "https://feed-the-kitty.firebaseio.com",
+    "project_id": "feed-the-kitty",
+    "storage_bucket": "feed-the-kitty.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:631136688347:android:e5941b3a823afcff",
+        "android_client_info": {
+          "package_name": "edu.umd.cs.feedthekitty"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "631136688347-7qbfrme0kdi19leckddqcotm0fo0rda2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "edu.umd.cs.feedthekitty",
+            "certificate_hash": "a40af537c7151577e55ba7d9d996fb9c97013b57"
+          }
+        },
+        {
+          "client_id": "631136688347-2m8i6dfp2vr5o2dk4g801gcq0j71oald.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCYe_1HmKINmVkVaVdKw0cytOpQX03WLJ0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "631136688347-2m8i6dfp2vr5o2dk4g801gcq0j71oald.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
