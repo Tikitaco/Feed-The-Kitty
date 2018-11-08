@@ -4,4 +4,10 @@
     <string name="facebook_app_id">327735074678007</string>
     <string name="fb_login_protocol_scheme">fb327735074678007</string>
     <string name="title_activity_homepage">Homepage</string>
+    <string name="event_name">Event name: </string>
+    <string name="description">Description: </string>
+    <string name="enter_event_name">Enter event name</string>
+    <string name="enter_event_description">Enter (optional) description</string>
+    <string name="create_event">Create Event</string>
+    <string name="default_date">Jan 1, 2018</string>
 </resources>

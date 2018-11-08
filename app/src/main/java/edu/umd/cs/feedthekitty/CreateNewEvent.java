@@ -1,4 +1,7 @@
 package edu.umd.cs.feedthekitty;
 
-public class CreateNewEvent {
+import android.support.v7.app.AppCompatActivity;
+
+public class CreateNewEvent extends AppCompatActivity {
+    
 }
