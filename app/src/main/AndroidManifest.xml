@@ -39,7 +39,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".HomepageActivity" />
-        <activity android:name=".createAccountActivity" />
+        <activity android:name=".CreateAccountActivity" />
         <activity android:name=".CreateEventActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

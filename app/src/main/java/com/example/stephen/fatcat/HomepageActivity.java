@@ -15,6 +15,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class HomepageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
@@ -53,6 +54,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
             case R.id.nav_logout:
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(HomepageActivity.this, MainActivity.class));
+                LoginManager.getInstance().logOut();
                 finish();
                 break;
 

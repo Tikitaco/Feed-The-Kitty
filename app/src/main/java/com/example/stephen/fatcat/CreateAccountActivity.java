@@ -2,8 +2,6 @@ package com.example.stephen.fatcat;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,14 +16,14 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-public class createAccountActivity extends AppCompatActivity {
+public class CreateAccountActivity extends AppCompatActivity {
 
     private EditText mEmailField;
     private EditText mPasswordFiedl;
     private EditText mPasswordFied2;
     private Button mLogin;
     private FirebaseAuth mAuth;
-    private final String TAG = "createAccountActivity";
+    private final String TAG = "CreateAccountActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,13 +54,13 @@ public class createAccountActivity extends AppCompatActivity {
 
     private void startSignIn() {
         if (!mPasswordFiedl.getText().toString().trim().equals(mPasswordFied2.getText().toString().trim())) {
-            Toast.makeText(createAccountActivity.this, "Password must match",
+            Toast.makeText(CreateAccountActivity.this, "Password must match",
                     Toast.LENGTH_SHORT).show();
         } else if (mPasswordFiedl.getText().toString().trim().length() <= 6) {
-            Toast.makeText(createAccountActivity.this, "Password must be greater than 6 characters",
+            Toast.makeText(CreateAccountActivity.this, "Password must be greater than 6 characters",
                     Toast.LENGTH_SHORT).show();
         } else if (mPasswordFiedl.getText().toString().trim().contains(" ")) {
-            Toast.makeText(createAccountActivity.this, "Password must not contain white space",
+            Toast.makeText(CreateAccountActivity.this, "Password must not contain white space",
                     Toast.LENGTH_SHORT).show();
         } else {
             String email = mEmailField.getText().toString().trim();
@@ -79,7 +77,7 @@ public class createAccountActivity extends AppCompatActivity {
                             } else {
                                 // If sign in fails, display a message to the user.
                                 Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                                Toast.makeText(createAccountActivity.this, "Authentication failed.",
+                                Toast.makeText(CreateAccountActivity.this, "Authentication failed.",
                                         Toast.LENGTH_SHORT).show();
                                 updateUI(null);
                             }
@@ -95,10 +93,10 @@ public class createAccountActivity extends AppCompatActivity {
 
     private void updateUI(FirebaseUser user){
         if(user!= null){
-            Intent accountIntent = new Intent(createAccountActivity.this, MainActivity.class);
+            Intent accountIntent = new Intent(CreateAccountActivity.this, MainActivity.class);
             startActivity(accountIntent);
         }else{
-            Toast.makeText(createAccountActivity.this, "Error creating user.",
+            Toast.makeText(CreateAccountActivity.this, "Error creating user.",
                     Toast.LENGTH_SHORT).show();
         }
     }
