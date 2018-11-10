@@ -1,4 +1,4 @@
-package edu.umd.cs.feedthekitty;
+package com.example.stephen.fatcat;
 
 import org.junit.Test;
 

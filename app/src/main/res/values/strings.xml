@@ -1,13 +1,9 @@
 <resources>
-    <string name="app_name">FeedTheKitty</string>
+    <string name="app_name">Fat Cat</string>
     <string name="action_settings">Settings</string>
-    <string name="facebook_app_id">327735074678007</string>
-    <string name="fb_login_protocol_scheme">fb327735074678007</string>
+    <string name="facebook_app_id">1142368909271018</string>
+    <string name="fb_login_protocol_scheme">fb1142368909271018</string>
     <string name="title_activity_homepage">Homepage</string>
-    <string name="event_name">Event name: </string>
-    <string name="description">Description: </string>
-    <string name="enter_event_name">Enter event name</string>
-    <string name="enter_event_description">Enter description (optional)</string>
-    <string name="create_event">Create Event</string>
-    <string name="default_date">January 1, 2018</string>
+    <string name = "open">Open</string>
+    <string name = "close">Close</string>
 </resources>

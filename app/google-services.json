@@ -1,35 +1,27 @@
 {
   "project_info": {
-    "project_number": "631136688347",
-    "firebase_url": "https://feed-the-kitty.firebaseio.com",
-    "project_id": "feed-the-kitty",
-    "storage_bucket": "feed-the-kitty.appspot.com"
+    "project_number": "46803692175",
+    "firebase_url": "https://fat-cat-784a2.firebaseio.com",
+    "project_id": "fat-cat-784a2",
+    "storage_bucket": "fat-cat-784a2.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:631136688347:android:e5941b3a823afcff",
+        "mobilesdk_app_id": "1:46803692175:android:e5a3d0c5390ff9cb",
         "android_client_info": {
-          "package_name": "edu.umd.cs.feedthekitty"
+          "package_name": "com.example.stephen.fatcat"
         }
       },
       "oauth_client": [
         {
-          "client_id": "631136688347-7qbfrme0kdi19leckddqcotm0fo0rda2.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "edu.umd.cs.feedthekitty",
-            "certificate_hash": "a40af537c7151577e55ba7d9d996fb9c97013b57"
-          }
-        },
-        {
-          "client_id": "631136688347-2m8i6dfp2vr5o2dk4g801gcq0j71oald.apps.googleusercontent.com",
+          "client_id": "46803692175-jm45bku2sr0896dpols47m91o96v84v9.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCYe_1HmKINmVkVaVdKw0cytOpQX03WLJ0"
+          "current_key": "AIzaSyCvsHVQKPnPgoaBDoWdskclsmJneLaaS7w"
         }
       ],
       "services": {
@@ -37,13 +29,8 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "631136688347-2m8i6dfp2vr5o2dk4g801gcq0j71oald.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
         },
         "ads_service": {
           "status": 2
