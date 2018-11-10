@@ -58,6 +58,11 @@ public class MainActivity extends AppCompatActivity {
         mCreateAccount = (Button) findViewById(R.id.createAccount);
         mCallbackManager = CallbackManager.Factory.create();
 
+        if(mAuth.getCurrentUser() != null){
+            Intent accountIntent = new Intent(MainActivity.this, createAccountActivity.class);
+            startActivity(accountIntent);
+        }
+
         mCreateAccount.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -66,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         mLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,8 +79,8 @@ public class MainActivity extends AppCompatActivity {
                     return;
                 }else{
                     signInWithEmailAndPassword(mEmailField, mPasswordFied);
-                }
 
+                }
             }
         });
 
