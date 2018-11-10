@@ -32,19 +32,17 @@ public class CreateEventActivity extends AppCompatActivity implements Navigation
     // 7 days in milliseconds - 7 * 24 * 60 * 60 * 1000
     private static final int SEVEN_DAYS = 604800000;
 
-    private TextView mEventName;
-    private TextView mDescription;
-    private EditText mEnterEventName;
-    private EditText mEnterDescription;
     private Button mDateButton;
     private Button mStartTimeButton;
     private Button mEndTimeButton;
+    private Button mSubmitEvent;
     private Date mDate;
     private static TextView dateView;
     private static TextView startTimeView;
     private static TextView endTimeView;
     private static String dateString;
     private static String timeString;
+    private static boolean setEnd = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,17 +50,20 @@ public class CreateEventActivity extends AppCompatActivity implements Navigation
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
 
+        TextView mEventName;
+        TextView mDescription;
+        final EditText mEnterEventName;
+        final EditText mEnterDescription;
+
         mEventName = (TextView) findViewById(R.id.EventName);
         mEnterEventName = (EditText) findViewById(R.id.EnterEventName);
         mDescription = (TextView) findViewById(R.id.Description);
         mEnterDescription = (EditText) findViewById(R.id.EnterEventDescription);
+
+
         dateView = (TextView) findViewById(R.id.Date);
         startTimeView = (TextView) findViewById(R.id.StartTime);
         endTimeView = (TextView) findViewById(R.id.EndTime);
-
-        // OnClickListener for the Date button, calls showDatePickerDialog() to
-        // show
-        // the Date dialog
 
         final Button datePickerButton = (Button) findViewById(R.id.chooseDate);
         datePickerButton.setOnClickListener(new View.OnClickListener() {
@@ -83,11 +84,20 @@ public class CreateEventActivity extends AppCompatActivity implements Navigation
         });
 
         final Button timePickerButton2 = (Button) findViewById(R.id.chooseEndTime);
-        timePickerButton.setOnClickListener(new View.OnClickListener() {
+        timePickerButton2.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
+                setEnd = true;
                 showTimePickerDialog();
+            }
+        });
+
+        final Button submit = (Button) findViewById(R.id.createEventSubmit);
+        submit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
 
@@ -95,7 +105,6 @@ public class CreateEventActivity extends AppCompatActivity implements Navigation
     }
 
     private static void setTimeString(int hourOfDay, int minute) {
-        String hour = "" + hourOfDay;
         String min = "" + minute;
         String amPm = "am";
 
@@ -105,6 +114,8 @@ public class CreateEventActivity extends AppCompatActivity implements Navigation
         }
         if (minute < 10)
             min = "0" + minute;
+
+        String hour = "" + hourOfDay;
 
         timeString = hour + ":" + min + amPm;
     }
@@ -159,7 +170,7 @@ public class CreateEventActivity extends AppCompatActivity implements Navigation
         dateString = mon + " " + day + ", " + year;
     }
 
-    // DialogFragment used to pick a ToDoItem deadline date
+    // DialogFragment used to pick a deadline date
 
     public static class DatePickerFragment extends DialogFragment implements
             DatePickerDialog.OnDateSetListener {
@@ -208,7 +219,12 @@ public class CreateEventActivity extends AppCompatActivity implements Navigation
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             setTimeString(hourOfDay, minute);
 
-            startTimeView.setText(timeString); // END TIME ??
+            if (setEnd) {
+                endTimeView.setText(timeString);
+                setEnd = false;
+            } else {
+                startTimeView.setText(timeString);
+            }
         }
     }
 
