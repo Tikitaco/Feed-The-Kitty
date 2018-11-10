@@ -50,6 +50,10 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 break;
             case R.id.nav_settings:
                 break;
+            case R.id.nav_friends:
+//                startActivity(new Intent(HomepageActivity.this, FriendsActivity.class));
+//                finish();
+                break;
             case R.id.nav_logout:
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(HomepageActivity.this, MainActivity.class));
