@@ -48,6 +48,9 @@
             android:id="@+id/EnterEventName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:nextFocusDown="@+id/EnterEventDescription"
+            android:imeOptions="actionNext"
             android:hint="Enter event name" />
     </LinearLayout>
 
@@ -180,12 +183,23 @@
         android:layout_gravity="center">
 
         <Button
-            android:id="@+id/CreateEventSubmit"
+            android:id="@+id/createEventSubmit"
             android:layout_width="120dp"
             android:layout_height="wrap_content"
+            android:layout_above="@+id/empty_view"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="20dp"
             android:background="@drawable/mybutton"
+            android:gravity="center"
             android:text="Create the Event"
             android:textColor="#fff" />
+
+        <View
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_alignParentBottom="true"
+            android:visibility="invisible" />
 
     </RelativeLayout>
 
