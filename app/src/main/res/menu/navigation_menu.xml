@@ -12,4 +12,7 @@
     <item android:id ="@+id/nav_friends"
         android:title="Friends"
         android:icon="@mipmap/baseline_friends_black_24dp"/>
+    <item android:id="@+id/nav_events"
+        android:icon="@drawable/com_facebook_tooltip_black_topnub"
+        android:title="Create Event"/>
 </menu>

@@ -7,6 +7,7 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -19,8 +20,13 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FirebaseUtils;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -50,8 +56,8 @@ public class CreateEventActivity extends AppCompatActivity implements Navigation
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
 
-        TextView mEventName;
-        TextView mDescription;
+        final TextView mEventName;
+        final TextView mDescription;
         final EditText mEnterEventName;
         final EditText mEnterDescription;
 
@@ -97,7 +103,24 @@ public class CreateEventActivity extends AppCompatActivity implements Navigation
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String name = mEnterEventName.getText().toString();
+                String description = mEnterDescription.getText().toString();
+                String startTime = startTimeView.getText().toString();
+                String endTime = endTimeView.getText().toString();
+                mDate = Calendar.getInstance().getTime(); // TODO This is only until the date picker is fully implemented
+                FatcatEvent event = new FatcatEvent(name, description, mDate, startTime, endTime);
 
+                FirebaseUtils.uploadNewEvent(event, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                        if (databaseError == null) // If the upload was successful...
+                        {
+                            Toast.makeText(CreateEventActivity.this, "Event Created Succesfully", Toast.LENGTH_SHORT).show();
+                        } else { // If the upload failed...
+                            Toast.makeText(CreateEventActivity.this, "Error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
             }
         });
 
