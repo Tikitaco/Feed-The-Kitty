@@ -23,7 +23,7 @@
                 android:layout_height="251dp"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="15dp"
-                app:srcCompat="@drawable/logo3" />
+                app:srcCompat="@drawable/logo" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -48,14 +48,16 @@
             android:id="@+id/email"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Email" />
+            android:hint="Email"
+            android:visibility="visible" />
 
         <EditText
             android:id="@+id/password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password"
-            android:inputType="textPassword"/>hornishs
+            android:inputType="textPassword"
+            android:visibility="visible" />hornishs
     </LinearLayout>
     <LinearLayout
         android:layout_gravity="center_horizontal"
