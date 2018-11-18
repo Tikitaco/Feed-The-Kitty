@@ -57,7 +57,7 @@
             android:layout_height="wrap_content"
             android:hint="Password"
             android:inputType="textPassword"
-            android:visibility="visible" />hornishs
+            android:visibility="visible" />
     </LinearLayout>
     <LinearLayout
         android:layout_gravity="center_horizontal"
