@@ -4,6 +4,7 @@
     <string name="facebook_app_id">1142368909271018</string>
     <string name="fb_login_protocol_scheme">fb1142368909271018</string>
     <string name="title_activity_homepage">Homepage</string>
-    <string name = "open">Open</string>
-    <string name = "close">Close</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
+    <string name="title_activity_event_details">EventDetailsActivity</string>
 </resources>
