@@ -49,6 +49,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Email"
+            android:textColorHint="#999999"
             android:visibility="visible" />
 
         <EditText
@@ -56,8 +57,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password"
+            android:textColorHint="#999999"
             android:inputType="textPassword"
-            android:visibility="visible" />hornishs
+            android:visibility="visible" />
     </LinearLayout>
     <LinearLayout
         android:layout_gravity="center_horizontal"
