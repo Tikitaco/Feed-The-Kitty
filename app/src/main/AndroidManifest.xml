@@ -39,7 +39,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".HomepageActivity" />
-        <activity android:name=".createAccountActivity"
+        <activity android:name=".CreateAccountActivity"
                   android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity android:name=".CreateEventActivity"
                   android:theme="@style/Theme.AppCompat.NoActionBar">
