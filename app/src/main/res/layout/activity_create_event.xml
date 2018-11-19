@@ -51,6 +51,7 @@
             android:singleLine="true"
             android:nextFocusDown="@+id/EnterEventDescription"
             android:imeOptions="actionNext"
+            android:inputType="text"
             android:hint="Enter event name" />
     </LinearLayout>
 
@@ -75,6 +76,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="top|start"
+            android:inputType="text"
             android:hint="Enter description (optional)"
             android:lines="1"
             android:maxLines="4"
