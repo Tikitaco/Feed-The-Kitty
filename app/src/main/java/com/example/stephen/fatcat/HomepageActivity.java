@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
@@ -85,7 +86,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         Log.i("TAG", "Loaded event: " + event.getName());
         final int index = events.size(); // So the buttons know which event to reference
         events.add(event);
-        LinearLayout layout = findViewById(R.id.linear_view);
+        RelativeLayout layout = findViewById(R.id.linear_view);
         Button b = new Button(this);
         b.setOnClickListener(new View.OnClickListener() {
             @Override
