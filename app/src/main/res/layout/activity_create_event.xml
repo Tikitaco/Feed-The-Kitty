@@ -51,7 +51,11 @@
             android:singleLine="true"
             android:nextFocusDown="@+id/EnterEventDescription"
             android:imeOptions="actionNext"
-            android:hint="Enter event name" />
+            android:inputType="text"
+            android:hint="Enter event name"
+            android:textColorHint="#999999"
+            android:textColor="#000000"
+            android:visibility="visible"/>
     </LinearLayout>
 
     <LinearLayout
@@ -75,10 +79,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="top|start"
+            android:inputType="text"
             android:hint="Enter description (optional)"
             android:lines="1"
             android:maxLines="4"
-            android:minLines="1" />
+            android:minLines="1"
+            android:textColorHint="#999999"
+            android:textColor="#000000"
+            android:visibility="visible"/>
     </LinearLayout>
 
     <LinearLayout
@@ -102,6 +110,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@android:style/TextAppearance.DeviceDefault.Medium"
+            android:textColor="#000000"
+            android:visibility="visible"
             android:text="January 1, 2018" />
     </LinearLayout>
 
@@ -126,6 +136,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@android:style/TextAppearance.DeviceDefault.Medium"
+            android:textColor="#000000"
+            android:visibility="visible"
             android:text="12:00pm" />
     </LinearLayout>
 
@@ -150,6 +162,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             style="@android:style/TextAppearance.DeviceDefault.Medium"
+            android:textColor="#000000"
+            android:visibility="visible"
             android:text="1:00pm" />
     </LinearLayout>
 
