@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -17,6 +18,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -36,11 +38,39 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
     private NavigationView mNavigationView;
     private ActionBarDrawerToggle mToggle;
     private ArrayList<FatcatEvent> events;
+    private BottomNavigationView mMainNav;
+    private FrameLayout mMainFrame;
+    private CaldendarFragment calendarFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_homepage);
+
+        mMainFrame = findViewById(R.id.main_frame);
+        mMainNav = findViewById(R.id.Bottom_Nav);
+        calendarFragment = new CaldendarFragment();
+
+        mMainNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                switch (item.getItemId()){
+                    case R.id.delete:
+                        //allows people to delete from the list view
+                        return true;
+                    case R.id.calendarView:
+                        //opens calendar fragment
+                        
+                        return true;
+                    case R.id.createEvent:
+                        //opens create event would like to change this to a fragment if possible
+                        startActivity(new Intent(HomepageActivity.this, CreateEventActivity.class));
+                        break;
+                }
+                return true;
+            }
+        });
+
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view) ;
