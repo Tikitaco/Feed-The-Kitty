@@ -1,9 +1,9 @@
 package com.example.stephen.fatcat;
 
-import android.app.ActionBar;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
@@ -13,13 +13,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -33,7 +31,8 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 
-public class HomepageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class HomepageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
+        CaldendarFragment.OnFragmentInteractionListener,ListFragment.OnFragmentInteractionListener {
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private ActionBarDrawerToggle mToggle;
@@ -41,6 +40,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
     private BottomNavigationView mMainNav;
     private FrameLayout mMainFrame;
     private CaldendarFragment calendarFragment;
+    private ListFragment listFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +49,10 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
 
         mMainFrame = findViewById(R.id.main_frame);
         mMainNav = findViewById(R.id.Bottom_Nav);
+
+        listFragment = new ListFragment();
         calendarFragment = new CaldendarFragment();
+        setFragment(listFragment);
 
         mMainNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -60,7 +63,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                         return true;
                     case R.id.calendarView:
                         //opens calendar fragment
-                        
+                        setFragment(calendarFragment);
                         return true;
                     case R.id.createEvent:
                         //opens create event would like to change this to a fragment if possible
@@ -168,5 +171,15 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private void setFragment(Fragment fragment){
+        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.main_frame,fragment).addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+    public void onFragmentInteraction(Uri uri){
+
+    }
+
 
 }

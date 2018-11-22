@@ -13,6 +13,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -55,6 +56,7 @@ public class CreateEventActivity extends AppCompatActivity implements Navigation
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_event);
+
 
         final TextView mEventName;
         final TextView mDescription;
