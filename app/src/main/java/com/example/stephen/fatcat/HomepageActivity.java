@@ -17,10 +17,12 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CalendarView;
 import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.applandeo.materialcalendarview.EventDay;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -30,6 +32,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class HomepageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         CaldendarFragment.OnFragmentInteractionListener,ListFragment.OnFragmentInteractionListener {
@@ -41,6 +44,8 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
     private FrameLayout mMainFrame;
     private CaldendarFragment calendarFragment;
     private ListFragment listFragment;
+    private CalendarView mCalendarView;
+    private List<EventDay> mEventDays = new ArrayList<EventDay>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,8 +135,6 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         });
         b.setText(event.getName() + " ( " + event.getDate() + " )");
         layout.addView(b);
-
-
     }
 
     public void loadEvents() {

@@ -13,10 +13,30 @@
         tools:context="com.applandeo.myapplication.MainActivity">
     <!-- TODO: Update blank fragment layout -->
         <com.applandeo.materialcalendarview.CalendarView
-        android:id="@+id/calendarView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+            android:id="@+id/datePicker"
+            android:layout_width="0dp"
+            android:layout_height="370dp"
+            app:datePicker="false"
+            app:headerColor="@color/startblue"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:selectionColor="@color/colorAccent"
+            app:todayLabelColor="@color/colorPrimaryDark"
         />
+
+        <TextView
+            android:id="@+id/noteEditText"
+            android:layout_width="0dp"
+            android:layout_height="72dp"
+            android:background="@null"
+            android:gravity="top"
+            android:textStyle="bold"
+
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/datePicker" />
+
     </android.support.constraint.ConstraintLayout>
 
 

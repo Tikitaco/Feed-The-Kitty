@@ -118,6 +118,7 @@ public class CreateEventActivity extends AppCompatActivity implements Navigation
                         if (databaseError == null) // If the upload was successful...
                         {
                             Toast.makeText(CreateEventActivity.this, "Event Created Succesfully", Toast.LENGTH_SHORT).show();
+
                         } else { // If the upload failed...
                             Toast.makeText(CreateEventActivity.this, "Error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                         }
