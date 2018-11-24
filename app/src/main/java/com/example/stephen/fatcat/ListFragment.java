@@ -4,9 +4,34 @@ import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.content.Intent;
+
+import com.applandeo.materialcalendarview.EventDay;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.Text;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -19,9 +44,15 @@ import android.view.ViewGroup;
  */
 public class ListFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
+    private List<String> mEventDays = new ArrayList<>();
+    private List<FatcatEvent> fatcatEvents;
+    DatabaseReference databaseReference;
+    FirebaseUser user;
+    EventDay event;
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -54,6 +85,7 @@ public class ListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        fatcatEvents = new ArrayList<>();
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -63,8 +95,46 @@ public class ListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_list, container, false);
+        View v = inflater.inflate(R.layout.fragment_list, container, false);
+        final ListView mListView = (ListView) v.findViewById(R.id.ListView);
+        DatabaseReference db = FirebaseDatabase.getInstance().getReference(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("events");
+        db.addValueEventListener(new ValueEventListener() {
+            ArrayList<String> a = new ArrayList<String>();
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot  eventSnapShot: dataSnapshot.getChildren()) {
+                    FatcatEvent fatcatEvent = eventSnapShot.getValue(FatcatEvent.class);
+                    fatcatEvents.add(fatcatEvent);
+                }
+                String[] event = new String[fatcatEvents.size()];
+                int i = 0;
+                for(FatcatEvent f: fatcatEvents){
+                    event[i] = f.getName();
+                    i++;
+                }
+
+                ArrayAdapter<String> listArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1,event);
+                mListView.setAdapter(listArrayAdapter);
+                /*mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        Intent a = new Intent(getContext(),EventDetailsActivity.class);
+                        a.putExtra("Event_ID", (CharSequence) fatcatEvents.get(i));
+                        a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        getContext().startActivity(a);
+                    }
+                });*/
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        return v;
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -88,6 +158,7 @@ public class ListFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+        fatcatEvents= new ArrayList<>();
         mListener = null;
     }
 

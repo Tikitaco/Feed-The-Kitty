@@ -6,9 +6,10 @@
     tools:context=".ListFragment">
 
     <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="List Fragment" />
+        android:text="List Fragment"
+        android:id="@+id/ListView"/>
 
 </FrameLayout>
