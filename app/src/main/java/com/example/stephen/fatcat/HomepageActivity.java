@@ -92,7 +92,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         events = new ArrayList<FatcatEvent>();
-        loadEvents();
+       // loadEvents();
     }
 
     public boolean onNavigationItemSelected(@NonNull MenuItem item){
@@ -120,6 +120,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         return true;
     }
 
+/*
     private void loadEvent(FatcatEvent event) {
         Log.i("TAG", "Loaded event: " + event.getName());
         final int index = events.size(); // So the buttons know which event to reference
@@ -167,6 +168,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
             }
         });
     }
+    */
 
     public boolean onOptionsItemSelected(MenuItem item){
         if (mToggle.onOptionsItemSelected(item)) {

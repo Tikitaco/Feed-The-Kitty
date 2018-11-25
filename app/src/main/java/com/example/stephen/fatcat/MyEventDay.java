@@ -5,9 +5,11 @@ import android.os.Parcelable;
 
 import com.applandeo.materialcalendarview.EventDay;
 
+import java.sql.Time;
 import java.util.Calendar;
+import java.util.Date;
 
-class MyEventDay extends EventDay implements Parcelable {
+class MyEventDay extends EventDay implements Parcelable,Comparable<MyEventDay> {
     private String mNote;
 
 
@@ -46,6 +48,22 @@ class MyEventDay extends EventDay implements Parcelable {
     @Override
     public int describeContents() {
         return 0;
+    }
+
+    public int compareTo(MyEventDay o ){
+       Date A = this.getCalendar().getTime();
+       Date B = o.getCalendar().getTime();
+       if(A.before(B))return -1;
+       if(B.before(A))return 1;
+       if(A.equals(B))return 0;
+       return 0 ;
+       }
+
+       public String toString(){
+
+        return this.getNote() + " " + this.getCalendar().getTime();
+
+
     }
 
 

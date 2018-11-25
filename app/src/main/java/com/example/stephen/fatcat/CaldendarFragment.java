@@ -29,6 +29,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -104,26 +106,27 @@ public class CaldendarFragment extends Fragment {
         mCalendarView = v.findViewById(R.id.datePicker);
 
         mCalendarView.setOnDayClickListener(new OnDayClickListener() {
-            String A = "";
+            ArrayList<MyEventDay> currentday = new ArrayList<>();
             @Override
             public void onDayClick(EventDay eventDay) {
                    if(eventDay instanceof  MyEventDay){
                        MyEventDay myEventDay = (MyEventDay)eventDay;
                        //get time from the event search for others with same time
-
+                       if(currentday != null)currentday.clear();
                        int counter =  0;
                        for(EventDay a: mEventDays){
                            MyEventDay myEventDay1 = (MyEventDay)a;
                            if(myEventDay.getCalendar().getTime().getDay() == myEventDay1.getCalendar().getTime().getDay()){
-                             A =   A + myEventDay1.getNote();
-                               counter ++;
+                             currentday.add(myEventDay1);
                            }
                        }
-                       Toast.makeText(getActivity(),String.valueOf(counter),Toast.LENGTH_LONG).show();
-
-
+                       Collections.sort(currentday);
                    }
-                calendarOutput.setText(A);
+                   String print = "";
+                   for(MyEventDay A: currentday){
+                     print +=   A.toString() + '\n';
+                   }
+                calendarOutput.setText(print);
             }
         });
 

@@ -91,6 +91,12 @@ public class ListFragment extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
+    @Override
+    public void onStart(){
+        super.onStart();
+        fatcatEvents.clear();
+
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -99,6 +105,7 @@ public class ListFragment extends Fragment {
         final ListView mListView = (ListView) v.findViewById(R.id.ListView);
         DatabaseReference db = FirebaseDatabase.getInstance().getReference(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("events");
         db.addValueEventListener(new ValueEventListener() {
+
             ArrayList<String> a = new ArrayList<String>();
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
