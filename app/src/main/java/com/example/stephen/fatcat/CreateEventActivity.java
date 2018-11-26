@@ -118,7 +118,8 @@ public class CreateEventActivity extends AppCompatActivity implements Navigation
                         if (databaseError == null) // If the upload was successful...
                         {
                             Toast.makeText(CreateEventActivity.this, "Event Created Succesfully", Toast.LENGTH_SHORT).show();
-
+                            //closes create event view and returns to event list
+                            finish();
                         } else { // If the upload failed...
                             Toast.makeText(CreateEventActivity.this, "Error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -126,8 +127,6 @@ public class CreateEventActivity extends AppCompatActivity implements Navigation
                 });
             }
         });
-
-
     }
 
     private static void setTimeString(int hourOfDay, int minute) {
@@ -239,7 +238,7 @@ public class CreateEventActivity extends AppCompatActivity implements Navigation
             int minute = c.get(Calendar.MINUTE);
 
             // Create a new instance of TimePickerDialog and return
-            return new TimePickerDialog(getActivity(), this, hour, minute, true);
+            return new TimePickerDialog(getActivity(), this, hour, minute, false);
         }
 
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
