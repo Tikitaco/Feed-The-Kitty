@@ -59,7 +59,23 @@ class MyEventDay extends EventDay implements Parcelable,Comparable<MyEventDay> {
        return 0 ;
        }
 
-       public String toString(){
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof  MyEventDay){
+            MyEventDay Obj = (MyEventDay)obj;
+            Date A = this.getCalendar().getTime();
+            Date B = Obj.getCalendar().getTime();
+            if(((MyEventDay) obj).getNote().equals(this.getNote()) && A.equals(B)){
+                return true;
+            }else{
+                return false;
+            }
+        }
+        return false;
+    }
+
+
+    public String toString(){
 
         return this.getNote() + " " + this.getCalendar().getTime();
 

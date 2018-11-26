@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +51,10 @@ public class CaldendarFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private com.applandeo.materialcalendarview.CalendarView mCalendarView;
     private List<EventDay> mEventDays = new ArrayList<>();
+    ArrayList<MyEventDay> currentday = new ArrayList<>();
+    String print = "";
+
+
     private List<FatcatEvent> fatcatEvents;
     DatabaseReference databaseReference;
     FirebaseUser user;
@@ -84,6 +89,7 @@ public class CaldendarFragment extends Fragment {
         return fragment;
     }
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,39 +108,39 @@ public class CaldendarFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_caldendar, container, false);
-        final TextView calendarOutput = v.findViewById(R.id.noteEditText);
         mCalendarView = v.findViewById(R.id.datePicker);
 
         mCalendarView.setOnDayClickListener(new OnDayClickListener() {
-            ArrayList<MyEventDay> currentday = new ArrayList<>();
             @Override
             public void onDayClick(EventDay eventDay) {
-                   if(eventDay instanceof  MyEventDay){
+                TextView calendarOutput = getView().findViewById(R.id.noteEditText);
+
+                if(eventDay instanceof  MyEventDay){
                        MyEventDay myEventDay = (MyEventDay)eventDay;
                        //get time from the event search for others with same time
-                       if(currentday != null)currentday.clear();
-                       int counter =  0;
+                       if(currentday.isEmpty() == false)currentday.clear();
+                       print = "";
                        for(EventDay a: mEventDays){
                            MyEventDay myEventDay1 = (MyEventDay)a;
                            if(myEventDay.getCalendar().getTime().getDay() == myEventDay1.getCalendar().getTime().getDay()){
                              currentday.add(myEventDay1);
                            }
                        }
-                       Collections.sort(currentday);
+
+                    Collections.sort(currentday);
                    }
-                   String print = "";
-                   for(MyEventDay A: currentday){
+                calendarOutput.setText(null);
+                int counter = 0;
+                for(MyEventDay A: currentday){
+                    counter++;
                      print +=   A.toString() + '\n';
                    }
+
                 calendarOutput.setText(print);
             }
         });
 
         DatabaseReference db = FirebaseDatabase.getInstance().getReference(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("events");
-        if(databaseReference == null){
-
-        }
-
 
         db.addValueEventListener(new ValueEventListener() {
             @Override
@@ -143,6 +149,7 @@ public class CaldendarFragment extends Fragment {
                     FatcatEvent fatcatEvent = eventSnapShot.getValue(FatcatEvent.class);
                     fatcatEvents.add(fatcatEvent);
                 }
+
                 for(FatcatEvent f: fatcatEvents){
                     Calendar day = Calendar.getInstance();
                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -156,7 +163,9 @@ public class CaldendarFragment extends Fragment {
 
                     MyEventDay myEventDay = new MyEventDay(day,R.drawable.com_facebook_profile_picture_blank_portrait,f.getName());
                     //adds array list
-                    mEventDays.add(myEventDay);
+                    if(!mEventDays.contains(myEventDay)){
+                        mEventDays.add(myEventDay);
+                    }
 
                 }
                 //arraylist is being added to thet calednar view
@@ -200,10 +209,14 @@ public class CaldendarFragment extends Fragment {
    public void onStart() {
         super.onStart();
 
-
-
         }
 
+        @Override
+    public void onResume(){
+        super.onResume();
+        print = "";
+        
+    }
 
 
 
@@ -211,6 +224,7 @@ public class CaldendarFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+
     }
 
     /**
