@@ -3,6 +3,9 @@ package com.example.stephen.fatcat.com.example.stephen.fatcat.firebase;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -16,8 +19,33 @@ public class FatcatEvent {
     private Date mDate;
     private String mStartTime;
     private String mEndTime;
+    private ArrayList<SingleItem> items;
 
     private static DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+
+    public class SingleItem {
+        private String mItemName;
+        private double mPrice;
+        private String mPayerName;
+
+        public SingleItem() {
+            mItemName = "NoItemName";
+            mPrice = 0.00;
+            mPayerName = "NoPayer";
+        }
+
+        public SingleItem(String itemName, double price) {
+            mItemName = itemName;
+            mPrice = price;
+            mPayerName = "Not yet paid for";
+        }
+
+        public SingleItem(String itemName, double price, String payerName) {
+            mItemName = itemName;
+            mPrice = price;
+            mPayerName = payerName;
+        }
+    }
 
     // Default Constructor for Firebase to create instances on reads
     public FatcatEvent() {
@@ -26,14 +54,16 @@ public class FatcatEvent {
         mDate = Calendar.getInstance().getTime();
         mStartTime = "";
         mEndTime = "";
+        items = new ArrayList<>();
     }
 
-    public FatcatEvent(String name, String description, Date date, String startTime, String endTime) {
+    public FatcatEvent(String name, String description, Date date, String startTime, String endTime, ArrayList<SingleItem> itemsList) {
         mName = name;
         mDescription = description;
         mDate = date;
         mStartTime = startTime;
         mEndTime = endTime;
+        items = itemsList;
     }
 
     public void setName(String name) {
@@ -56,16 +86,13 @@ public class FatcatEvent {
         mStartTime = startTime;
     }
 
-    public void setEndTime(String endTime) {
-        mEndTime = endTime;
-    }
+    public void setEndTime(String endTime) { mEndTime = endTime; }
 
+    public void addItem(SingleItem item) { items.add(item);}
 
     public String getName() {
         return mName;
     }
-
-
 
     public String getDate() {
         return dateFormat.format(mDate);
@@ -82,5 +109,7 @@ public class FatcatEvent {
     public String getEndTime() {
         return mEndTime;
     }
+
+    public ArrayList<SingleItem> getList() { return items;}
 
 }

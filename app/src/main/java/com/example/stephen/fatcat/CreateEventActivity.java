@@ -22,6 +22,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import java.util.ArrayList;
 
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FirebaseUtils;
@@ -43,7 +44,7 @@ public class CreateEventActivity extends AppCompatActivity implements Navigation
     private Button mStartTimeButton;
     private Button mEndTimeButton;
     private Button mSubmitEvent;
-    private Date mDate;
+    private static Date mDate;
     private static TextView dateView;
     private static TextView startTimeView;
     private static TextView endTimeView;
@@ -110,14 +111,15 @@ public class CreateEventActivity extends AppCompatActivity implements Navigation
                 String startTime = startTimeView.getText().toString();
                 String endTime = endTimeView.getText().toString();
                 mDate = Calendar.getInstance().getTime(); // TODO This is only until the date picker is fully implemented
-                FatcatEvent event = new FatcatEvent(name, description, mDate, startTime, endTime);
+                ArrayList<FatcatEvent.SingleItem> items = new ArrayList<>(); // TODO Must create list
+                FatcatEvent event = new FatcatEvent(name, description, mDate, startTime, endTime, items);
 
                 FirebaseUtils.uploadNewEvent(event, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                         if (databaseError == null) // If the upload was successful...
                         {
-                            Toast.makeText(CreateEventActivity.this, "Event Created Succesfully", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(CreateEventActivity.this, "Event Created Successfully", Toast.LENGTH_SHORT).show();
                             //closes create event view and returns to event list
                             finish();
                         } else { // If the upload failed...
