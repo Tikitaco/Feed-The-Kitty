@@ -1,9 +1,9 @@
 package com.example.stephen.fatcat.com.example.stephen.fatcat.firebase;
 
 public class FatcatFriend {
-    public String mUsername;
-    public String mUid;
-    public String mEmail;
+    private String mUsername;
+    private String mUid;
+    private String mEmail;
 
     // Empty constructor for firebase instances
     public FatcatFriend() {

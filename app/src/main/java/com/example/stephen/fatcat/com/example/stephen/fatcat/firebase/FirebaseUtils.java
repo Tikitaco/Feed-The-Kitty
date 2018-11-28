@@ -79,6 +79,37 @@ public class FirebaseUtils {
         }
     }
 
+    public static void getUserProfile(String uid, final FatcatListener<FatcatFriend> listener) {
+        DatabaseReference profiles = FirebaseDatabase.getInstance().getReference("profiles");
+        profiles.orderByKey().equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                FatcatFriend profile = new FatcatFriend();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        String username = snapshot.child("username").getValue().toString();
+                        String email = snapshot.child("email").getValue().toString();
+                        String uid = snapshot.getKey();
+                        profile.setUsername(username);
+                        profile.setUID(uid);
+                        profile.setEmail(email);
+                        listener.onReturnData(profile);
+                    }
+                }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    public static void removeFriend(String friendUID) {
+        DatabaseReference mdb = FirebaseDatabase.getInstance().getReference();
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference profileInformation = mdb.child("profiles").child(uid);
+        profileInformation.child("friends").child(friendUID).removeValue();
+    }
+
     public static void updateProfile(FirebaseUser user) {
         DatabaseReference mdb = FirebaseDatabase.getInstance().getReference();
         String uid = user.getUid();

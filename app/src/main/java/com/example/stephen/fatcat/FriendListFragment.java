@@ -3,20 +3,28 @@ package com.example.stephen.fatcat;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatFriend;
@@ -101,13 +109,8 @@ public class FriendListFragment extends Fragment {
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
-
                     }
                 });
-
-
-
-
             }
 
             @Override
@@ -151,6 +154,31 @@ public class FriendListFragment extends Fragment {
         builder.show();
     }
 
+    private void showFriendPopup(final FatcatFriend friend) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        // Get the layout inflater
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+        View informationView = inflater.inflate(R.layout.popup_friend_information, null);
+        TextView friendUsername = informationView.findViewById(R.id.popup_name);
+        Button removeFriendButton = informationView.findViewById(R.id.popup_remove_friend);
+
+        friendUsername.setText(friend.getUsername() + " (" + friend.getEmail() + ")");
+        builder.setView(informationView);
+        final AlertDialog dialog = builder.show();
+
+        removeFriendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseUtils.removeFriend(friend.getUID());
+                updateFriendsList();
+                Toast.makeText(getActivity(), "Removed friend successfully", Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -163,7 +191,18 @@ public class FriendListFragment extends Fragment {
                 showAddFriendDialog();
             }
         });
-        mList.setAdapter(new MyFriendListRecyclerViewAdapter(friends, null));
+        mList.setAdapter(new MyFriendListRecyclerViewAdapter(friends, new OnListFragmentInteractionListener() {
+            @Override
+            public void onListFragmentInteraction(FatcatFriend friend) {
+                Log.i("Utils", friend.getUsername());
+                showFriendPopup(friend);
+            }
+        }));
+
+        // Add a divider between each item to make it look nice
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mList.getContext(), DividerItemDecoration.VERTICAL);
+        mList.addItemDecoration(dividerItemDecoration);
+        Log.i("Utils", "Updated Friends List");
         updateFriendsList();
     }
 

@@ -35,8 +35,8 @@ public class MyFriendListRecyclerViewAdapter extends RecyclerView.Adapter<MyFrie
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).getEmail());
-        holder.mContentView.setText(mValues.get(position).getUsername());
+        FatcatFriend friend = mValues.get(position);
+        holder.mContentView.setText(friend.getUsername() + " (" + friend.getEmail() + ")");
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,14 +57,12 @@ public class MyFriendListRecyclerViewAdapter extends RecyclerView.Adapter<MyFrie
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
         public final TextView mContentView;
         public FatcatFriend mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
             mContentView = (TextView) view.findViewById(R.id.content);
         }
 

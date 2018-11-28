@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomepageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        CaldendarFragment.OnFragmentInteractionListener,ListFragment.OnFragmentInteractionListener, FriendListFragment.OnListFragmentInteractionListener {
+        CaldendarFragment.OnFragmentInteractionListener,ListFragment.OnFragmentInteractionListener, FriendListFragment.OnListFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener {
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private ActionBarDrawerToggle mToggle;
@@ -46,8 +46,10 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
     private CaldendarFragment calendarFragment;
     private ListFragment listFragment;
     private FriendListFragment friendFragment;
+    private SettingsFragment settingsFragment;
     private CalendarView mCalendarView;
     private List<EventDay> mEventDays = new ArrayList<EventDay>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +60,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         mMainNav = findViewById(R.id.Bottom_Nav);
 
         listFragment = new ListFragment();
+        settingsFragment = new SettingsFragment();
         calendarFragment = new CaldendarFragment();
         friendFragment = new FriendListFragment();
         setFragment(listFragment);
@@ -104,6 +107,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
             case R.id.nav_account:
                 break;
             case R.id.nav_settings:
+                setFragment(settingsFragment);
                 break;
             case R.id.nav_friends:
                   setFragment(friendFragment);
@@ -193,6 +197,6 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     public void onListFragmentInteraction(FatcatFriend friend) {
-
+        Toast.makeText(this, friend.getEmail(), Toast.LENGTH_SHORT).show();
     }
 }
