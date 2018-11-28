@@ -29,20 +29,25 @@
                 <data android:scheme="@string/fb_login_protocol_scheme" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"
-                  android:theme="@style/Theme.AppCompat.NoActionBar">
+        <activity
+            android:name=".MainActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".HomepageActivity" />
-        <activity android:name=".CreateAccountActivity"
-                  android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity android:name=".CreateEventActivity"
-                  android:theme="@style/Theme.AppCompat.NoActionBar">
+        <activity
+            android:name=".CreateAccountActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".CreateEventActivity"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
 
-            <!--THIS MIGHT BE CREATING TWO APPS INSTEAD OF ONE SO I COMMENTED IT OUT FOR NOW-->
+            <!-- THIS MIGHT BE CREATING TWO APPS INSTEAD OF ONE SO I COMMENTED IT OUT FOR NOW -->
+
 
             <!--
             <intent-filter>
@@ -55,7 +60,7 @@
         <activity
             android:name=".EventDetailsActivity"
             android:label="@string/title_activity_event_details"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
     </application>
 
 </manifest>

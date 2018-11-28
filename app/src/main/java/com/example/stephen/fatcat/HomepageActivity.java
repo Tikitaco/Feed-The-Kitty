@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.applandeo.materialcalendarview.EventDay;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatFriend;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -35,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomepageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        CaldendarFragment.OnFragmentInteractionListener,ListFragment.OnFragmentInteractionListener {
+        CaldendarFragment.OnFragmentInteractionListener,ListFragment.OnFragmentInteractionListener, FriendListFragment.OnListFragmentInteractionListener {
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private ActionBarDrawerToggle mToggle;
@@ -44,6 +45,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
     private FrameLayout mMainFrame;
     private CaldendarFragment calendarFragment;
     private ListFragment listFragment;
+    private FriendListFragment friendFragment;
     private CalendarView mCalendarView;
     private List<EventDay> mEventDays = new ArrayList<EventDay>();
 
@@ -57,6 +59,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
 
         listFragment = new ListFragment();
         calendarFragment = new CaldendarFragment();
+        friendFragment = new FriendListFragment();
         setFragment(listFragment);
 
         mMainNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -103,6 +106,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
             case R.id.nav_settings:
                 break;
             case R.id.nav_friends:
+                  setFragment(friendFragment);
 //                startActivity(new Intent(HomepageActivity.this, FriendsActivity.class));
 //                finish();
                 break;
@@ -187,4 +191,8 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
     }
 
 
+    @Override
+    public void onListFragmentInteraction(FatcatFriend friend) {
+
+    }
 }

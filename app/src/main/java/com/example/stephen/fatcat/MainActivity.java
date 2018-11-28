@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FirebaseUtils;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -117,6 +118,8 @@ public class MainActivity extends AppCompatActivity {
     private void updateUI(FirebaseUser currentUser) {
         if (currentUser != null) {
             Toast.makeText(MainActivity.this, "You're logged in", Toast.LENGTH_LONG).show();
+            FirebaseUtils.updateProfile(currentUser);
+            Toast.makeText(this, "Made update", Toast.LENGTH_SHORT).show();
             Intent accountIntent = new Intent(MainActivity.this, HomepageActivity.class);
             startActivity(accountIntent);
         }
