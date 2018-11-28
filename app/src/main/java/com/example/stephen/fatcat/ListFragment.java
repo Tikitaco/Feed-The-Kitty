@@ -1,5 +1,6 @@
 package com.example.stephen.fatcat;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
@@ -7,12 +8,14 @@ import android.app.Fragment;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.content.Intent;
+import android.widget.Toast;
 
 import com.applandeo.materialcalendarview.EventDay;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
@@ -49,6 +52,7 @@ public class ListFragment extends Fragment {
     DatabaseReference databaseReference;
     FirebaseUser user;
     EventDay event;
+    String[] events;
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -113,24 +117,22 @@ public class ListFragment extends Fragment {
                     FatcatEvent fatcatEvent = eventSnapShot.getValue(FatcatEvent.class);
                     fatcatEvents.add(fatcatEvent);
                 }
-                String[] event = new String[fatcatEvents.size()];
+                events = new String[fatcatEvents.size()];
                 int i = 0;
                 for(FatcatEvent f: fatcatEvents){
-                    event[i] = f.getName();
+                    events[i] = f.getName();
                     i++;
                 }
 
-                ArrayAdapter<String> listArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1,event);
+                ArrayAdapter<String> listArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1,events);
                 mListView.setAdapter(listArrayAdapter);
-                /*mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                        Intent a = new Intent(getContext(),EventDetailsActivity.class);
-                        a.putExtra("Event_ID", (CharSequence) fatcatEvents.get(i));
-                        a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        getContext().startActivity(a);
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        String itemValue = (String)mListView.getItemAtPosition(position);
+                        Toast.makeText(getActivity(),itemValue,Toast.LENGTH_LONG).show();
                     }
-                });*/
+                });
 
             }
 
@@ -183,5 +185,14 @@ public class ListFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void onAdd(){
+
+    }
+    public void onRemove(){
+        if(events.length == 0)return;
+
+
     }
 }
