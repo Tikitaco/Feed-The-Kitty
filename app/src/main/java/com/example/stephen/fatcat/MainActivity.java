@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatGlobals;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FirebaseUtils;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -39,10 +40,7 @@ public class MainActivity extends AppCompatActivity {
     LoginButton fbLoginButton;
     private static final String TAG = "MainActivity";
     private static final String EMAIL = "email";
-
-
-
-
+    public static FatcatGlobals globals = new FatcatGlobals();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
         if (currentUser != null) {
             Toast.makeText(MainActivity.this, "You're logged in", Toast.LENGTH_LONG).show();
             FirebaseUtils.updateProfile(currentUser);
+            globals.initializeGlobals();
             Toast.makeText(this, "Made update", Toast.LENGTH_SHORT).show();
             Intent accountIntent = new Intent(MainActivity.this, HomepageActivity.class);
             startActivity(accountIntent);

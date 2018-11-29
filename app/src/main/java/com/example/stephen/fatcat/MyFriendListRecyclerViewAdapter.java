@@ -1,9 +1,14 @@
 package com.example.stephen.fatcat;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.stephen.fatcat.FriendListFragment.OnListFragmentInteractionListener;
@@ -19,10 +24,15 @@ public class MyFriendListRecyclerViewAdapter extends RecyclerView.Adapter<MyFrie
 
     private final List<FatcatFriend> mValues;
     private final OnListFragmentInteractionListener mListener;
+    private Context mContext; // This context is used to load the default image of the profile pictures
 
     public MyFriendListRecyclerViewAdapter(List<FatcatFriend> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
+    }
+
+    public void setContext(Context context) {
+        mContext = context;
     }
 
     @Override
@@ -35,9 +45,15 @@ public class MyFriendListRecyclerViewAdapter extends RecyclerView.Adapter<MyFrie
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        FatcatFriend friend = mValues.get(position);
+        FatcatFriend friend = holder.mItem;
         holder.mContentView.setText(friend.getUsername() + " (" + friend.getEmail() + ")");
-
+        if (friend.getProfilePicture() != null) {
+            holder.mProfilePicture.setImageBitmap(friend.getProfilePicture());
+        } else {
+            Bitmap bm = BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.baseline_person_black_24dp);
+            Log.i("Utils", "Set Defautl Bitmap");
+            holder.mProfilePicture.setImageBitmap(bm);
+        }
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,12 +74,15 @@ public class MyFriendListRecyclerViewAdapter extends RecyclerView.Adapter<MyFrie
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
         public final TextView mContentView;
+        public final ImageView mProfilePicture;
+
         public FatcatFriend mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
             mContentView = (TextView) view.findViewById(R.id.content);
+            mProfilePicture = (ImageView) view.findViewById(R.id.list_profile_image);
         }
 
         @Override
