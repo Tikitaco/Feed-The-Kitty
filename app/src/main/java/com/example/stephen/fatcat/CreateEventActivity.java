@@ -27,6 +27,11 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
+import android.view.ViewGroupOverlay;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.ColorDrawable;
+
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
@@ -60,6 +65,7 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
     private static boolean setEnd = false;
     private static final int ADD_ITEM_REQUEST = 0;
     private Context mContext = this;
+    private static DecimalFormat df2 = new DecimalFormat(".##");
 
     ItemsListAdapter mAdapter;
 
@@ -84,6 +90,7 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
         View footerView = getLayoutInflater().inflate(R.layout.single_list_footer_view, null);
         getListView().addFooterView(footerView);
 
+        final ViewGroup root = (ViewGroup) getWindow().getDecorView().getRootView(); // Blur?
 
         Button addAnotherItem = (Button) findViewById(R.id.add_another_item_view);
         addAnotherItem.setOnClickListener(new View.OnClickListener() {
@@ -93,13 +100,15 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
                 LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                 View popupView = inflater.inflate(R.layout.single_list_add_item, null, false);
 
+                applyDim(root, 0.5f);
+
                 final PopupWindow pw = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true); // LayoutParams.WRAP_CONTENT
 
-                TextView addItemTitle = (TextView) findViewById(R.id.add_item_title);
-                TextView addItemName = (TextView) findViewById(R.id.item_name_view);
-                EditText addItemNameEdit = (EditText) findViewById(R.id.item_edit_name_view);
-                TextView addItemPrice = (TextView) findViewById(R.id.price_view);
-                EditText addItemPriceEdit = (EditText) findViewById(R.id.price_edit_view);
+                final TextView addItemTitle = (TextView) findViewById(R.id.add_item_title);
+                final TextView addItemName = (TextView) findViewById(R.id.item_name_view);
+                final EditText addItemNameEdit = (EditText) findViewById(R.id.item_edit_name_view);
+                final TextView addItemPrice = (TextView) findViewById(R.id.price_view);
+                final EditText addItemPriceEdit = (EditText) findViewById(R.id.price_edit_view);
 
                 pw.showAtLocation(popupView, Gravity.CENTER, 0 ,0); //?? popupView
 
@@ -108,6 +117,7 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
                     @Override
                     public void onClick(View view) {
                         pw.dismiss();
+                        clearDim(root);
                     }
                 });
 
@@ -115,7 +125,14 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
                 submit.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+
+                        String priceStr = df2.format(Double.valueOf(addItemPrice.toString())); //
+                        Double priceDouble = Double.valueOf(priceStr);
+
+                        SingleItem addItem = new SingleItem(addItemNameEdit.toString(), priceDouble);
+
                         pw.dismiss();
+                        clearDim(root);
                     }
                 });
             }
@@ -169,7 +186,7 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
                 String startTime = startTimeView.getText().toString();
                 String endTime = endTimeView.getText().toString();
                 mDate = Calendar.getInstance().getTime(); // TODO This is only until the date picker is fully implemented
-                ArrayList<FatcatEvent.SingleItem> items = new ArrayList<>(); // TODO Must create list
+                ArrayList<SingleItem> items = new ArrayList<>(); // TODO Must create list
                 FatcatEvent event = new FatcatEvent(name, description, mDate, startTime, endTime, items);
 
                 FirebaseUtils.uploadNewEvent(event, new DatabaseReference.CompletionListener() {
@@ -189,6 +206,20 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
                 });
             }
         });
+    }
+
+    public static void applyDim(@NonNull ViewGroup parent, float dimAmount){
+        Drawable dim = new ColorDrawable(Color.BLACK);
+        dim.setBounds(0, 0, parent.getWidth(), parent.getHeight());
+        dim.setAlpha((int) (255 * dimAmount));
+
+        ViewGroupOverlay overlay = parent.getOverlay();
+        overlay.add(dim);
+    }
+
+    public static void clearDim(@NonNull ViewGroup parent) {
+        ViewGroupOverlay overlay = parent.getOverlay();
+        overlay.clear();
     }
 
     @Override

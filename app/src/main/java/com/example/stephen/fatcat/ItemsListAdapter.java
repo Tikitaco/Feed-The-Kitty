@@ -25,7 +25,7 @@ import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEven
 
 public class ItemsListAdapter extends BaseAdapter {
 
-    private final List<FatcatEvent.SingleItem> mItems = new ArrayList<>();
+    private final List<SingleItem> mItems = new ArrayList<>();
     private final Context mContext;
     private static DecimalFormat df2 = new DecimalFormat(".##");
 
@@ -38,7 +38,7 @@ public class ItemsListAdapter extends BaseAdapter {
     // Add a ToDoItem to the adapter
     // Notify observers that the data set has changed
 
-    public void add(FatcatEvent.SingleItem item) {
+    public void add(SingleItem item) {
 
         mItems.add(item);
         notifyDataSetChanged();
@@ -92,7 +92,7 @@ public class ItemsListAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         // create layout and mItem
-        final FatcatEvent.SingleItem mItem = mItems.get(position);
+        final SingleItem mItem = mItems.get(position);
         RelativeLayout itemLayout = (RelativeLayout) inflater.inflate(R.layout.single_list_item, parent, false);
         // create title of item
         final TextView titleItemView = (TextView) itemLayout.findViewById(R.id.titleItemView);
