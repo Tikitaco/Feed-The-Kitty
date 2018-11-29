@@ -3,15 +3,19 @@ package com.example.stephen.fatcat;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
+
+import java.util.ArrayList;
 
 /**
  * A fragment representing a list of Items.
@@ -21,12 +25,9 @@ import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEven
  */
 public class MyEventFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
-    private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
-    private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
-
+    private RecyclerView mList;
+    private MyEventRecyclerViewAdapter mAdapter;
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -54,23 +55,24 @@ public class MyEventFragment extends Fragment {
 
         // Set the adapter
         if (view instanceof RecyclerView) {
-            Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            recyclerView.setAdapter(new MyEventRecyclerViewAdapter(MainActivity.globals.myEvents, mListener));
+            mAdapter = new MyEventRecyclerViewAdapter(MainActivity.globals.myEvents, mListener);
+            recyclerView.setAdapter(mAdapter);
         }
 
-        RecyclerView mList = view.findViewById(R.id.list);
+        mList = view.findViewById(R.id.event_list);
         // Add a divider between each item to make it look nice
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mList.getContext(), DividerItemDecoration.VERTICAL);
         mList.addItemDecoration(dividerItemDecoration);
         return view;
     }
 
+
+    public void updateList() {
+        // Update the adapter and list.
+        mList.setAdapter(mAdapter = new MyEventRecyclerViewAdapter(MainActivity.globals.myEvents, mListener));
+        mAdapter.notifyDataSetChanged();
+    }
 
     @Override
     public void onAttach(Context context) {

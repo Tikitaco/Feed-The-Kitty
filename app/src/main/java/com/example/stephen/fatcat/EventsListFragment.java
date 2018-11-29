@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,11 +23,9 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class EventsListFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
     private OnFragmentInteractionListener mListener;
-    private RecyclerView mList;
+    private ViewPager mPager;
 
     public EventsListFragment() {
         // Required empty public constructor
@@ -52,10 +51,10 @@ public class EventsListFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        ViewPager viewPager = (ViewPager) getView().findViewById(R.id.viewpager);
-        viewPager.setAdapter(new EventPageAdapter(getFragmentManager(), getContext()));
+        mPager = (ViewPager) getView().findViewById(R.id.viewpager);
+        mPager.setAdapter(new EventPageAdapter(getFragmentManager(), getContext()));
         TabLayout tabLayout = (TabLayout) getView().findViewById(R.id.sliding_tabs);
-        tabLayout.setupWithViewPager(viewPager);
+        tabLayout.setupWithViewPager(mPager);
 
     }
 
@@ -103,5 +102,15 @@ public class EventsListFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+    public void updateLists() {
+        EventPageAdapter adapter = (EventPageAdapter) mPager.getAdapter();
+        for (Fragment f : adapter.getAllFragments()) {
+            if (f != null && f instanceof MyEventFragment) {
+                ((MyEventFragment) f).updateList();
+                Log.i("Utils", "Updated List!");
+            }
+        }
     }
 }

@@ -214,8 +214,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
             MainActivity.globals.getMyEvents(new FatcatListener<Vector<FatcatEvent>>() {
                 @Override
                 public void onReturnData(Vector<FatcatEvent> data) {
-                    listFragment.updateList();
-                    Log.i("Utils", "Updated List");
+                    eventsFragment.updateLists();
                 }
             });
         }
