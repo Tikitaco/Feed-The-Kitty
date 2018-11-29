@@ -21,6 +21,7 @@ public class FatcatEvent {
     private String mEndTime;
     private String mOwnerUID;
     private ArrayList<SingleItem> items;
+    private String eventID;
 
     private static DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
@@ -115,6 +116,10 @@ public class FatcatEvent {
         mDescription = description;
     }
 
+    public void setEventID(String id) {
+        eventID = id;
+    }
+
     public void setStartTime(String startTime) {
         mStartTime = startTime;
     }
@@ -143,6 +148,9 @@ public class FatcatEvent {
         return mEndTime;
     }
 
+    public String getEventID() {
+        return eventID;
+    }
     public ArrayList<SingleItem> getList() { return items;}
 
 }

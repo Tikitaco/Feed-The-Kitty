@@ -4,12 +4,18 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.stephen.fatcat.MyEventFragment.OnListFragmentInteractionListener;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatDeletionListener;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatListener;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FirebaseUtils;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.List;
+import java.util.Vector;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link FatcatEvent} and makes a call to the
@@ -20,10 +26,12 @@ public class MyEventRecyclerViewAdapter extends RecyclerView.Adapter<MyEventRecy
 
     private final List<FatcatEvent> mValues;
     private final OnListFragmentInteractionListener mListener;
+    private MyEventFragment mFragment;
 
-    public MyEventRecyclerViewAdapter(List<FatcatEvent> items, OnListFragmentInteractionListener listener) {
+    public MyEventRecyclerViewAdapter(List<FatcatEvent> items, OnListFragmentInteractionListener listener, MyEventFragment fragment) {
         mValues = items;
         mListener = listener;
+        mFragment = fragment;
     }
 
     @Override
@@ -39,7 +47,24 @@ public class MyEventRecyclerViewAdapter extends RecyclerView.Adapter<MyEventRecy
         holder.mEventName.setText(mValues.get(position).getName());
         holder.mEventDate.setText(mValues.get(position).getDate());
         //holder.mContentView.setText(mValues.get(position).content);
-
+        holder.mDeleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseUtils.deleteEvent(holder.mItem.getEventID(), new FatcatDeletionListener() {
+                    @Override
+                    public void onFinishDeletion(boolean success) {
+                        if (success) {
+                            MainActivity.globals.getMyEvents(new FatcatListener<Vector<FatcatEvent>>() {
+                                @Override
+                                public void onReturnData(Vector<FatcatEvent> data) {
+                                    mFragment.updateList();
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+        });
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,6 +86,7 @@ public class MyEventRecyclerViewAdapter extends RecyclerView.Adapter<MyEventRecy
         public final View mView;
         public final TextView mEventName;
         public final TextView mEventDate;
+        public final ImageView mDeleteButton;
         public FatcatEvent mItem;
 
         public ViewHolder(View view) {
@@ -68,6 +94,7 @@ public class MyEventRecyclerViewAdapter extends RecyclerView.Adapter<MyEventRecy
             mView = view;
             mEventName = (TextView) view.findViewById(R.id.list_event_name);
             mEventDate = (TextView) view.findViewById(R.id.list_event_date);
+            mDeleteButton = (ImageView) view.findViewById(R.id.deleteButton);
         }
 
         @Override

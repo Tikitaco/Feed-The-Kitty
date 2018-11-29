@@ -56,7 +56,7 @@ public class MyEventFragment extends Fragment {
         // Set the adapter
         if (view instanceof RecyclerView) {
             RecyclerView recyclerView = (RecyclerView) view;
-            mAdapter = new MyEventRecyclerViewAdapter(MainActivity.globals.myEvents, mListener);
+            mAdapter = new MyEventRecyclerViewAdapter(MainActivity.globals.myEvents, mListener, this);
             recyclerView.setAdapter(mAdapter);
         }
 
@@ -70,7 +70,7 @@ public class MyEventFragment extends Fragment {
 
     public void updateList() {
         // Update the adapter and list.
-        mList.setAdapter(mAdapter = new MyEventRecyclerViewAdapter(MainActivity.globals.myEvents, mListener));
+        mList.setAdapter(mAdapter = new MyEventRecyclerViewAdapter(MainActivity.globals.myEvents, mListener, this));
         mAdapter.notifyDataSetChanged();
     }
 

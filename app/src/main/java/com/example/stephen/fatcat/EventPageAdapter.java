@@ -28,7 +28,6 @@ public class EventPageAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        Toast.makeText(context, "Getting item at " + position, Toast.LENGTH_SHORT).show();
         Fragment fragment = MyEventFragment.newInstance();
         fragmentList[position] = fragment;
         return fragment;

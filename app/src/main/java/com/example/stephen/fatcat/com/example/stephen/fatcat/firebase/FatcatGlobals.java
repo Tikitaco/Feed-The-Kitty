@@ -17,7 +17,7 @@ public class FatcatGlobals {
     public FatcatFriend myProfile;
     public Vector<FatcatFriend> friendProfiles = new Vector<>();
     public Vector<FatcatEvent> myEvents = new Vector<>();
-
+    public Vector<FatcatEvent> myInvites = new Vector<>();
 
     /**
      * Load friends at the beginning of the app, so we don't have to continually grab them.
@@ -28,11 +28,30 @@ public class FatcatGlobals {
         getMyEvents(new FatcatListener<Vector<FatcatEvent>>() {
             @Override
             public void onReturnData(Vector<FatcatEvent> data) {
-                listener.onReturnData(null);
+                getInvites(new FatcatListener<Vector<FatcatEvent>>() {
+                    @Override
+                    public void onReturnData(Vector<FatcatEvent> data) {
+                        listener.onReturnData(null);
+                    }
+                });
             }
         });
     }
 
+    /**
+     * Retrieves all the information about the events that the user has been invited to.
+     * @param listener used for callback once the events are retrieved
+     */
+    public void getInvites(final FatcatListener<Vector<FatcatEvent>> listener) {
+        if (listener != null) {
+            listener.onReturnData(myInvites);
+        }
+    }
+
+    /**
+     *  Retrieves all the events that the user is hosting
+     * @param listener is used as a callback for when the events are retrieved
+     */
     public void getMyEvents(final FatcatListener<Vector<FatcatEvent>> listener) {
         FirebaseUtils.getAllMyEvents(new FatcatListener<Vector<FatcatEvent>>() {
             @Override
@@ -49,6 +68,10 @@ public class FatcatGlobals {
         });
     }
 
+    /**
+     * Retrieves the user's profile information
+     * @param listener used for callback once the information is retrieved
+     */
     public void getMyProfile(final FatcatListener<FatcatFriend> listener) {
         FirebaseUtils.getUserProfile(FirebaseAuth.getInstance().getCurrentUser().getUid(), new FatcatListener<FatcatFriend>() {
             @Override
@@ -61,6 +84,10 @@ public class FatcatGlobals {
         });
     }
 
+    /**
+     * Retrieves the profile information of everyone on the user's friends list
+     * @param listener used for callback once information is retrieved
+     */
     public void getFriends(final FatcatListener<Vector<FatcatFriend>> listener) {
         friendProfiles.clear();
         DatabaseReference db = FirebaseDatabase.getInstance().getReference("profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("friends");

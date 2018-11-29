@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -60,12 +61,39 @@ public class FirebaseUtils {
         profileInformation.child("my_events").child(uuid).setValue(true);
     }
 
+    /**
+     * Deletes a specific event
+     * @param event_uuid
+     * @param listener
+     */
+    public static void deleteEvent(String event_uuid, final FatcatDeletionListener listener) {
+        DatabaseReference mdb = FirebaseDatabase.getInstance().getReference();
+        mdb.child("events").child(event_uuid).removeValue(new DatabaseReference.CompletionListener() { // First, delete the event from the master event list
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                if (databaseError == null) {
+                    listener.onFinishDeletion(true);
+                } else {
+                    listener.onFinishDeletion(false);
+                }
+            }
+        });
+    }
+
+    /**
+     * Gets the information of a single event specified by event_id
+     * @param event_id The unique id of the event
+     * @param listener used for callback once the information is retrieved
+     */
     public static void getEventInformation(String event_id, final FatcatListener<FatcatEvent> listener) {
         DatabaseReference events = FirebaseDatabase.getInstance().getReference("events");
         events.child(event_id).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 FatcatEvent event = dataSnapshot.getValue(FatcatEvent.class);
+                if (event != null && dataSnapshot.getKey() != null) {
+                    event.setEventID(dataSnapshot.getKey());
+                }
                 listener.onReturnData(event);
             }
 
@@ -76,6 +104,10 @@ public class FirebaseUtils {
         });
     }
 
+    /**
+     * Retrieves event information of all events the user is hosting
+     * @param listener used for callback once the information is retrieved
+     */
     public static void getAllMyEvents(final FatcatListener<Vector<FatcatEvent>> listener) {
         final Vector<FatcatEvent> events = new Vector<>();
         DatabaseReference profiles = FirebaseDatabase.getInstance().getReference("profiles");
