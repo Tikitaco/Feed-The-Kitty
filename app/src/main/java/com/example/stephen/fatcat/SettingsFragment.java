@@ -1,6 +1,11 @@
 package com.example.stephen.fatcat;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
@@ -15,12 +20,18 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatFriend;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatGlobals;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatListener;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FirebaseUtils;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
+
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -33,10 +44,11 @@ import com.google.firebase.database.ValueEventListener;
 public class SettingsFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
-    private FatcatFriend myProfile;
     private EditText mUsername;
     private Button mSaveChanges;
     private ImageView mProfilePicture;
+    public static final int PICK_IMAGE = 1000;
+    private Bitmap newPicture = null;
 
     public SettingsFragment() {
         // Required empty public constructor
@@ -47,7 +59,7 @@ public class SettingsFragment extends Fragment {
      * this fragment using the provided parameters.
      * @return A new instance of fragment SettingsFragment.
      */
-    public static SettingsFragment newInstance(String param1, String param2) {
+    public static SettingsFragment newInstance() {
         SettingsFragment fragment = new SettingsFragment();
         return fragment;
     }
@@ -55,6 +67,13 @@ public class SettingsFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
+
+    private void uploadProfilePicture() {
+        Intent intent = new Intent();
+        intent.setType("image/*");
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
     }
 
     @Override
@@ -70,6 +89,14 @@ public class SettingsFragment extends Fragment {
                 saveSettings();
             }
         });
+
+        mProfilePicture.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                uploadProfilePicture();
+            }
+        });
+        updateSettings();
     }
 
     @Override
@@ -81,6 +108,19 @@ public class SettingsFragment extends Fragment {
 
     private void saveSettings() {
         FirebaseUtils.updateUsername(mUsername.getText().toString());
+
+
+        if (newPicture != null) {
+            final ProgressDialog dialog = ProgressDialog.show(getActivity(), "Uploading your new profile picture...",
+                    "Loading. Please wait...", true);
+            dialog.show();
+            FirebaseUtils.uploadProfilePicture(newPicture, new OnCompleteListener() {
+                @Override
+                public void onComplete(@NonNull Task task) {
+                    dialog.dismiss();
+                }
+            });
+        }
         Toast.makeText(getActivity(), "Saved", Toast.LENGTH_SHORT).show();
         updateSettings();
     }
@@ -94,18 +134,27 @@ public class SettingsFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
         }
-        updateSettings();
     }
 
     public void updateSettings() {
         // First, get the user profile information
-        FirebaseUtils.getUserProfile(FirebaseAuth.getInstance().getCurrentUser().getUid(), new FatcatListener<FatcatFriend>() {
+        /*FirebaseUtils.getUserProfile(FirebaseAuth.getInstance().getCurrentUser().getUid(), new FatcatListener<FatcatFriend>() {
             @Override
             public void onReturnData(FatcatFriend data) {
                 Log.i("Utils", data.getUsername());
                 mUsername.setText(data.getUsername());
+                if (data.getProfilePicture() != null) {
+                    mProfilePicture.setImageBitmap(data.getProfilePicture());
+                }
             }
-        });
+        }); */
+        FatcatFriend myProfile = MainActivity.globals.myProfile;
+        Log.i("Utils", "" + (myProfile == null));
+        Log.i("Utils", "" + (mUsername == null));
+        mUsername.setText(myProfile.getUsername());
+        if (myProfile.getProfilePicture() != null) {
+            mProfilePicture.setImageBitmap(myProfile.getProfilePicture());
+        }
     }
 
     @Override
@@ -127,5 +176,28 @@ public class SettingsFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PICK_IMAGE && resultCode == Activity.RESULT_OK) {
+            if (data == null) {
+                //Display an error
+                Log.e("Utils", "Error opening picture");
+                return;
+            }
+            Log.i("Utils", "Got Image!!");
+            try {
+                InputStream inputStream = getContext().getContentResolver().openInputStream(data.getData());
+                newPicture = BitmapFactory.decodeStream(inputStream);
+                mProfilePicture.setImageBitmap(newPicture);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            //Now you can do whatever you want with your inpustream, save it as file, upload to a server, decode a bitmap...
+        }
     }
 }
