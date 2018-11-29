@@ -16,23 +16,47 @@ import java.util.Vector;
 public class FatcatGlobals {
     public FatcatFriend myProfile;
     public Vector<FatcatFriend> friendProfiles = new Vector<>();
+    public Vector<FatcatEvent> myEvents = new Vector<>();
 
 
     /**
      * Load friends at the beginning of the app, so we don't have to continually grab them.
      */
-    public void initializeGlobals() {
-        getMyProfile();
-        getFriends(null);
+    public void initializeGlobals(final FatcatListener listener) {
+        getMyProfile(null); // Get your profile information from the database
+        getFriends(null); // Get all of your friend's information from the database
+        getMyEvents(new FatcatListener<Vector<FatcatEvent>>() {
+            @Override
+            public void onReturnData(Vector<FatcatEvent> data) {
+                listener.onReturnData(null);
+            }
+        });
     }
 
-    public void getMyProfile() {
+    public void getMyEvents(final FatcatListener<Vector<FatcatEvent>> listener) {
+        FirebaseUtils.getAllMyEvents(new FatcatListener<Vector<FatcatEvent>>() {
+            @Override
+            public void onReturnData(Vector<FatcatEvent> data) {
+                myEvents = new Vector<>(data); // Copy all event data into local vector
+                Log.i("Utils", "Events: " + myEvents.size());
+                for (FatcatEvent event : myEvents) {
+                    Log.i("Utils", "Event Name: " + event.getName());
+                }
+                if (listener != null) {
+                    listener.onReturnData(myEvents);
+                }
+            }
+        });
+    }
+
+    public void getMyProfile(final FatcatListener<FatcatFriend> listener) {
         FirebaseUtils.getUserProfile(FirebaseAuth.getInstance().getCurrentUser().getUid(), new FatcatListener<FatcatFriend>() {
             @Override
             public void onReturnData(FatcatFriend data) {
-                Log.i("Utils", "Hello World");
-                Log.i("Utils", data.getUsername());
                 myProfile = new FatcatFriend(data);
+                if (listener != null) {
+                    listener.onReturnData(myProfile);
+                }
             }
         });
     }
@@ -51,11 +75,9 @@ public class FatcatGlobals {
                 final int[] counter = {0}; // Counts the number loaded (so we can tell when we're done)
                 synchronized (counter) { // Ensure we don't run into concurrency issues
                     for (String uid : friendUIDs) {
-                        Log.i("Utils", "Adding uid: " + uid);
                         FirebaseUtils.getUserProfile(uid, new FatcatListener<FatcatFriend>() {
                             @Override
                             public void onReturnData(FatcatFriend data) {
-                                Log.i("Utils", "Adding friend: " + data.getEmail());
                                 friendProfiles.add(data);
                                 counter[0]++;
                                 if (listener != null && counter[0] == size) {
@@ -68,7 +90,7 @@ public class FatcatGlobals {
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                listener.onReturnData(null);
             }
         });
     }

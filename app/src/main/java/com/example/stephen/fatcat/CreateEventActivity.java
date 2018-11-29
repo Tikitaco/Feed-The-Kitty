@@ -121,6 +121,8 @@ public class CreateEventActivity extends AppCompatActivity implements Navigation
                         {
                             Toast.makeText(CreateEventActivity.this, "Event Created Successfully", Toast.LENGTH_SHORT).show();
                             //closes create event view and returns to event list
+                            setResult(RESULT_OK);
+                            finishActivity(HomepageActivity.CREATE_ACTIVITY_REQUEST_CODE); // Finish and signify the list fragment to update
                             finish();
                         } else { // If the upload failed...
                             Toast.makeText(CreateEventActivity.this, "Error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();

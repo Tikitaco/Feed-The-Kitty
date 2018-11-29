@@ -1,5 +1,6 @@
 package com.example.stephen.fatcat;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -12,6 +13,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatGlobals;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatListener;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FirebaseUtils;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -55,8 +57,8 @@ public class MainActivity extends AppCompatActivity {
         mCallbackManager = CallbackManager.Factory.create();
 
         if(mAuth.getCurrentUser() != null){
-            Intent accountIntent = new Intent(MainActivity.this, CreateAccountActivity.class);
-            startActivity(accountIntent);
+            //Intent accountIntent = new Intent(MainActivity.this, CreateAccountActivity.class);
+            //startActivity(accountIntent);
         }
 
         mCreateAccount.setOnClickListener(new View.OnClickListener() {
@@ -117,11 +119,17 @@ public class MainActivity extends AppCompatActivity {
     private void updateUI(FirebaseUser currentUser) {
         if (currentUser != null) {
             Toast.makeText(MainActivity.this, "You're logged in", Toast.LENGTH_LONG).show();
+            final ProgressDialog dialog = ProgressDialog.show(MainActivity.this, "Logging in...", "Loading. Please wait...", true);
+            dialog.show();
             FirebaseUtils.updateProfile(currentUser);
-            globals.initializeGlobals();
-            Toast.makeText(this, "Made update", Toast.LENGTH_SHORT).show();
-            Intent accountIntent = new Intent(MainActivity.this, HomepageActivity.class);
-            startActivity(accountIntent);
+            globals.initializeGlobals(new FatcatListener() {
+                @Override
+                public void onReturnData(Object data) { // Once all the data is loaded, start the new activity
+                    Intent accountIntent = new Intent(MainActivity.this, HomepageActivity.class);
+                    startActivity(accountIntent);
+                    dialog.dismiss();
+                }
+            });
         }
 
     }

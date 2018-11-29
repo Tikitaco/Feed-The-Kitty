@@ -26,6 +26,7 @@ import com.applandeo.materialcalendarview.EventDay;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatFriend;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatGlobals;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -35,6 +36,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 public class HomepageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         CaldendarFragment.OnFragmentInteractionListener,ListFragment.OnFragmentInteractionListener, FriendListFragment.OnListFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener {
@@ -50,6 +52,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
     private SettingsFragment settingsFragment;
     private CalendarView mCalendarView;
     private List<EventDay> mEventDays = new ArrayList<EventDay>();
+    public final static int CREATE_ACTIVITY_REQUEST_CODE = 1234;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +81,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                         return true;
                     case R.id.createEvent:
                         //opens create event would like to change this to a fragment if possible
-                        startActivity(new Intent(HomepageActivity.this, CreateEventActivity.class));
+                        startActivityForResult(new Intent(HomepageActivity.this, CreateEventActivity.class), CREATE_ACTIVITY_REQUEST_CODE);
                         break;
                 }
                 return true;
@@ -120,6 +123,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 finish();
                 break;
             case R.id.nav_events:
+
                 startActivity(new Intent(HomepageActivity.this, CreateEventActivity.class));
                 break;
 
@@ -198,5 +202,19 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
     @Override
     public void onListFragmentInteraction(FatcatFriend friend) {
         Toast.makeText(this, friend.getEmail(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (resultCode == RESULT_OK && requestCode == CREATE_ACTIVITY_REQUEST_CODE) {
+            MainActivity.globals.getMyEvents(new FatcatListener<Vector<FatcatEvent>>() {
+                @Override
+                public void onReturnData(Vector<FatcatEvent> data) {
+                    listFragment.updateList();
+                    Log.i("Utils", "Updated List");
+                }
+            });
+        }
     }
 }
