@@ -110,7 +110,7 @@ public class FatcatEvent {
     public void setOwnerUID(String uid) {
         mOwnerUID = uid;
     }
-    
+
     public void setDescription(String description) {
         mDescription = description;
     }

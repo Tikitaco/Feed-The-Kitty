@@ -39,7 +39,7 @@ import java.util.List;
 import java.util.Vector;
 
 public class HomepageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        CaldendarFragment.OnFragmentInteractionListener,ListFragment.OnFragmentInteractionListener, FriendListFragment.OnListFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener {
+        CaldendarFragment.OnFragmentInteractionListener,ListFragment.OnFragmentInteractionListener, FriendListFragment.OnListFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener, EventsListFragment.OnFragmentInteractionListener, MyEventFragment.OnListFragmentInteractionListener {
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private ActionBarDrawerToggle mToggle;
@@ -50,6 +50,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
     private ListFragment listFragment;
     private FriendListFragment friendFragment;
     private SettingsFragment settingsFragment;
+    private EventsListFragment eventsFragment;
     private CalendarView mCalendarView;
     private List<EventDay> mEventDays = new ArrayList<EventDay>();
     public final static int CREATE_ACTIVITY_REQUEST_CODE = 1234;
@@ -66,7 +67,8 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         settingsFragment = new SettingsFragment();
         calendarFragment = new CaldendarFragment();
         friendFragment = new FriendListFragment();
-        setFragment(listFragment);
+        eventsFragment = new EventsListFragment();
+        setFragment(eventsFragment);
 
         mMainNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -189,11 +191,12 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         return super.onOptionsItemSelected(item);
     }
 
-    private void setFragment(Fragment fragment){
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+    private void setFragment(android.support.v4.app.Fragment fragment) {
+        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.main_frame,fragment).addToBackStack(null);
         fragmentTransaction.commit();
     }
+
     public void onFragmentInteraction(Uri uri){
 
     }
@@ -216,5 +219,10 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 }
             });
         }
+    }
+
+    @Override
+    public void onListFragmentInteraction(FatcatEvent item) {
+
     }
 }
