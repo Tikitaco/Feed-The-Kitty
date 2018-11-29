@@ -45,6 +45,30 @@ public class FatcatEvent {
             mPrice = price;
             mPayerName = payerName;
         }
+
+        public String getItemName() {
+            return mItemName;
+        }
+
+        public String getPayerName() {
+            return mPayerName;
+        }
+
+        public double getPrice() {
+            return mPrice;
+        }
+
+        public void setItemName(String itemName) {
+            mItemName = itemName;
+        }
+
+        public void setPrice(Double price) {
+            mPrice = price;
+        }
+
+        public void setPayerName(String name) {
+            mPayerName = name;
+        }
     }
 
     // Default Constructor for Firebase to create instances on reads

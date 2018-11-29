@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/SingleItem"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    <!--android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    android:background="?attr/colorPrimary" -->
+
+    <CheckBox
+        android:id="@+id/statusCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="10dp"
+        android:buttonTint="#000">
+    </CheckBox>
+
+    <TextView
+        android:id="@+id/titleItemView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="7dp"
+        android:layout_toRightOf="@+id/statusCheckBox"
+        android:text="SuperBowl"
+        android:textColor="#000"
+        android:textSize="20sp"
+        android:textStyle="bold">
+    </TextView>
+
+    <TextView
+        android:id="@+id/colon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="7dp"
+        android:layout_toRightOf="@+id/titleItemView"
+        android:text=": $"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="#000">
+    </TextView>
+
+    <TextView
+        android:id="@+id/price_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="7dp"
+        android:layout_toEndOf="@+id/colon"
+        android:text="5.00"
+        android:textColor="#000"
+        android:textSize="20sp"
+        android:textStyle="bold">
+    </TextView>
+
+    <TextView
+        android:id="@+id/paid_for_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart = "16dp"
+        android:layout_below="@+id/statusCheckBox"
+        android:text="Paid for by Brianne Nguyen"
+        android:textColor="@color/startblue"
+        android:textSize="20sp"
+        android:textStyle="bold">
+    </TextView>
+
+
+
+
+
+
+</RelativeLayout>

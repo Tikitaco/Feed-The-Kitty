@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/title_of_popup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_centerHorizontal="true"
+        android:textColor="#000"
+        android:text="You've chosen to pay for an item!"
+        android:textSize="20sp">
+    </TextView>
+
+
+    <TextView
+        android:id="@+id/enter_name_view1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title_of_popup"
+        android:text="Name: "
+        android:layout_marginStart="49dp"
+        android:layout_marginTop="7dp"
+        android:textColor="#000"
+        android:textSize="20sp"
+        android:textStyle="normal">
+    </TextView>
+
+    <EditText
+        android:id="@+id/enter_name_view2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/enter_name_view1"
+        android:layout_below="@+id/title_of_popup"
+        android:hint="Enter your name"
+        android:textColor="#000"
+        android:textSize="20sp"
+        android:textStyle="normal">
+    </EditText>
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/enter_name_view2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="2dp">
+
+        <Button
+            android:id="@+id/cancel_name"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginStart="60dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/mybutton"
+            android:text="Cancel"
+            android:textColor="#fff" />
+
+        <Button
+            android:id="@+id/submit_name"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="20dp"
+            android:layout_toRightOf="@+id/cancel_name"
+            android:background="@drawable/mybutton"
+            android:text="Submit"
+            android:textColor="#fff" />
+
+
+    </RelativeLayout>
+
+</RelativeLayout>
