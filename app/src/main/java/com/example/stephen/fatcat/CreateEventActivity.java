@@ -4,6 +4,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
+import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -12,8 +13,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
-import android.util.DisplayMetrics;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -33,7 +32,7 @@ import com.google.firebase.database.DatabaseReference;
 import java.util.Calendar;
 import java.util.Date;
 
-public class CreateEventActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
+public class CreateEventActivity extends ListActivity implements NavigationView.OnNavigationItemSelectedListener{
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
 
@@ -51,13 +50,32 @@ public class CreateEventActivity extends AppCompatActivity implements Navigation
     private static String dateString;
     private static String timeString;
     private static boolean setEnd = false;
+    private static final int ADD_ITEM_REQUEST = 0;
+
+    ItemsListAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_create_event);
+        //setContentView(R.layout.activity_create_event);
 
+        mAdapter = new ItemsListAdapter(getApplicationContext());
+        getListView().setFooterDividersEnabled(true);
+
+        View v = (View) getLayoutInflater().inflate(R.layout.activity_create_event, null);
+        getListView().addHeaderView(v);
+        setListAdapter(mAdapter);
+
+        Button footerView = (Button) getLayoutInflater().inflate(R.layout.single_list_footer_view, null);
+        getListView().addFooterView(footerView);
+        footerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Intent intent = new Intent(CreateEventActivity.this, AddToDoActivity.class);
+                //startActivityForResult(intent, ADD_ITEM_REQUEST);
+            }
+        });
 
         final TextView mEventName;
         final TextView mDescription;
@@ -129,6 +147,22 @@ public class CreateEventActivity extends AppCompatActivity implements Navigation
                 });
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        // TODO - Check result code and request code
+        // if user submitted a new ToDoItem
+        // Create a new ToDoItem from the data Intent
+        // and then add it to the adapter
+
+        if (requestCode == ADD_ITEM_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                //FatcatEvent.SingleItem res = new FatcatEvent.SingleItem(data);
+                //mAdapter.add(res);
+            }
+        }
     }
 
     private static void setTimeString(int hourOfDay, int minute) {
