@@ -5,7 +5,9 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
 import android.app.ListActivity;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -13,11 +15,15 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -28,6 +34,8 @@ import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FirebaseUt
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+
+import org.w3c.dom.Text;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -51,36 +59,68 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
     private static String timeString;
     private static boolean setEnd = false;
     private static final int ADD_ITEM_REQUEST = 0;
+    private Context mContext = this;
 
     ItemsListAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_create_event);
-
-        mAdapter = new ItemsListAdapter(getApplicationContext());
-        getListView().setFooterDividersEnabled(true);
-
-        View v = (View) getLayoutInflater().inflate(R.layout.activity_create_event, null);
-        getListView().addHeaderView(v);
-        setListAdapter(mAdapter);
-
-        Button footerView = (Button) getLayoutInflater().inflate(R.layout.single_list_footer_view, null);
-        getListView().addFooterView(footerView);
-        footerView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Intent intent = new Intent(CreateEventActivity.this, AddToDoActivity.class);
-                //startActivityForResult(intent, ADD_ITEM_REQUEST);
-            }
-        });
-
         final TextView mEventName;
         final TextView mDescription;
         final EditText mEnterEventName;
         final EditText mEnterDescription;
+
+        super.onCreate(savedInstanceState);
+        //setContentView(R.layout.activity_create_event);
+
+        mAdapter = new ItemsListAdapter(getApplicationContext());
+
+        View v = (View) getLayoutInflater().inflate(R.layout.activity_create_event, null);
+        getListView().setBackgroundColor(Color.WHITE);
+        getListView().addHeaderView(v);
+        setListAdapter(mAdapter);
+
+        View footerView = getLayoutInflater().inflate(R.layout.single_list_footer_view, null);
+        getListView().addFooterView(footerView);
+
+
+        Button addAnotherItem = (Button) findViewById(R.id.add_another_item_view);
+        addAnotherItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View popupView = inflater.inflate(R.layout.single_list_add_item, null, false);
+
+                final PopupWindow pw = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true); // LayoutParams.WRAP_CONTENT
+
+                TextView addItemTitle = (TextView) findViewById(R.id.add_item_title);
+                TextView addItemName = (TextView) findViewById(R.id.item_name_view);
+                EditText addItemNameEdit = (EditText) findViewById(R.id.item_edit_name_view);
+                TextView addItemPrice = (TextView) findViewById(R.id.price_view);
+                EditText addItemPriceEdit = (EditText) findViewById(R.id.price_edit_view);
+
+                pw.showAtLocation(popupView, Gravity.CENTER, 0 ,0); //?? popupView
+
+                Button cancel = (Button) popupView.findViewById(R.id.cancel_new_item);
+                cancel.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        pw.dismiss();
+                    }
+                });
+
+                Button submit = (Button) popupView.findViewById(R.id.submit_new_item);
+                submit.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        pw.dismiss();
+                    }
+                });
+            }
+        });
+
 
         mEventName = (TextView) findViewById(R.id.EventName);
         mEnterEventName = (EditText) findViewById(R.id.EnterEventName);

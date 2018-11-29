@@ -1,5 +1,7 @@
 package com.example.stephen.fatcat.com.example.stephen.fatcat.firebase;
 
+import android.content.Intent;
+
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -20,6 +22,10 @@ public class FatcatEvent {
     private String mStartTime;
     private String mEndTime;
     private ArrayList<SingleItem> items;
+
+    public final static String ITEMNAME = "itemname";
+    public final static String PAYERNAME = "payername";
+    public final static String PRICE = "price";
 
     private static DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
@@ -45,6 +51,13 @@ public class FatcatEvent {
             mPrice = price;
             mPayerName = payerName;
         }
+
+        /*public SingleItem(Intent intent) {
+            mItemName = intent.getStringExtra(ITEMNAME);
+            mPrice =
+                    intent.getDoubleExtra(PAYERNAME);
+
+        }*/
 
         public String getItemName() {
             return mItemName;

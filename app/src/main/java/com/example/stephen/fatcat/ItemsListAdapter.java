@@ -115,7 +115,7 @@ public class ItemsListAdapter extends BaseAdapter {
 
                    LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                    View popupView = inflater.inflate(R.layout.single_list_enter_name_popup, null, false);
-                   final PopupWindow pw = new PopupWindow(popupView, 440, 440, true);
+                   final PopupWindow pw = new PopupWindow(popupView, 440, 440, true); // LayoutParams.WRAP_CONTENT
                    EditText name = (EditText) popupView.findViewById(R.id.enter_name_view2);
 
                    pw.showAtLocation(popupView, Gravity.CENTER, 0 ,0); //?? popupView

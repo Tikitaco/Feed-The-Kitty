@@ -45,7 +45,8 @@
         <activity
             android:name=".CreateEventActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar"
-            android:label="Create Event">
+            android:label="Create Event"
+            android:screenOrientation="portrait">
 
             <!-- THIS MIGHT BE CREATING TWO APPS INSTEAD OF ONE SO I COMMENTED IT OUT FOR NOW -->
 

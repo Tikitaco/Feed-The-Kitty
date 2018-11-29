@@ -31,7 +31,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginStart="10dp">
 
         <TextView
             android:id="@+id/EventName"
@@ -61,7 +62,8 @@
         android:layout_width="360dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginStart="10dp">
 
         <TextView
             android:id="@+id/Description"
@@ -93,7 +95,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginStart="10dp">
 
         <Button
             android:id="@+id/chooseDate"
@@ -119,7 +122,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginStart="10dp">
 
         <Button
             android:id="@+id/chooseStartTime"
@@ -145,7 +149,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginStart="10dp">
 
         <Button
             android:id="@+id/chooseEndTime"
@@ -170,7 +175,9 @@
         android:layout_width="360dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:layout_gravity="center">
+        android:layout_marginBottom="15dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="10dp">
 
         <TextView
             android:id="@+id/List"
@@ -182,39 +189,5 @@
             android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
-
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/ScrollList"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_marginStart="5dp">
-    </ScrollView>
-
-    <RelativeLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center">
-
-        <Button
-            android:id="@+id/createEventSubmit"
-            android:layout_width="120dp"
-            android:layout_height="wrap_content"
-            android:layout_above="@+id/empty_view"
-            android:layout_centerHorizontal="true"
-            android:layout_marginBottom="20dp"
-            android:background="@drawable/mybutton"
-            android:gravity="center"
-            android:text="Create the Event"
-            android:textColor="#fff" />
-
-        <View
-            android:id="@+id/empty_view"
-            android:layout_width="match_parent"
-            android:layout_height="30dp"
-            android:layout_alignParentBottom="true"
-            android:visibility="invisible" />
-
-    </RelativeLayout>
-
 
 </LinearLayout>
