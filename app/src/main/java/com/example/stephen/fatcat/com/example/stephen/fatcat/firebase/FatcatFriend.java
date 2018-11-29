@@ -2,11 +2,14 @@ package com.example.stephen.fatcat.com.example.stephen.fatcat.firebase;
 
 import android.graphics.Bitmap;
 
+import java.util.ArrayList;
+
 public class FatcatFriend {
     private String mUsername;
     private String mUid;
     private String mEmail;
     private Bitmap mProfilePicture;
+    private ArrayList<FatcatEvent> events = new ArrayList<>();
 
     // Empty constructor for firebase instances
     public FatcatFriend() {

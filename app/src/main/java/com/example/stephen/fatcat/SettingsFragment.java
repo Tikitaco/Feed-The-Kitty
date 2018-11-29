@@ -8,8 +8,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -108,8 +108,6 @@ public class SettingsFragment extends Fragment {
 
     private void saveSettings() {
         FirebaseUtils.updateUsername(mUsername.getText().toString());
-
-
         if (newPicture != null) {
             final ProgressDialog dialog = ProgressDialog.show(getActivity(), "Uploading your new profile picture...",
                     "Loading. Please wait...", true);
@@ -122,7 +120,12 @@ public class SettingsFragment extends Fragment {
             });
         }
         Toast.makeText(getActivity(), "Saved", Toast.LENGTH_SHORT).show();
-        updateSettings();
+        MainActivity.globals.getMyProfile(new FatcatListener<FatcatFriend>() {
+            @Override
+            public void onReturnData(FatcatFriend data) { // Wait until we're done to update the settings page...
+                updateSettings();
+            }
+        });
     }
 
     @Override
@@ -178,7 +181,6 @@ public class SettingsFragment extends Fragment {
         void onFragmentInteraction(Uri uri);
     }
 
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -196,8 +198,6 @@ public class SettingsFragment extends Fragment {
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
-
-            //Now you can do whatever you want with your inpustream, save it as file, upload to a server, decode a bitmap...
         }
     }
 }

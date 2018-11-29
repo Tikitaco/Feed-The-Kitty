@@ -6,6 +6,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -37,26 +38,140 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.UUID;
+import java.util.Vector;
+
+import static java.util.UUID.randomUUID;
 
 public class FirebaseUtils {
 
-    public static void uploadNewEvent(FatcatEvent evt) {
-       uploadNewEvent(evt, null);
-    }
     public static String TAG = "FirebaseUtils";
 
 
-    public static void uploadNewEvent(FatcatEvent evt, DatabaseReference.CompletionListener listener) {
+    /**
+     * Utility method to link a user's profile to the event as its owner
+     * @param uuid the unique id of the event
+     */
+    private static void addEventToProfile(String uuid) {
         DatabaseReference mdb = FirebaseDatabase.getInstance().getReference();
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        final DatabaseReference profileInformation = mdb.child("profiles").child(uid);
+        profileInformation.child("my_events").child(uuid).setValue(true);
+    }
+
+    /**
+     * Deletes a specific event
+     * @param event_uuid
+     * @param listener
+     */
+    public static void deleteEvent(String event_uuid, final FatcatDeletionListener listener) {
+        DatabaseReference mdb = FirebaseDatabase.getInstance().getReference();
+        mdb.child("events").child(event_uuid).removeValue(new DatabaseReference.CompletionListener() { // First, delete the event from the master event list
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                if (databaseError == null) {
+                    listener.onFinishDeletion(true);
+                } else {
+                    listener.onFinishDeletion(false);
+                }
+            }
+        });
+    }
+
+    /**
+     * Gets the information of a single event specified by event_id
+     * @param event_id The unique id of the event
+     * @param listener used for callback once the information is retrieved
+     */
+    public static void getEventInformation(String event_id, final FatcatListener<FatcatEvent> listener) {
+        DatabaseReference events = FirebaseDatabase.getInstance().getReference("events");
+        events.child(event_id).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                FatcatEvent event = dataSnapshot.getValue(FatcatEvent.class);
+                if (event != null && dataSnapshot.getKey() != null) {
+                    event.setEventID(dataSnapshot.getKey());
+                }
+                listener.onReturnData(event);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+    /**
+     * Retrieves event information of all events the user is hosting
+     * @param listener used for callback once the information is retrieved
+     */
+    public static void getAllMyEvents(final FatcatListener<Vector<FatcatEvent>> listener) {
+        final Vector<FatcatEvent> events = new Vector<>();
+        DatabaseReference profiles = FirebaseDatabase.getInstance().getReference("profiles");
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        profiles.child(uid).child("my_events").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                final ArrayList<String> event_ids = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Log.i(TAG, snapshot.getKey());
+                    event_ids.add(snapshot.getKey()); // Add event UUID to arrayList
+                }
+                final int[] counter = {0};
+                final int size = event_ids.size();
+                synchronized(counter) { // Prevent concurrency errors
+                    for (String event_id : event_ids) {
+                        getEventInformation(event_id, new FatcatListener<FatcatEvent>() {
+                            @Override
+                            public void onReturnData(FatcatEvent data) {
+                                if (data != null) { // If the event exists, add it
+                                    events.add(data);
+                                }
+                                counter[0]++;
+                                if (counter[0] == size) {
+                                    listener.onReturnData(events);
+                                }
+                            }
+                        });
+                    }
+
+                    listener.onReturnData(events); // If it's empty, just return.
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+    /**
+     * Uploads a New Event and adds the user as its owner
+     * @param evt The event object being uploaded
+     * @param listener The listener that is called when the upload is finished
+     */
+    public static void uploadNewEvent(FatcatEvent evt, DatabaseReference.CompletionListener listener) {
+        String new_event_id = UUID.randomUUID().toString().replaceAll("-", ""); // Generate a random UUID to identify the event by.
+        DatabaseReference mdb = FirebaseDatabase.getInstance().getReference();
+        addEventToProfile(new_event_id);
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Used to tell users apart
+        evt.setOwnerUID(uid);
         if (listener == null) {
-            mdb.child(uid).child("events").child(evt.getName()).setValue(evt);
+            mdb.child("events").child(new_event_id).setValue(evt);
         } else {
-            mdb.child(uid).child("events").child(evt.getName()).setValue(evt, listener);
+            mdb.child("events").child(new_event_id).setValue(evt, listener);
         }
     }
 
+    /**
+     * Utility method to check is a username is valid before uploading
+     * @param username The username being checked
+     * @return true if the username is valid, false otherwise.
+     */
     private static boolean isValidUsername(String username) {
         // TODO Add more username limits
         if (username.length() == 0) {
@@ -65,6 +180,11 @@ public class FirebaseUtils {
         return true;
     }
 
+    /**
+     * Adds a friend to the user's friends list by inputting their email
+     * @param friendEmail The email of the user you want to friend
+     * @param listener The Database listener that's called once the upload is complete
+     */
     public static void addFriend(String friendEmail, final DatabaseReference.CompletionListener listener) {
         // First, search for the user with that email
         final DatabaseReference profiles = FirebaseDatabase.getInstance().getReference("profiles");
@@ -90,6 +210,11 @@ public class FirebaseUtils {
         });
     }
 
+    /**
+     * Will change the username of the user currently logged in
+     * @param newUsername The new username
+     * @return False is the username is not valid
+     */
     public static boolean updateUsername(String newUsername) {
         if (isValidUsername(newUsername)) {
             DatabaseReference mdb = FirebaseDatabase.getInstance().getReference();
@@ -102,7 +227,13 @@ public class FirebaseUtils {
         }
     }
 
-    public static void getUserProfileByEmail(String email, final FatcatListener<FatcatFriend> friend) {
+    /**
+     * Retrieves a user's profile information from their email. The FatcatFriend object is returned in
+     * the listener callback
+     * @param email The email of the user you are getting information from
+     * @param listener Returns the FatcatFriend object once the query is finished
+     */
+    public static void getUserProfileByEmail(String email, final FatcatListener<FatcatFriend> listener) {
         // First, search for the user with that email
         final DatabaseReference profiles = FirebaseDatabase.getInstance().getReference("profiles");
         profiles.orderByChild("email").equalTo(email).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -110,17 +241,24 @@ public class FirebaseUtils {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot data : dataSnapshot.getChildren()) {
                     String friendUID = data.getKey();
-                    getUserProfile(friendUID, friend);
+                    getUserProfile(friendUID, listener);
                     break; // We only need the first element of this iterable
                 }
     }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                friend.onReturnData(null);
+                listener.onReturnData(null);
             }
         });
     }
+
+    /**
+     * Retrieves a user's profile information from their UID. The FatcatFriend object is returned in
+     * the listener callback
+     * @param uid The uid of the user you are getting information from
+     * @param listener Returns the FatcatFriend object once the query is finished
+     */
     public static void getUserProfile(String uid, final FatcatListener<FatcatFriend> listener) {
         DatabaseReference profiles = FirebaseDatabase.getInstance().getReference("profiles");
         profiles.orderByKey().equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -145,7 +283,7 @@ public class FirebaseUtils {
                                 }
                             }
                         });
-                        break; // Stop after a single iteration, only one should be equal
+                        break; // Stop after a single iteration, only one should be equal to the UID
                     }
                 }
 
@@ -156,11 +294,11 @@ public class FirebaseUtils {
         });
     }
 
-    public static void uploadProfilePicture(Bitmap image) {
-        uploadProfilePicture(image, null);
-    }
 
-    public static class DownloadImagesTask extends AsyncTask<URL, Void, Bitmap> {
+    /**
+     * This static class is used to download profile images without interfering with any other threads / causing errors
+     */
+    private static class DownloadImagesTask extends AsyncTask<URL, Void, Bitmap> {
 
         @Override
         protected Bitmap doInBackground(URL... urls) {
@@ -189,7 +327,11 @@ public class FirebaseUtils {
         }
     }
 
-
+    /**
+     * Uploads a Bitmap image into the database as the profile picture of the user logged in.
+     * @param image The bitmap of the image being uploaded
+     * @param listener The listener that can be used for callbacks once it's finished
+     */
         public static void uploadProfilePicture(Bitmap image, OnCompleteListener listener) {
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         StorageReference reference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://fat-cat-784a2.appspot.com");
@@ -210,14 +352,12 @@ public class FirebaseUtils {
      */
     public static void getProfilePicture(final String uid, final FatcatListener<Bitmap> listener) {
         StorageReference reference = FirebaseStorage.getInstance().getReferenceFromUrl("gs://fat-cat-784a2.appspot.com");
-        Log.i("Utils", "Getting Profile picture for " + uid);
         StorageReference location = reference.child(uid + ".jpg");
         location.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
                 try {
                     URL url = new URL(uri.toString());
-                    Log.i("Utils", " URL Success from " + uid);
                     DownloadImagesTask task = new DownloadImagesTask() {
                         @Override
                         protected void onPostExecute(Bitmap result) {
@@ -227,13 +367,11 @@ public class FirebaseUtils {
                     task.execute(url);
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
-                    Log.i("Utils", "Failed here");
                 }
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.i("Utils", "Failure from " + uid);
                 listener.onReturnData(null); // Return null if there is no image to be found or if retreival failed
             }
         }).addOnCanceledListener(new OnCanceledListener() {
@@ -244,6 +382,10 @@ public class FirebaseUtils {
         });
     }
 
+    /**
+     * Removes a friend from the friendlist of the user that's logged in
+     * @param friendUID The UID identifier of the friend being removed
+     */
     public static void removeFriend(String friendUID) {
         DatabaseReference mdb = FirebaseDatabase.getInstance().getReference();
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -251,6 +393,11 @@ public class FirebaseUtils {
         profileInformation.child("friends").child(friendUID).removeValue();
     }
 
+    /**
+     * This will do an update of the user's profile on the database. This is the method
+     * that will create a profile if non-exist.
+     * @param user The user currently logged in
+     */
     public static void updateProfile(FirebaseUser user) {
         DatabaseReference mdb = FirebaseDatabase.getInstance().getReference();
         String uid = user.getUid();
@@ -280,7 +427,4 @@ public class FirebaseUtils {
             }
         });
     }
-
-
-
 }

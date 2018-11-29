@@ -21,7 +21,9 @@ public class FatcatEvent {
     private Date mDate;
     private String mStartTime;
     private String mEndTime;
+    private String mOwnerUID;
     private ArrayList<SingleItem> items;
+    private String eventID;
 
     public final static String ITEMNAME = "itemname";
     public final static String PAYERNAME = "payername";
@@ -115,8 +117,20 @@ public class FatcatEvent {
         }
     }
 
+    public String getOwnerUID() {
+        return mOwnerUID;
+    }
+
+    public void setOwnerUID(String uid) {
+        mOwnerUID = uid;
+    }
+
     public void setDescription(String description) {
         mDescription = description;
+    }
+
+    public void setEventID(String id) {
+        eventID = id;
     }
 
     public void setStartTime(String startTime) {
@@ -147,6 +161,9 @@ public class FatcatEvent {
         return mEndTime;
     }
 
+    public String getEventID() {
+        return eventID;
+    }
     public ArrayList<SingleItem> getList() { return items;}
 
 }
