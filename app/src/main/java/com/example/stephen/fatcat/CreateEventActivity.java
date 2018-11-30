@@ -78,20 +78,6 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-        final TextView mEventName;
-        final TextView mDescription;
-        final EditText mEnterEventName;
-        final EditText mEnterDescription;
-
-        mEventName = (TextView) findViewById(R.id.EventName);
-        mEnterEventName = (EditText) findViewById(R.id.EnterEventName);
-        mDescription = (TextView) findViewById(R.id.Description);
-        mEnterDescription = (EditText) findViewById(R.id.EnterEventDescription);
-
-        dateView = (TextView) findViewById(R.id.Date);
-        startTimeView = (TextView) findViewById(R.id.StartTime);
-        endTimeView = (TextView) findViewById(R.id.EndTime);
-
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_create_event);
 
@@ -101,6 +87,20 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
         getListView().setBackgroundColor(Color.WHITE);
         getListView().addHeaderView(v);
         setListAdapter(mAdapter);
+
+        final TextView mEventName;
+        final TextView mDescription;
+        final EditText mEnterEventName;
+        final EditText mEnterDescription;
+
+        mEventName = (TextView) v.findViewById(R.id.EventName);
+        mEnterEventName = (EditText) v.findViewById(R.id.EnterEventName);
+        mDescription = (TextView) v.findViewById(R.id.Description);
+        mEnterDescription = (EditText) v.findViewById(R.id.EnterEventDescription);
+
+        dateView = (TextView) v.findViewById(R.id.Date);
+        startTimeView = (TextView) v.findViewById(R.id.StartTime);
+        endTimeView = (TextView) v.findViewById(R.id.EndTime);
 
         View footerView = getLayoutInflater().inflate(R.layout.single_list_footer_view, null);
         getListView().addFooterView(footerView);
@@ -144,14 +144,13 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
                     @Override
                     public void onClick(View view) {
 
-                        String s = addItemPriceEdit.getText().toString();
+                        String priceStr = addItemPriceEdit.getText().toString();
+                        String value = priceStr.substring(1);
+                        Double priceDouble = Double.valueOf(value);
 
-                        //String priceStr = df2.format(Double.valueOf(addItemPrice.toString()));
-                        //Double priceDouble = Double.valueOf(priceStr);
+                        SingleItem addItem = new SingleItem(addItemNameEdit.toString(), priceDouble);
 
-                        //SingleItem addItem = new SingleItem(addItemNameEdit.toString(), priceDouble);
-
-                        //mAdapter.add(addItem);
+                        mAdapter.add(addItem);
 
                         pw.dismiss();
                         clearDim(root);

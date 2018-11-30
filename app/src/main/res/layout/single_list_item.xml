@@ -26,7 +26,6 @@
         android:layout_marginLeft="4dp"
         android:layout_marginTop="7dp"
         android:layout_toRightOf="@+id/statusCheckBox"
-        android:text="SuperBowl"
         android:textColor="#000"
         android:textSize="20sp"
         android:textStyle="bold">
@@ -53,7 +52,6 @@
         android:layout_alignParentTop="true"
         android:layout_marginTop="7dp"
         android:layout_toEndOf="@+id/colon"
-        android:text="5.00"
         android:textColor="#000"
         android:textSize="20sp"
         android:textStyle="bold">
@@ -65,7 +63,6 @@
         android:layout_height="wrap_content"
         android:layout_marginStart = "16dp"
         android:layout_below="@+id/statusCheckBox"
-        android:text="Paid for by Brianne Nguyen"
         android:textColor="@color/startblue"
         android:textSize="20sp"
         android:textStyle="bold">
