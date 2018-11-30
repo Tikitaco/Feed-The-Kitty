@@ -22,6 +22,9 @@ public class FatcatGlobals {
      * Load friends at the beginning of the app, so we don't have to continually grab them.
      */
     public void initializeGlobals(final FatcatListener listener) {
+        friendProfiles.clear();
+        myEvents.clear();
+        myInvitations.clear();
         final int counter[] = {0};
         synchronized (counter) {
             getMyProfile(new FatcatListener<FatcatFriend>() {
@@ -32,6 +35,7 @@ public class FatcatGlobals {
                         @Override
                         public void onReturnData(Vector<FatcatInvitation> data) {
                             counter[0]++;
+                            Log.i("Utils", "Global (Profile) Counter: " + counter[0]);
                             if (counter[0] == 3) {
                                 listener.onReturnData(null);
                             }
@@ -44,6 +48,7 @@ public class FatcatGlobals {
                 public void onReturnData(Vector<FatcatFriend> data) {
                     Log.i("Utils", "Finished getting friends");
                     counter[0]++;
+                    Log.i("Utils", "Global (Friends) Counter: " + counter[0]);
                     if (counter[0] == 3) {
                         listener.onReturnData(null);
                     }
@@ -54,6 +59,7 @@ public class FatcatGlobals {
                 public void onReturnData(Vector<FatcatEvent> data) {
                     Log.i("Utils", "Finished getting events");
                     counter[0]++;
+                    Log.i("Utils", "Global (Events) Counter: " + counter[0]);
                     if (counter[0] == 3) {
                         listener.onReturnData(null);
                     }
@@ -112,6 +118,8 @@ public class FatcatGlobals {
                 }
             });
         }
+        // Just return if there are no invites
+        listener.onReturnData(myInvitations);
 
     }
 
@@ -144,6 +152,10 @@ public class FatcatGlobals {
                             }
                         });
                     }
+                }
+                // If no friends, just return
+                if (listener != null) {
+                    listener.onReturnData(friendProfiles);
                 }
             }
             @Override

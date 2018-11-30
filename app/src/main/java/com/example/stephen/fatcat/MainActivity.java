@@ -120,13 +120,18 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(MainActivity.this, "You're logged in", Toast.LENGTH_LONG).show();
             final ProgressDialog dialog = ProgressDialog.show(MainActivity.this, "Logging in...", "Loading. Please wait...", true);
             dialog.show();
-            FirebaseUtils.updateProfile(currentUser);
-            globals.initializeGlobals(new FatcatListener() {
+            FirebaseUtils.updateProfile(currentUser, new FatcatListener() { // Create a profile on the database if one doesn't exist already
                 @Override
-                public void onReturnData(Object data) { // Once all the data is loaded, start the new activity
-                    Intent accountIntent = new Intent(MainActivity.this, HomepageActivity.class);
-                    startActivity(accountIntent);
-                    dialog.dismiss();
+                public void onReturnData(Object data) {
+                    globals.initializeGlobals(new FatcatListener() {
+                        @Override
+                        public void onReturnData(Object data) { // Once all the data is loaded, start the new activity
+                            Log.i("Utils", "Finished initializing global variables");
+                            Intent accountIntent = new Intent(MainActivity.this, HomepageActivity.class);
+                            dialog.dismiss();
+                            startActivity(accountIntent);
+                        }
+                    });
                 }
             });
         }

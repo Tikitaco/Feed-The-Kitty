@@ -419,7 +419,7 @@ public class FirebaseUtils {
      * that will create a profile if non-exist.
      * @param user The user currently logged in
      */
-    public static void updateProfile(FirebaseUser user) {
+    public static void updateProfile(FirebaseUser user, final FatcatListener listener) {
         DatabaseReference mdb = FirebaseDatabase.getInstance().getReference();
         String uid = user.getUid();
         final DatabaseReference profileInformation = mdb.child("profiles").child(uid);
@@ -441,6 +441,7 @@ public class FirebaseUtils {
                 if (!hasUsername) {
                     profileInformation.child("username").setValue("New User");
                 }
+                listener.onReturnData(null);
             }
 
             @Override
