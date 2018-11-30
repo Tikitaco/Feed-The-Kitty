@@ -56,6 +56,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
     private EventsListFragment eventsFragment;
     private CalendarView mCalendarView;
     private List<EventDay> mEventDays = new ArrayList<EventDay>();
+    boolean isCalendar = false;
     public final static int CREATE_ACTIVITY_REQUEST_CODE = 1234;
 
     @Override
@@ -78,10 +79,21 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 switch (item.getItemId()){
                     case R.id.delete:
                         //allows people to delete from the list view
+
                         return true;
                     case R.id.calendarView:
                         //opens calendar fragment
-                        setFragment(calendarFragment);
+                        if(isCalendar){
+                            setFragment(eventsFragment);
+                            item.setIcon(R.mipmap.baseline_calendar_today_white_36);
+                            item.setTitle("Calendar View");
+                            isCalendar = false;
+                        }else{
+                            setFragment(calendarFragment);
+                            item.setIcon(R.mipmap.baseline_list_black_36);
+                            item.setTitle("List View");
+                            isCalendar = true;
+                        }
                         return true;
                     case R.id.createEvent:
                         //opens create event would like to change this to a fragment if possible
@@ -203,6 +215,11 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
     private void setFragment(android.support.v4.app.Fragment fragment) {
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.main_frame,fragment).addToBackStack(null);
+        fragmentTransaction.commit();
+    }
+    private void setFragmentSave(android.support.v4.app.Fragment fragment) {
+        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.main_frame,fragment);
         fragmentTransaction.commit();
     }
 

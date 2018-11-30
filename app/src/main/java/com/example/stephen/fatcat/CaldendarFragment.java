@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewDebug;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.CalendarView;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 import com.applandeo.materialcalendarview.EventDay;
 import com.applandeo.materialcalendarview.listeners.OnDayClickListener;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatGlobals;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -109,12 +111,36 @@ public class CaldendarFragment extends Fragment {
         // Inflate the layout for this fragment
         View v =  inflater.inflate(R.layout.fragment_caldendar, container, false);
         mCalendarView = v.findViewById(R.id.datePicker);
+        int counter = 0;
+        for(FatcatEvent f: MainActivity.globals.myEvents){
+            Calendar day = Calendar.getInstance();
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            Date convertedDate = new Date();
+            try {
+                convertedDate = dateFormat.parse(f.getDate());
+            }catch (ParseException e){
+                e.printStackTrace();
+            }
+            day.setTime(convertedDate);
+
+            MyEventDay myEventDay = new MyEventDay(day,R.drawable.com_facebook_profile_picture_blank_portrait,f.getName(), convertedDate);
+            //adds array list
+            if(!mEventDays.contains(myEventDay)){
+                mEventDays.add(myEventDay);
+            }
+            counter++;
+
+        }
+        //arraylist is being added to thet calednar view
+        mCalendarView.setEvents(mEventDays);
+        Toast.makeText(getActivity(),String.valueOf(counter),Toast.LENGTH_LONG).show();
 
         mCalendarView.setOnDayClickListener(new OnDayClickListener() {
             @Override
             public void onDayClick(EventDay eventDay) {
                 TextView calendarOutput = getView().findViewById(R.id.noteEditText);
-
+                currentday.clear();
+                print = "";
                 if(eventDay instanceof  MyEventDay){
                        MyEventDay myEventDay = (MyEventDay)eventDay;
                        //get time from the event search for others with same time
@@ -130,58 +156,15 @@ public class CaldendarFragment extends Fragment {
                     Collections.sort(currentday);
                    }
                 calendarOutput.setText(null);
-                int counter = 0;
+
                 for(MyEventDay A: currentday){
-                    counter++;
                      print +=   A.toString() + '\n';
                    }
+
 
                 calendarOutput.setText(print);
             }
         });
-
-        DatabaseReference db = FirebaseDatabase.getInstance().getReference(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("events");
-
-        db.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot  eventSnapShot: dataSnapshot.getChildren()) {
-                    FatcatEvent fatcatEvent = eventSnapShot.getValue(FatcatEvent.class);
-                    fatcatEvents.add(fatcatEvent);
-                }
-
-                for(FatcatEvent f: fatcatEvents){
-                    Calendar day = Calendar.getInstance();
-                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                    Date convertedDate = new Date();
-                    try {
-                        convertedDate = dateFormat.parse(f.getDate());
-                    }catch (ParseException e){
-                        e.printStackTrace();
-                    }
-                    day.setTime(convertedDate);
-
-                    MyEventDay myEventDay = new MyEventDay(day,R.drawable.com_facebook_profile_picture_blank_portrait,f.getName());
-                    //adds array list
-                    if(!mEventDays.contains(myEventDay)){
-                        mEventDays.add(myEventDay);
-                    }
-
-                }
-                //arraylist is being added to thet calednar view
-                mCalendarView.setEvents(mEventDays);
-
-            }
-
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-
-
-        });
-
 
         return v;
     }

@@ -6,16 +6,19 @@ import android.os.Parcelable;
 import com.applandeo.materialcalendarview.EventDay;
 
 import java.sql.Time;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 class MyEventDay extends EventDay implements Parcelable,Comparable<MyEventDay> {
     private String mNote;
+    private Date mTime;
 
 
-    MyEventDay(Calendar day, int imageResource, String note) {
+    MyEventDay(Calendar day, int imageResource, String note,Date time) {
         super(day, imageResource);
         mNote = note;
+        mTime = time;
     }
 
     String getNote() {
@@ -76,12 +79,15 @@ class MyEventDay extends EventDay implements Parcelable,Comparable<MyEventDay> {
 
 
     public String toString(){
-
-        return this.getNote() + " " + this.getCalendar().getTime();
+        Date A = mTime;
+       String B =  new SimpleDateFormat("hh:mm:ss").format(A);
+        return this.getNote() + " " + B;
 
 
     }
-
+    public Date getTime(){
+        return mTime ;
+    }
 
 
 

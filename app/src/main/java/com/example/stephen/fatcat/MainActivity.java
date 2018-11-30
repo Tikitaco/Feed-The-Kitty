@@ -1,6 +1,9 @@
 package com.example.stephen.fatcat;
 
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -152,8 +155,41 @@ public class MainActivity extends AppCompatActivity {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("MainAcitivity", "signInWithEmail:failure", task.getException());
-                            Toast.makeText(MainActivity.this, "Authentication failed.",
-                                    Toast.LENGTH_SHORT).show();
+
+                            AlertDialog alertDialog = new AlertDialog.Builder(MainActivity.this).create(); //Read Update
+                            alertDialog.setTitle("Invalid Username or Password");
+                            alertDialog.setMessage("Would you like to send a password reset to you email?");
+
+                            alertDialog.setButton(Dialog.BUTTON_POSITIVE,"Send", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+
+                                    FirebaseAuth.getInstance().sendPasswordResetEmail(mEmailField.getText().toString().trim())
+                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                @Override
+                                                public void onComplete(@NonNull Task<Void> task) {
+                                                    if (task.isSuccessful()) {
+                                                        Log.d(TAG, "Email sent.");
+                                                        Toast.makeText(MainActivity.this, "Email Sent",
+                                                                Toast.LENGTH_SHORT).show();
+                                                    }else{
+                                                        Log.d(TAG, "Email not sent.");
+                                                        Toast.makeText(MainActivity.this, "Invalid Email",
+                                                                Toast.LENGTH_SHORT).show();
+
+
+                                                    }
+                                                }
+                                            });
+                                }
+                            });
+                            alertDialog.setButton(Dialog.BUTTON_NEGATIVE,"Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    dialog.cancel();
+                                }
+                            });
+                            alertDialog.show();
+
                             updateUI(null);
                         }
 
