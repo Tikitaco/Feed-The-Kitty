@@ -40,7 +40,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:singleLine="true"
-            android:nextFocusDown="@+id/EnterEventDescription"
             android:imeOptions="actionNext"
             android:inputType="text"
             android:hint="Enter item name"
@@ -68,15 +67,15 @@
 
         <EditText
             android:id="@+id/price_edit_view"
-            android:layout_width="match_parent"
+            android:layout_width="132dp"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:nextFocusDown="@+id/EnterEventDescription"
+            android:hint="$00.00"
             android:imeOptions="actionNext"
-            android:hint="$0.00"
-            android:textColorHint="#999999"
+            android:inputType="text"
+            android:singleLine="true"
             android:textColor="#000000"
-            android:visibility="visible"/>
+            android:textColorHint="#999999"
+            android:visibility="visible" />
     </LinearLayout>
 
     <LinearLayout

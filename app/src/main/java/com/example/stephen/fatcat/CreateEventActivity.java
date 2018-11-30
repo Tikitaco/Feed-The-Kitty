@@ -7,6 +7,7 @@ import android.app.TimePickerDialog;
 import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -15,6 +16,8 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
@@ -31,7 +34,10 @@ import android.view.ViewGroupOverlay;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ColorDrawable;
 
+import java.lang.ref.WeakReference;
+import java.math.BigDecimal;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
@@ -77,6 +83,15 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
         final EditText mEnterEventName;
         final EditText mEnterDescription;
 
+        mEventName = (TextView) findViewById(R.id.EventName);
+        mEnterEventName = (EditText) findViewById(R.id.EnterEventName);
+        mDescription = (TextView) findViewById(R.id.Description);
+        mEnterDescription = (EditText) findViewById(R.id.EnterEventDescription);
+
+        dateView = (TextView) findViewById(R.id.Date);
+        startTimeView = (TextView) findViewById(R.id.StartTime);
+        endTimeView = (TextView) findViewById(R.id.EndTime);
+
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_create_event);
 
@@ -98,19 +113,22 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
             public void onClick(View view) {
 
                 LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                View popupView = inflater.inflate(R.layout.single_list_add_item, null, false);
+                View popupView = inflater.inflate(R.layout.single_list_add_item, root, false);
+
+                final TextView addItemTitle = (TextView) popupView.findViewById(R.id.add_item_title);
+                final TextView addItemName = (TextView) popupView.findViewById(R.id.item_name_view);
+                final EditText addItemNameEdit = (EditText) popupView.findViewById(R.id.item_edit_name_view);
+                final TextView addItemPrice = (TextView) popupView.findViewById(R.id.price_view);
+                final EditText addItemPriceEdit = (EditText) popupView.findViewById(R.id.price_edit_view);
 
                 applyDim(root, 0.5f);
 
                 final PopupWindow pw = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true); // LayoutParams.WRAP_CONTENT
 
-                final TextView addItemTitle = (TextView) findViewById(R.id.add_item_title);
-                final TextView addItemName = (TextView) findViewById(R.id.item_name_view);
-                final EditText addItemNameEdit = (EditText) findViewById(R.id.item_edit_name_view);
-                final TextView addItemPrice = (TextView) findViewById(R.id.price_view);
-                final EditText addItemPriceEdit = (EditText) findViewById(R.id.price_edit_view);
-
                 pw.showAtLocation(popupView, Gravity.CENTER, 0 ,0); //?? popupView
+
+                addItemPriceEdit.setRawInputType(Configuration.KEYBOARD_12KEY);
+                addItemPriceEdit.addTextChangedListener(new MoneyTextWatcher(addItemPriceEdit));
 
                 Button cancel = (Button) popupView.findViewById(R.id.cancel_new_item);
                 cancel.setOnClickListener(new View.OnClickListener() {
@@ -126,10 +144,14 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
                     @Override
                     public void onClick(View view) {
 
-                        String priceStr = df2.format(Double.valueOf(addItemPrice.toString())); //
-                        Double priceDouble = Double.valueOf(priceStr);
+                        String s = addItemPriceEdit.getText().toString();
 
-                        SingleItem addItem = new SingleItem(addItemNameEdit.toString(), priceDouble);
+                        //String priceStr = df2.format(Double.valueOf(addItemPrice.toString()));
+                        //Double priceDouble = Double.valueOf(priceStr);
+
+                        //SingleItem addItem = new SingleItem(addItemNameEdit.toString(), priceDouble);
+
+                        //mAdapter.add(addItem);
 
                         pw.dismiss();
                         clearDim(root);
@@ -139,15 +161,6 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
         });
 
 
-        mEventName = (TextView) findViewById(R.id.EventName);
-        mEnterEventName = (EditText) findViewById(R.id.EnterEventName);
-        mDescription = (TextView) findViewById(R.id.Description);
-        mEnterDescription = (EditText) findViewById(R.id.EnterEventDescription);
-
-
-        dateView = (TextView) findViewById(R.id.Date);
-        startTimeView = (TextView) findViewById(R.id.StartTime);
-        endTimeView = (TextView) findViewById(R.id.EndTime);
 
         final Button datePickerButton = (Button) findViewById(R.id.chooseDate);
         datePickerButton.setOnClickListener(new View.OnClickListener() {
@@ -206,6 +219,37 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
                 });
             }
         });
+    }
+
+    public class MoneyTextWatcher implements TextWatcher {
+        private final WeakReference<EditText> editTextWeakReference;
+
+        public MoneyTextWatcher(EditText editText) {
+            editTextWeakReference = new WeakReference<EditText>(editText);
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            EditText editText = editTextWeakReference.get();
+            if (editText == null) return;
+            String s = editable.toString();
+            if (s.isEmpty()) return;
+            editText.removeTextChangedListener(this);
+            String cleanString = s.replaceAll("[$,.]", "");
+            BigDecimal parsed = new BigDecimal(cleanString).setScale(2, BigDecimal.ROUND_FLOOR).divide(new BigDecimal(100), BigDecimal.ROUND_FLOOR);
+            String formatted = NumberFormat.getCurrencyInstance().format(parsed);
+            editText.setText(formatted);
+            editText.setSelection(formatted.length());
+            editText.addTextChangedListener(this);
+        }
     }
 
     public static void applyDim(@NonNull ViewGroup parent, float dimAmount){
