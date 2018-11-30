@@ -44,7 +44,7 @@ public class ItemsListAdapter extends BaseAdapter {
 
     }
 
-    // Add a ToDoItem to the adapter
+    // Add a SingleItem to the adapter
     // Notify observers that the data set has changed
 
     public void add(SingleItem item) {
@@ -63,7 +63,7 @@ public class ItemsListAdapter extends BaseAdapter {
 
     }
 
-    // Returns the number of ToDoItems
+    // Returns the number of SingleItem
 
     @Override
     public int getCount() {
@@ -72,7 +72,7 @@ public class ItemsListAdapter extends BaseAdapter {
 
     }
 
-    // Retrieve the number of ToDoItems
+    // Retrieve the number of SingleItem
 
     @Override
     public Object getItem(int pos) {
@@ -81,7 +81,7 @@ public class ItemsListAdapter extends BaseAdapter {
 
     }
 
-    // Get the ID for the ToDoItem
+    // Get the ID for the SingleItem
     // In this case it's just the position
 
     @Override
@@ -89,6 +89,12 @@ public class ItemsListAdapter extends BaseAdapter {
 
         return pos;
 
+    }
+
+
+    public void remove(int pos) {
+        mItems.remove(pos);
+        notifyDataSetChanged();
     }
 
     // Create a View for the SingleItem at specified position
@@ -120,9 +126,6 @@ public class ItemsListAdapter extends BaseAdapter {
         final TextView payerView = (TextView) dataView.findViewById(R.id.paid_for_view);
         payerView.setText(mItem.getPayerName());
 
-
-        //final ViewGroup root = (ViewGroup) parent; // Blur?
-
         // create status
         final CheckBox statusView = (CheckBox) dataView.findViewById(R.id.statusCheckBox);
         statusView.setChecked(!mItem.getPayerName().equals("Not yet paid for"));
@@ -145,14 +148,6 @@ public class ItemsListAdapter extends BaseAdapter {
         return dataView;
     }
 
-    static class ViewHolder {
-        int position;
-        RelativeLayout mItemLayout;
-        TextView mtitleItemView;
-        CheckBox mstatusView;
-        TextView mpriceView;
-        TextView mpayerView;
-    }
 }
 
 
