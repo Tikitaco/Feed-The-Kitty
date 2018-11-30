@@ -26,6 +26,7 @@ import com.applandeo.materialcalendarview.EventDay;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatFriend;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatGlobals;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatInvitation;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
@@ -39,7 +40,9 @@ import java.util.List;
 import java.util.Vector;
 
 public class HomepageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        CaldendarFragment.OnFragmentInteractionListener,ListFragment.OnFragmentInteractionListener, FriendListFragment.OnListFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener, EventsListFragment.OnFragmentInteractionListener, MyEventFragment.OnListFragmentInteractionListener {
+        CaldendarFragment.OnFragmentInteractionListener,ListFragment.OnFragmentInteractionListener, FriendListFragment.OnListFragmentInteractionListener,
+        SettingsFragment.OnFragmentInteractionListener, EventsListFragment.OnFragmentInteractionListener, MyEventFragment.OnListFragmentInteractionListener,
+        MyInvitationsListFragmentFragment.OnListFragmentInteractionListener{
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private ActionBarDrawerToggle mToggle;
@@ -68,7 +71,6 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         calendarFragment = new CaldendarFragment();
         friendFragment = new FriendListFragment();
         eventsFragment = new EventsListFragment();
-        setFragment(eventsFragment);
 
         mMainNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -103,7 +105,9 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         events = new ArrayList<FatcatEvent>();
-       // loadEvents();
+        setStartingFragment(eventsFragment);
+
+        // loadEvents();
     }
 
     public boolean onNavigationItemSelected(@NonNull MenuItem item){
@@ -191,6 +195,11 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         return super.onOptionsItemSelected(item);
     }
 
+    private void setStartingFragment(android.support.v4.app.Fragment fragment) {
+        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.add(R.id.main_frame,fragment);
+        fragmentTransaction.commit();
+    }
     private void setFragment(android.support.v4.app.Fragment fragment) {
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.main_frame,fragment).addToBackStack(null);
@@ -222,6 +231,11 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     public void onListFragmentInteraction(FatcatEvent item) {
+
+    }
+
+    @Override
+    public void onListFragmentInteraction(FatcatInvitation item) {
 
     }
 }

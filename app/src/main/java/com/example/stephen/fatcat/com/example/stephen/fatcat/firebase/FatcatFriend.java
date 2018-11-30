@@ -3,6 +3,9 @@ package com.example.stephen.fatcat.com.example.stephen.fatcat.firebase;
 import android.graphics.Bitmap;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Vector;
 
 public class FatcatFriend {
     private String mUsername;
@@ -10,6 +13,7 @@ public class FatcatFriend {
     private String mEmail;
     private Bitmap mProfilePicture;
     private ArrayList<FatcatEvent> events = new ArrayList<>();
+    public Map<String, Integer> invites = new HashMap<>();
 
     // Empty constructor for firebase instances
     public FatcatFriend() {
@@ -27,6 +31,7 @@ public class FatcatFriend {
         if (copy.getProfilePicture() != null) {
             mProfilePicture = copy.getProfilePicture().copy(copy.getProfilePicture().getConfig(), true);
         }
+        invites.putAll(copy.invites);
     }
 
     public FatcatFriend(String username) {

@@ -80,6 +80,16 @@ public class FirebaseUtils {
         });
     }
 
+    public static void inviteFriendToEvent(FatcatEvent event, FatcatFriend friend) {
+        Log.i("Utils", "Adding " + friend.getUsername() + " to " + event.getName());
+        DatabaseReference events = FirebaseDatabase.getInstance().getReference("events");
+        // Add this user to the participants list of the event
+        events.child(event.getEventID()).child("participants").child(friend.getUID()).setValue(FatcatInvitation.PENDING);
+        // Add the invitation to the profile to let the user know they have an event
+        DatabaseReference profiles = FirebaseDatabase.getInstance().getReference("profiles");
+        profiles.child(friend.getUID()).child("invites").child(event.getEventID()).setValue(FatcatInvitation.PENDING);
+    }
+
     /**
      * Gets the information of a single event specified by event_id
      * @param event_id The unique id of the event
@@ -91,6 +101,13 @@ public class FirebaseUtils {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 FatcatEvent event = dataSnapshot.getValue(FatcatEvent.class);
+                if (dataSnapshot.hasChild("participants")) {
+                    for (DataSnapshot participant : dataSnapshot.child("participants").getChildren()) {
+                        String user = participant.getKey();
+                        int status = Integer.parseInt(participant.getValue().toString());
+                        event.participants.put(user, status);
+                    }
+                }
                 if (event != null && dataSnapshot.getKey() != null) {
                     event.setEventID(dataSnapshot.getKey());
                 }
@@ -117,7 +134,6 @@ public class FirebaseUtils {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 final ArrayList<String> event_ids = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    Log.i(TAG, snapshot.getKey());
                     event_ids.add(snapshot.getKey()); // Add event UUID to arrayList
                 }
                 final int[] counter = {0};
@@ -266,26 +282,33 @@ public class FirebaseUtils {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 final FatcatFriend profile = new FatcatFriend();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        String username = snapshot.child("username").getValue().toString();
-                        String email = snapshot.child("email").getValue().toString();
-                        String uid = snapshot.getKey();
-                        profile.setUsername(username);
-                        profile.setUID(uid);
-                        profile.setEmail(email);
-                        getProfilePicture(uid, new FatcatListener<Bitmap>() {
-                            @Override
-                            public void onReturnData(Bitmap data) {
-                                if (data != null) {
-                                    profile.setProfilePicture(data);
-                                    listener.onReturnData(profile);
-                                } else {
-                                    listener.onReturnData(profile);
-                                }
-                            }
-                        });
-                        break; // Stop after a single iteration, only one should be equal to the UID
+                    String username = snapshot.child("username").getValue().toString();
+                    String email = snapshot.child("email").getValue().toString();
+                    String uid = snapshot.getKey();
+                    profile.setUsername(username);
+                    profile.setUID(uid);
+                    profile.setEmail(email);
+                    if (snapshot.hasChild("invites")) {
+                        Log.i(TAG, "We do have invites");
+                        for (DataSnapshot invite : snapshot.child("invites").getChildren()) {
+                            Log.i(TAG, "Adding invites!");
+                            profile.invites.put(invite.getKey(), invite.getValue(Integer.class));
+                        }
                     }
+                    getProfilePicture(uid, new FatcatListener<Bitmap>() {
+                        @Override
+                        public void onReturnData(Bitmap data) {
+                            if (data != null) {
+                                profile.setProfilePicture(data);
+                                listener.onReturnData(profile);
+                            } else {
+                                listener.onReturnData(profile);
+                            }
+                        }
+                    });
+                    break; // Stop after a single iteration, only one should be equal to the UID
                 }
+            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -293,7 +316,6 @@ public class FirebaseUtils {
             }
         });
     }
-
 
     /**
      * This static class is used to download profile images without interfering with any other threads / causing errors
@@ -310,7 +332,6 @@ public class FirebaseUtils {
         }
 
         private Bitmap download_Image(URL url) {
-            //---------------------------------------------------
             Bitmap bm = null;
             try {
                 URLConnection conn = url.openConnection();
@@ -398,7 +419,7 @@ public class FirebaseUtils {
      * that will create a profile if non-exist.
      * @param user The user currently logged in
      */
-    public static void updateProfile(FirebaseUser user) {
+    public static void updateProfile(FirebaseUser user, final FatcatListener listener) {
         DatabaseReference mdb = FirebaseDatabase.getInstance().getReference();
         String uid = user.getUid();
         final DatabaseReference profileInformation = mdb.child("profiles").child(uid);
@@ -416,9 +437,11 @@ public class FirebaseUtils {
                         hasUsername = true;
                     }
                 }
+
                 if (!hasUsername) {
                     profileInformation.child("username").setValue("New User");
                 }
+                listener.onReturnData(null);
             }
 
             @Override
