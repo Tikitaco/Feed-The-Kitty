@@ -1,25 +1,37 @@
 package com.example.stephen.fatcat;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.app.Fragment;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.PopupWindow;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatFriend;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatGlobals;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatListener;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FirebaseUtils;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -30,6 +42,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * A fragment representing a list of Items.
@@ -46,7 +59,7 @@ public class FriendListFragment extends Fragment {
     private OnListFragmentInteractionListener mListener;
     private RecyclerView mList;
     private FloatingActionButton mAddFriendButton;
-    private ArrayList<FatcatFriend> friends = new ArrayList<>();
+    //private ArrayList<FatcatFriend> friends = new ArrayList<>();
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
@@ -67,54 +80,7 @@ public class FriendListFragment extends Fragment {
     }
 
     private void updateFriendsList() {
-        friends.clear();
-        DatabaseReference db = FirebaseDatabase.getInstance().getReference("profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("friends");
-        db.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                final ArrayList<String> friendUIDs = new ArrayList<>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    friendUIDs.add(snapshot.getKey());
-                }
-                DatabaseReference profiles = FirebaseDatabase.getInstance().getReference("profiles");
-                profiles.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                            Log.i("Utils", snapshot.getKey());
-                            Log.i("Utils", "List: " + friendUIDs.size());
-                            if (friendUIDs.contains(snapshot.getKey())) {
-                                Log.i("Utils","Found friend!");
-                                String username = snapshot.child("username").getValue().toString();
-                                String email = snapshot.child("email").getValue().toString();
-                                String uid = snapshot.getKey();
-                                FatcatFriend friend = new FatcatFriend();
-                                friend.setUsername(username);
-                                friend.setUID(uid);
-                                friend.setEmail(email);
-                                friends.add(friend);
-                            }
-                        }
-                        // Now that we have all the friends, we can finally update the list
-                        mList.getAdapter().notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
-
-
-
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+        mList.getAdapter().notifyDataSetChanged();
     }
 
     private void showAddFriendDialog() {
@@ -132,11 +98,60 @@ public class FriendListFragment extends Fragment {
         builder.setPositiveButton("Add Friend", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String email = input.getText().toString();
-                FirebaseUtils.addFriend(email, new DatabaseReference.CompletionListener() {
+                final String email = input.getText().toString();
+                final ProgressDialog loadingDialog = ProgressDialog.show(getActivity(), "Adding friend...",
+                        "Loading. Please wait...", true);
+                loadingDialog.show();
+                FirebaseUtils.getUserProfileByEmail(email, new FatcatListener<FatcatFriend>() {
                     @Override
-                    public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
-                        updateFriendsList();
+                    public void onReturnData(FatcatFriend data) {
+                        loadingDialog.dismiss();
+                        if (data == null) { // If nothing returned, say user does not exist
+                            Toast.makeText(FriendListFragment.this.getContext(), "User does not exist", Toast.LENGTH_SHORT).show();
+                        } else {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                            // Get the layout inflater
+                            LayoutInflater inflater = getActivity().getLayoutInflater();
+                            View informationView = inflater.inflate(R.layout.popup_add_friend, null);
+                            TextView username = informationView.findViewById(R.id.add_username);
+                            ImageView image = informationView.findViewById(R.id.add_image);
+                            Button accept = informationView.findViewById(R.id.add_button);
+                            Button cancel = informationView.findViewById(R.id.cancel_button);
+                            builder.setView(informationView);
+                            username.setText(data.getUsername());
+                            if (data.getProfilePicture() != null) {
+                                image.setImageBitmap(data.getProfilePicture());
+                            }
+                            final AlertDialog finalAddDialog = builder.show();
+                            cancel.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    finalAddDialog.dismiss();
+                                }
+                            });
+                            accept.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    final ProgressDialog loadingDialog = ProgressDialog.show(getActivity(), "Adding friend...",
+                                            "Loading. Please wait...", true);
+                                    loadingDialog.show();
+                                    FirebaseUtils.addFriend(email, new DatabaseReference.CompletionListener() {
+                                        @Override
+                                        public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                                            MainActivity.globals.getFriends(new FatcatListener<Vector<FatcatFriend>>() { // Update the global friends list and update the UI when done
+                                                @Override
+                                                public void onReturnData(Vector<FatcatFriend> data) {
+                                                    updateFriendsList();
+                                                    loadingDialog.dismiss();
+                                                    finalAddDialog.dismiss();
+                                                }
+                                            });
+
+                                        }
+                                    });
+                                }
+                            });
+                        }
                     }
                 });
             }
@@ -151,6 +166,44 @@ public class FriendListFragment extends Fragment {
         builder.show();
     }
 
+    private void showFriendPopup(final FatcatFriend friend) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        // Get the layout inflater
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+
+        // Inflate and set the layout for the dialog
+        // Pass null as the parent view because its going in the dialog layout
+        View informationView = inflater.inflate(R.layout.popup_friend_information, null);
+        TextView friendUsername = informationView.findViewById(R.id.popup_name);
+        ImageView friendProfilePicture = informationView.findViewById(R.id.popup_profile_picture);
+        Button removeFriendButton = informationView.findViewById(R.id.popup_remove_friend);
+        if (friend.getProfilePicture() != null) {
+            friendProfilePicture.setImageBitmap(friend.getProfilePicture());
+        }
+        friendUsername.setText(friend.getUsername() + " (" + friend.getEmail() + ")");
+        builder.setView(informationView);
+        final AlertDialog dialog = builder.show();
+
+        removeFriendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseUtils.removeFriend(friend.getUID());
+                final ProgressDialog progressDialog = ProgressDialog.show(getActivity(), "Removing Friend...",
+                        "Loading. Please wait...", true);
+                progressDialog.show();
+                MainActivity.globals.getFriends(new FatcatListener<Vector<FatcatFriend>>() {
+                    @Override
+                    public void onReturnData(Vector<FatcatFriend> data) {
+                        updateFriendsList();
+                        progressDialog.dismiss();
+                        Toast.makeText(getActivity(), "Removed friend successfully", Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+                dialog.dismiss();
+            }
+        });
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -163,7 +216,19 @@ public class FriendListFragment extends Fragment {
                 showAddFriendDialog();
             }
         });
-        mList.setAdapter(new MyFriendListRecyclerViewAdapter(friends, null));
+        MyFriendListRecyclerViewAdapter adapter = new MyFriendListRecyclerViewAdapter(MainActivity.globals.friendProfiles, new OnListFragmentInteractionListener() {
+            @Override
+            public void onListFragmentInteraction(FatcatFriend friend) {
+                Log.i("Utils", friend.getUsername());
+                showFriendPopup(friend);
+            }
+        });
+        adapter.setContext(getContext());
+        mList.setAdapter(adapter);
+        // Add a divider between each item to make it look nice
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mList.getContext(), DividerItemDecoration.VERTICAL);
+        mList.addItemDecoration(dividerItemDecoration);
+        Log.i("Utils", "Updated Friends List");
         updateFriendsList();
     }
 
@@ -181,7 +246,7 @@ public class FriendListFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyFriendListRecyclerViewAdapter(friends, mListener));
+            recyclerView.setAdapter(new MyFriendListRecyclerViewAdapter(MainActivity.globals.friendProfiles, mListener));
         }
 
         return view;

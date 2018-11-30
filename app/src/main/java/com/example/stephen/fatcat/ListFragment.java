@@ -1,21 +1,20 @@
 package com.example.stephen.fatcat;
 
-import android.content.ClipData;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.app.Fragment;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.ListView;
 import android.content.Intent;
-import android.widget.Toast;
 
 import com.applandeo.materialcalendarview.EventDay;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
@@ -48,11 +47,10 @@ import java.util.List;
 public class ListFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     private List<String> mEventDays = new ArrayList<>();
-    private List<FatcatEvent> fatcatEvents;
     DatabaseReference databaseReference;
     FirebaseUser user;
     EventDay event;
-    String[] events;
+    private ListView mListView;
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
@@ -89,7 +87,6 @@ public class ListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        fatcatEvents = new ArrayList<>();
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -98,49 +95,44 @@ public class ListFragment extends Fragment {
     @Override
     public void onStart(){
         super.onStart();
-        fatcatEvents.clear();
+
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        updateList();
+    }
+
+    public void updateList() {
+        String[] event = new String[MainActivity.globals.myEvents.size()];
+        int i = 0;
+        Log.i("Util", "Events in list: " + MainActivity.globals.myEvents.size());
+        for(FatcatEvent f: MainActivity.globals.myEvents){
+            event[i] = f.getName();
+            i++;
+        }
+        mListView.setAdapter(new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, event));
+        ((BaseAdapter) mListView.getAdapter()).notifyDataSetChanged();
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_list, container, false);
-        final ListView mListView = (ListView) v.findViewById(R.id.ListView);
-        DatabaseReference db = FirebaseDatabase.getInstance().getReference(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("events");
-        db.addValueEventListener(new ValueEventListener() {
-
-            ArrayList<String> a = new ArrayList<String>();
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                for(DataSnapshot  eventSnapShot: dataSnapshot.getChildren()) {
-                    FatcatEvent fatcatEvent = eventSnapShot.getValue(FatcatEvent.class);
-                    fatcatEvents.add(fatcatEvent);
-                }
-                events = new String[fatcatEvents.size()];
-                int i = 0;
-                for(FatcatEvent f: fatcatEvents){
-                    events[i] = f.getName();
-                    i++;
-                }
-
-                ArrayAdapter<String> listArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1,events);
-                mListView.setAdapter(listArrayAdapter);
-                mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+       View v = inflater.inflate(R.layout.fragment_list, container, false);
+        ArrayAdapter<String> listArrayAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1);
+        mListView = (ListView) v.findViewById(R.id.ListView);
+        mListView.setAdapter(listArrayAdapter);
+                /*mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        String itemValue = (String)mListView.getItemAtPosition(position);
-                        Toast.makeText(getActivity(),itemValue,Toast.LENGTH_LONG).show();
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        Intent a = new Intent(getContext(),EventDetailsActivity.class);
+                        a.putExtra("Event_ID", (CharSequence) fatcatEvents.get(i));
+                        a.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        getContext().startActivity(a);
                     }
-                });
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
+                });*/
 
         return v;
 
@@ -168,7 +160,6 @@ public class ListFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        fatcatEvents= new ArrayList<>();
         mListener = null;
     }
 
@@ -185,14 +176,5 @@ public class ListFragment extends Fragment {
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
-    }
-
-    public void onAdd(){
-
-    }
-    public void onRemove(){
-        if(events.length == 0)return;
-
-
     }
 }

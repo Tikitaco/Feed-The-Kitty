@@ -24,7 +24,7 @@
         android:baselineAlignBottom="true"
         android:clickable="true"
         android:focusable="true"
-        android:src="@drawable/com_facebook_auth_dialog_background"
+        android:src="@drawable/ic_person_add_black_24dp"
         app:backgroundTint="#00efff" />
 
 </FrameLayout>

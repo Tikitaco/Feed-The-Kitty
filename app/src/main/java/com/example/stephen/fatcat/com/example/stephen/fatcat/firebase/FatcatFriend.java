@@ -1,13 +1,32 @@
 package com.example.stephen.fatcat.com.example.stephen.fatcat.firebase;
 
+import android.graphics.Bitmap;
+
+import java.util.ArrayList;
+
 public class FatcatFriend {
-    public String mUsername;
-    public String mUid;
-    public String mEmail;
+    private String mUsername;
+    private String mUid;
+    private String mEmail;
+    private Bitmap mProfilePicture;
+    private ArrayList<FatcatEvent> events = new ArrayList<>();
 
     // Empty constructor for firebase instances
     public FatcatFriend() {
 
+    }
+
+    /**
+     * Create a copy of another profile
+     * @param copy
+     */
+    public FatcatFriend(FatcatFriend copy) {
+        mUsername = new String(copy.getUsername());
+        mUid = new String(copy.getUID());
+        mEmail = new String(copy.getEmail());
+        if (copy.getProfilePicture() != null) {
+            mProfilePicture = copy.getProfilePicture().copy(copy.getProfilePicture().getConfig(), true);
+        }
     }
 
     public FatcatFriend(String username) {
@@ -24,6 +43,14 @@ public class FatcatFriend {
 
     public void setEmail(String email) {
         mEmail = email;
+    }
+
+    public void setProfilePicture(Bitmap image) {
+        mProfilePicture = image;
+    }
+
+    public Bitmap getProfilePicture() {
+        return mProfilePicture;
     }
 
     public String getEmail() {

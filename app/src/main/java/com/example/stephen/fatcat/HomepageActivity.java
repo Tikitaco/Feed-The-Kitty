@@ -25,6 +25,8 @@ import android.widget.Toast;
 import com.applandeo.materialcalendarview.EventDay;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatFriend;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatGlobals;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -34,9 +36,10 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 public class HomepageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        CaldendarFragment.OnFragmentInteractionListener,ListFragment.OnFragmentInteractionListener, FriendListFragment.OnListFragmentInteractionListener {
+        CaldendarFragment.OnFragmentInteractionListener,ListFragment.OnFragmentInteractionListener, FriendListFragment.OnListFragmentInteractionListener, SettingsFragment.OnFragmentInteractionListener, EventsListFragment.OnFragmentInteractionListener, MyEventFragment.OnListFragmentInteractionListener {
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private ActionBarDrawerToggle mToggle;
@@ -46,8 +49,11 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
     private CaldendarFragment calendarFragment;
     private ListFragment listFragment;
     private FriendListFragment friendFragment;
+    private SettingsFragment settingsFragment;
+    private EventsListFragment eventsFragment;
     private CalendarView mCalendarView;
     private List<EventDay> mEventDays = new ArrayList<EventDay>();
+    public final static int CREATE_ACTIVITY_REQUEST_CODE = 1234;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,9 +64,11 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         mMainNav = findViewById(R.id.Bottom_Nav);
 
         listFragment = new ListFragment();
+        settingsFragment = new SettingsFragment();
         calendarFragment = new CaldendarFragment();
         friendFragment = new FriendListFragment();
-        setFragment(listFragment);
+        eventsFragment = new EventsListFragment();
+        setFragment(eventsFragment);
 
         mMainNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -75,7 +83,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                         return true;
                     case R.id.createEvent:
                         //opens create event would like to change this to a fragment if possible
-                        startActivity(new Intent(HomepageActivity.this, CreateEventActivity.class));
+                        startActivityForResult(new Intent(HomepageActivity.this, CreateEventActivity.class), CREATE_ACTIVITY_REQUEST_CODE);
                         break;
                 }
                 return true;
@@ -104,6 +112,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
             case R.id.nav_account:
                 break;
             case R.id.nav_settings:
+                setFragment(settingsFragment);
                 break;
             case R.id.nav_friends:
                   setFragment(friendFragment);
@@ -116,6 +125,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 finish();
                 break;
             case R.id.nav_events:
+
                 startActivity(new Intent(HomepageActivity.this, CreateEventActivity.class));
                 break;
 
@@ -181,11 +191,12 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         return super.onOptionsItemSelected(item);
     }
 
-    private void setFragment(Fragment fragment){
-        FragmentTransaction fragmentTransaction = getFragmentManager().beginTransaction();
+    private void setFragment(android.support.v4.app.Fragment fragment) {
+        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
         fragmentTransaction.replace(R.id.main_frame,fragment).addToBackStack(null);
         fragmentTransaction.commit();
     }
+
     public void onFragmentInteraction(Uri uri){
 
     }
@@ -193,6 +204,24 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     public void onListFragmentInteraction(FatcatFriend friend) {
+        Toast.makeText(this, friend.getEmail(), Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (resultCode == RESULT_OK && requestCode == CREATE_ACTIVITY_REQUEST_CODE) {
+            MainActivity.globals.getMyEvents(new FatcatListener<Vector<FatcatEvent>>() {
+                @Override
+                public void onReturnData(Vector<FatcatEvent> data) {
+                    eventsFragment.updateLists();
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onListFragmentInteraction(FatcatEvent item) {
 
     }
 }
