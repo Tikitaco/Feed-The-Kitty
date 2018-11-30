@@ -90,18 +90,41 @@ public class ItemsListAdapter extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        View dataView = convertView;
+        final ViewHolder viewHolder;
+        final SingleItem item = (SingleItem) getItem(position);
+        if (dataView == null) {
+            LayoutInflater mInflater = LayoutInflater.from(mContext);
+            dataView = mInflater.inflate(R.layout.single_list_item, null);
+            viewHolder = new ViewHolder();
+            viewHolder.mtitleItemView = (TextView) dataView.findViewById(R.id.titleItemView);
+            viewHolder.mpriceView = (TextView) dataView.findViewById(R.id.price_view);
+            viewHolder.mpayerView = (TextView) dataView.findViewById(R.id.paid_for_view);
+            dataView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) dataView.getTag();
+        }
+
+        viewHolder.mtitleItemView.setText(item.getItemName());
+        viewHolder.mpayerView.setText(item.getPayerName());
+
+        String.valueOf(item.getPrice());
+        viewHolder.mpriceView.setText(String.valueOf(item.getPrice()));
+
+        /*LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View dataView = convertView;
         // create layout and mItem
         final SingleItem mItem = mItems.get(position);
-        RelativeLayout itemLayout = (RelativeLayout) inflater.inflate(R.layout.single_list_item, parent, false);
+        dataView = inflater.inflate(R.layout.single_list_item, null);
         // create title of item
-        final TextView titleItemView = (TextView) itemLayout.findViewById(R.id.titleItemView);
-        titleItemView.setText(mItem.getItemName());
+        final TextView titleItemView = (TextView) dataView.findViewById(R.id.titleItemView);
+        titleItemView.setText(mItem.getItemName()); */
         // create price
-        final TextView priceView = (TextView) itemLayout.findViewById(R.id.price_view);
+        /*final TextView priceView = (TextView) itemLayout.findViewById(R.id.price_view);
         priceView.setText(df2.format(mItem.getPrice()));
         // create "paid for"
-        final TextView dateView = (TextView) itemLayout.findViewById(R.id.paid_for_view);
+        final TextView payerView = (TextView) itemLayout.findViewById(R.id.paid_for_view);
         dateView.setText(mItem.getPayerName());
         // create status
         final CheckBox statusView = (CheckBox) itemLayout.findViewById(R.id.statusCheckBox);
@@ -143,7 +166,19 @@ public class ItemsListAdapter extends BaseAdapter {
                    mItem.setPayerName("Not yet paid for");
                 }
             }
-        });
-        return itemLayout;
+        });*/
+        return dataView;
+    }
+
+    static class ViewHolder {
+        int position;
+        RelativeLayout mItemLayout;
+        TextView mtitleItemView;
+        CheckBox mstatusView;
+        TextView mpriceView;
+        TextView mpayerView;
     }
 }
+
+
+
