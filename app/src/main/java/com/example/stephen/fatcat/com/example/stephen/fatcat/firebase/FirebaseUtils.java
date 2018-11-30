@@ -112,6 +112,7 @@ public class FirebaseUtils {
                     event.setEventID(dataSnapshot.getKey());
                 }
                 listener.onReturnData(event);
+                return;
             }
 
             @Override
@@ -149,12 +150,14 @@ public class FirebaseUtils {
                                 counter[0]++;
                                 if (counter[0] == size) {
                                     listener.onReturnData(events);
+                                    return;
                                 }
                             }
                         });
                     }
 
                     listener.onReturnData(events); // If it's empty, just return.
+                    return;
                 }
             }
 
@@ -265,6 +268,7 @@ public class FirebaseUtils {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 listener.onReturnData(null);
+                return;
             }
         });
     }
@@ -291,7 +295,6 @@ public class FirebaseUtils {
                     if (snapshot.hasChild("invites")) {
                         Log.i(TAG, "We do have invites");
                         for (DataSnapshot invite : snapshot.child("invites").getChildren()) {
-                            Log.i(TAG, "Adding invites!");
                             profile.invites.put(invite.getKey(), invite.getValue(Integer.class));
                         }
                     }
@@ -301,8 +304,10 @@ public class FirebaseUtils {
                             if (data != null) {
                                 profile.setProfilePicture(data);
                                 listener.onReturnData(profile);
+                                return;
                             } else {
                                 listener.onReturnData(profile);
+                                return;
                             }
                         }
                     });
@@ -442,6 +447,7 @@ public class FirebaseUtils {
                     profileInformation.child("username").setValue("New User");
                 }
                 listener.onReturnData(null);
+                return;
             }
 
             @Override

@@ -25,46 +25,52 @@ public class FatcatGlobals {
         friendProfiles.clear();
         myEvents.clear();
         myInvitations.clear();
-        final int counter[] = {0};
-        synchronized (counter) {
-            getMyProfile(new FatcatListener<FatcatFriend>() {
-                @Override
-                public void onReturnData(FatcatFriend data) {
-                    Log.i("Utils", "Finished getting profile");
-                    getInvitations(new FatcatListener<Vector<FatcatInvitation>>() {
+        final boolean profileDone[] = {false};
+        final boolean friendsDone[] = {false};
+        final boolean eventsDone[] = {false};
+        synchronized (profileDone) {
+            synchronized (friendsDone) {
+                synchronized (eventsDone) {
+                    getMyProfile(new FatcatListener<FatcatFriend>() {
                         @Override
-                        public void onReturnData(Vector<FatcatInvitation> data) {
-                            counter[0]++;
-                            Log.i("Utils", "Global (Profile) Counter: " + counter[0]);
-                            if (counter[0] == 3) {
+                        public void onReturnData(FatcatFriend data) {
+                            getInvitations(new FatcatListener<Vector<FatcatInvitation>>() {
+                                @Override
+                                public void onReturnData(Vector<FatcatInvitation> data) {
+                                    profileDone[0] = true;
+                                    Log.i("Utils", "Finished getting profile");
+                                    if (profileDone[0] && friendsDone[0] && eventsDone[0]) {
+                                        listener.onReturnData(null);
+                                        return;
+                                    }
+                                }
+                            });
+                        }
+                    }); // Get your profile information from the database
+                    getFriends(new FatcatListener<Vector<FatcatFriend>>() {
+                        @Override
+                        public void onReturnData(Vector<FatcatFriend> data) {
+                            Log.i("Utils", "Finished getting friends");
+                            friendsDone[0] = true;
+                            if (profileDone[0] && friendsDone[0] && eventsDone[0]) {
                                 listener.onReturnData(null);
+                                return;
+                            }
+                        }
+                    }); // Get all of your friend's information from the database
+                    getMyEvents(new FatcatListener<Vector<FatcatEvent>>() {
+                        @Override
+                        public void onReturnData(Vector<FatcatEvent> data) {
+                            Log.i("Utils", "Finished getting events");
+                            eventsDone[0] = true;
+                            if (profileDone[0] && friendsDone[0] && eventsDone[0]) {
+                                listener.onReturnData(null);
+                                return;
                             }
                         }
                     });
                 }
-            }); // Get your profile information from the database
-            getFriends(new FatcatListener<Vector<FatcatFriend>>() {
-                @Override
-                public void onReturnData(Vector<FatcatFriend> data) {
-                    Log.i("Utils", "Finished getting friends");
-                    counter[0]++;
-                    Log.i("Utils", "Global (Friends) Counter: " + counter[0]);
-                    if (counter[0] == 3) {
-                        listener.onReturnData(null);
-                    }
-                }
-            }); // Get all of your friend's information from the database
-            getMyEvents(new FatcatListener<Vector<FatcatEvent>>() {
-                @Override
-                public void onReturnData(Vector<FatcatEvent> data) {
-                    Log.i("Utils", "Finished getting events");
-                    counter[0]++;
-                    Log.i("Utils", "Global (Events) Counter: " + counter[0]);
-                    if (counter[0] == 3) {
-                        listener.onReturnData(null);
-                    }
-                }
-            });
+            }
         }
     }
 
@@ -80,6 +86,7 @@ public class FatcatGlobals {
                 myEvents = new Vector<>(data); // Copy all event data into local vector
                 if (listener != null) {
                     listener.onReturnData(myEvents);
+                    return;
                 }
             }
         });
@@ -96,6 +103,7 @@ public class FatcatGlobals {
                 myProfile = new FatcatFriend(data);
                 if (listener != null) {
                     listener.onReturnData(myProfile);
+                    return;
                 }
             }
         });
@@ -112,15 +120,17 @@ public class FatcatGlobals {
                 public void onReturnData(FatcatEvent data) {
                     myInvitations.add(new FatcatInvitation(data, status));
                     counter[0]++;
+                    Log.i("Utils", "Added event # " + counter[0]);
                     if (counter[0] == number_events) {
                         listener.onReturnData(myInvitations);
+                        return;
                     }
                 }
             });
         }
         // Just return if there are no invites
         listener.onReturnData(myInvitations);
-
+        return;
     }
 
     /**
@@ -148,6 +158,7 @@ public class FatcatGlobals {
                                 counter[0]++;
                                 if (listener != null && counter[0] == size) {
                                     listener.onReturnData(friendProfiles);
+                                    return;
                                 }
                             }
                         });
@@ -156,6 +167,7 @@ public class FatcatGlobals {
                 // If no friends, just return
                 if (listener != null) {
                     listener.onReturnData(friendProfiles);
+                    return;
                 }
             }
             @Override
