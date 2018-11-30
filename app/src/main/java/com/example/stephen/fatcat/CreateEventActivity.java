@@ -145,15 +145,23 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
                     public void onClick(View view) {
 
                         String priceStr = addItemPriceEdit.getText().toString();
-                        String value = priceStr.substring(1);
-                        Double priceDouble = Double.valueOf(value);
+                        String itemNameEdit = addItemNameEdit.getText().toString();
 
-                        SingleItem addItem = new SingleItem(addItemNameEdit.getText().toString(), priceDouble);
+                        // Check for null edittext
+                        if(priceStr.equals(null) || priceStr.equals("") || itemNameEdit.equals(null) || itemNameEdit.equals(""))
+                        {
+                            Toast.makeText(CreateEventActivity.this,  "Item name or price not entered",Toast.LENGTH_LONG).show();
+                        } else {
+                            String value = priceStr.substring(1);
+                            Double priceDouble = Double.valueOf(value);
 
-                        mAdapter.add(addItem);
+                            SingleItem addItem = new SingleItem(addItemNameEdit.getText().toString(), priceDouble);
 
-                        pw.dismiss();
-                        clearDim(root);
+                            mAdapter.add(addItem);
+
+                            pw.dismiss();
+                            clearDim(root);
+                        }
                     }
                 });
             }

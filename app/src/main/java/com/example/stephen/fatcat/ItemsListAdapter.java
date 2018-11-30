@@ -27,6 +27,7 @@ import android.widget.Button;
 
 
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatListener;
 
 import static com.example.stephen.fatcat.CreateEventActivity.applyDim;
 import static com.example.stephen.fatcat.CreateEventActivity.clearDim;
@@ -99,26 +100,6 @@ public class ItemsListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        /*View dataView = convertView;
-        final ViewHolder viewHolder;
-        final SingleItem item = (SingleItem) getItem(position);
-        if (dataView == null) {
-            LayoutInflater mInflater = LayoutInflater.from(mContext);
-            dataView = mInflater.inflate(R.layout.single_list_item, null);
-            viewHolder = new ViewHolder();
-            viewHolder.mtitleItemView = (TextView) dataView.findViewById(R.id.titleItemView);
-            viewHolder.mpriceView = (TextView) dataView.findViewById(R.id.price_view);
-            viewHolder.mpayerView = (TextView) dataView.findViewById(R.id.paid_for_view);
-            dataView.setTag(viewHolder);
-        } else {
-            viewHolder = (ViewHolder) dataView.getTag();
-        }
-
-        viewHolder.mtitleItemView.setText(item.getItemName());
-        viewHolder.mpayerView.setText(item.getPayerName());
-        String.valueOf(item.getPrice());
-        viewHolder.mpriceView.setText(String.valueOf(item.getPrice()));*/
-
         LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View dataView = convertView;
         // create layout and mItem
@@ -129,13 +110,18 @@ public class ItemsListAdapter extends BaseAdapter {
         titleItemView.setText(mItem.getItemName());
         // create price
         final TextView priceView = (TextView) dataView.findViewById(R.id.price_view);
-        priceView.setText(df2.format(mItem.getPrice()));
+        Double value = mItem.getPrice();
+        if (value != 0.0) {
+            priceView.setText(df2.format(mItem.getPrice()));
+        } else {
+            priceView.setText("0.00");
+        }
         // create "paid for"
         final TextView payerView = (TextView) dataView.findViewById(R.id.paid_for_view);
         payerView.setText(mItem.getPayerName());
 
 
-        final ViewGroup root = (ViewGroup) parent; // Blur?
+        //final ViewGroup root = (ViewGroup) parent; // Blur?
 
         // create status
         final CheckBox statusView = (CheckBox) dataView.findViewById(R.id.statusCheckBox);
@@ -146,75 +132,17 @@ public class ItemsListAdapter extends BaseAdapter {
             public void onCheckedChanged(CompoundButton buttonView, boolean checked) {
 
                if(checked) {
+                   String username = MainActivity.globals.myProfile.getUsername();
 
-                   LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                   View popupView = inflater.inflate(R.layout.single_list_enter_name_popup, root, false);
-                   EditText name = (EditText) popupView.findViewById(R.id.enter_name_view2);
-
-                   applyDim(root, 0.5f);
-
-                   final PopupWindow pw = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
-
-                   pw.showAtLocation(popupView, Gravity.CENTER, 0 ,0); //?? popupView
-
-                   Button cancel = (Button) popupView.findViewById(R.id.cancel_name);
-                   cancel.setOnClickListener(new View.OnClickListener() {
-                       @Override
-                       public void onClick(View view) {
-                           pw.dismiss();
-                           statusView.setChecked(false);
-                           clearDim(root);
-                       }
-                   });
-
-                   Button submit = (Button) popupView.findViewById(R.id.submit_name);
-                   submit.setOnClickListener(new View.OnClickListener() {
-                       @Override
-                       public void onClick(View view) {
-                           pw.dismiss();
-                           statusView.setChecked(true);
-                           clearDim(root);
-                       }
-                   });
-
-                    mItem.setPayerName(name.toString());
+                   mItem.setPayerName(username);
+                   payerView.setText("Paid for by " + username);
                 } else {
                    mItem.setPayerName("Not yet paid for");
+                   payerView.setText("Not yet paid for");
                 }
             }
         });
         return dataView;
-    }
-
-    public class MoneyTextWatcher implements TextWatcher {
-        private final WeakReference<EditText> editTextWeakReference;
-
-        public MoneyTextWatcher(EditText editText) {
-            editTextWeakReference = new WeakReference<EditText>(editText);
-        }
-
-        @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-        }
-
-        @Override
-        public void afterTextChanged(Editable editable) {
-            EditText editText = editTextWeakReference.get();
-            if (editText == null) return;
-            String s = editable.toString();
-            if (s.isEmpty()) return;
-            editText.removeTextChangedListener(this);
-            String cleanString = s.replaceAll("[$,.]", "");
-            BigDecimal parsed = new BigDecimal(cleanString).setScale(2, BigDecimal.ROUND_FLOOR).divide(new BigDecimal(100), BigDecimal.ROUND_FLOOR);
-            String formatted = NumberFormat.getCurrencyInstance().format(parsed);
-            editText.setText(formatted);
-            editText.setSelection(formatted.length());
-            editText.addTextChangedListener(this);
-        }
     }
 
     static class ViewHolder {
