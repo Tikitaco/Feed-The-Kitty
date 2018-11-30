@@ -3,10 +3,10 @@ package com.example.stephen.fatcat;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.widget.Toast;
 
-public class EventPageAdapter extends FragmentPagerAdapter {
+public class EventPageAdapter extends FragmentStatePagerAdapter {
     final int PAGE_COUNT = 2;
     private String tabTitles[] = new String[] { "My Events", "Invitations" };
     private Context context;
@@ -28,6 +28,7 @@ public class EventPageAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
+        Toast.makeText(context, "Getting item at position " + position, Toast.LENGTH_SHORT).show();
         Fragment fragment = null;
         if (position == 0) {
             fragment = MyEventFragment.newInstance();

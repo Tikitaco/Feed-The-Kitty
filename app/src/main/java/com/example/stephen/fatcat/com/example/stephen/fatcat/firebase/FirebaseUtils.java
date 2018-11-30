@@ -311,7 +311,7 @@ public class FirebaseUtils {
                             }
                         }
                     });
-                    break; // Stop after a single iteration, only one should be equal to the UID
+                    return; // Stop after a single iteration, only one should be equal to the UID
                 }
             }
 
