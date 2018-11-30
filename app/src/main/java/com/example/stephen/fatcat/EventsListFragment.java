@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 
 /**
@@ -51,10 +52,7 @@ public class EventsListFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        mPager = (ViewPager) getView().findViewById(R.id.viewpager);
-        mPager.setAdapter(new EventPageAdapter(getFragmentManager(), getContext()));
-        TabLayout tabLayout = (TabLayout) getView().findViewById(R.id.sliding_tabs);
-        tabLayout.setupWithViewPager(mPager);
+
 
     }
 
@@ -62,7 +60,12 @@ public class EventsListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_events_list, container, false);
+        View v = inflater.inflate(R.layout.fragment_events_list, container, false);
+        mPager = (ViewPager) v.findViewById(R.id.viewpager);
+        mPager.setAdapter(new EventPageAdapter(getFragmentManager(), getContext()));
+        TabLayout tabLayout = (TabLayout) v.findViewById(R.id.sliding_tabs);
+        tabLayout.setupWithViewPager(mPager);
+        return v;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -80,6 +83,13 @@ public class EventsListFragment extends Fragment {
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
+        }
+        if ( mPager == null && getView() != null) {
+            Toast.makeText(getContext(), "Null pager", Toast.LENGTH_SHORT).show();
+            mPager = (ViewPager) getView().findViewById(R.id.viewpager);
+            mPager.setAdapter(new EventPageAdapter(getFragmentManager(), getContext()));
+            TabLayout tabLayout = (TabLayout) getView().findViewById(R.id.sliding_tabs);
+            tabLayout.setupWithViewPager(mPager);
         }
     }
 

@@ -4,6 +4,7 @@ import android.content.Intent;
 import com.example.stephen.fatcat.SingleItem;
 
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.Exclude;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.lang.reflect.Array;
@@ -14,6 +15,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class FatcatEvent {
 
@@ -25,6 +29,9 @@ public class FatcatEvent {
     private String mOwnerUID;
     private ArrayList<SingleItem> items;
     private String eventID;
+
+    @Exclude
+    public Map<String, Integer> participants = new HashMap<>();
 
     public final static String ITEMNAME = "itemname";
     public final static String PAYERNAME = "payername";
@@ -111,6 +118,7 @@ public class FatcatEvent {
     public String getEventID() {
         return eventID;
     }
+
     public ArrayList<SingleItem> getList() { return items;}
 
 }

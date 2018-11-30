@@ -28,7 +28,12 @@ public class EventPageAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        Fragment fragment = MyEventFragment.newInstance();
+        Fragment fragment = null;
+        if (position == 0) {
+            fragment = MyEventFragment.newInstance();
+        } else if (position == 1) {
+            fragment = MyInvitationsListFragmentFragment.newInstance();
+        }
         fragmentList[position] = fragment;
         return fragment;
     }

@@ -1,5 +1,6 @@
 package com.example.stephen.fatcat;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,8 +13,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatFriend;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FirebaseUtils;
 
 import java.util.ArrayList;
 
@@ -56,7 +61,12 @@ public class MyEventFragment extends Fragment {
         // Set the adapter
         if (view instanceof RecyclerView) {
             RecyclerView recyclerView = (RecyclerView) view;
-            mAdapter = new MyEventRecyclerViewAdapter(MainActivity.globals.myEvents, mListener, this);
+            mAdapter = new MyEventRecyclerViewAdapter(MainActivity.globals.myEvents, new OnListFragmentInteractionListener() {
+                @Override
+                public void onListFragmentInteraction(FatcatEvent item) {
+                    showInvitationDialog(item);
+                }
+            }, this);
             recyclerView.setAdapter(mAdapter);
         }
 
@@ -67,10 +77,49 @@ public class MyEventFragment extends Fragment {
         return view;
     }
 
+    private void showInvitationDialog(final FatcatEvent eventClicked) {
+        Toast.makeText(getContext(), "Inviting to event", Toast.LENGTH_SHORT).show();
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        // Get the layout inflater
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View informationView = inflater.inflate(R.layout.popup_invite_list, null);
+        final RecyclerView list = informationView.findViewById(R.id.invitation_list);
+        Button inviteButton = informationView.findViewById(R.id.invite_add_button);
+        list.setLayoutManager(new LinearLayoutManager(getContext()));
+        list.setAdapter(new InviteFriendListAdapter(MainActivity.globals.friendProfiles));
+        // Add a divider between each item to make it look nice
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mList.getContext(), DividerItemDecoration.VERTICAL);
+        list.addItemDecoration(dividerItemDecoration);
+        builder.setView(informationView);
+        final AlertDialog dialog = builder.show();
+        inviteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ArrayList<FatcatFriend> invites = new ArrayList<>();
+                for (int i = 0; i < list.getAdapter().getItemCount(); i++) {
+                    InviteFriendListAdapter.ViewHolder holder = (InviteFriendListAdapter.ViewHolder) list.findViewHolderForAdapterPosition(i);
+                    if (holder.mAdd.isChecked()) {
+                        invites.add(holder.mItem);
+                    }
+                }
+                for (FatcatFriend friend : invites) {
+                    FirebaseUtils.inviteFriendToEvent(eventClicked, friend);
+                }
+                dialog.dismiss();
+
+            }
+        });
+
+    }
 
     public void updateList() {
         // Update the adapter and list.
-        mList.setAdapter(mAdapter = new MyEventRecyclerViewAdapter(MainActivity.globals.myEvents, mListener, this));
+        mList.setAdapter(mAdapter = new MyEventRecyclerViewAdapter(MainActivity.globals.myEvents, new OnListFragmentInteractionListener() {
+            @Override
+            public void onListFragmentInteraction(FatcatEvent item) {
+                showInvitationDialog(item);
+            }
+        }, this));
         mAdapter.notifyDataSetChanged();
     }
 

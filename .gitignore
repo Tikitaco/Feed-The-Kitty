@@ -13,3 +13,4 @@ app/src/main/res/xml/pref_headers.xml
 app/src/main/res/xml/pref_notification.xml
 app/src/main/res/xml/pref_general.xml
 app/src/main/res/xml/pref_data_sync.xml
+app/src/main/res/values/strings.xml
