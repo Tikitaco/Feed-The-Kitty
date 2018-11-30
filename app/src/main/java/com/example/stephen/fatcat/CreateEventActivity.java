@@ -148,7 +148,7 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
                         String value = priceStr.substring(1);
                         Double priceDouble = Double.valueOf(value);
 
-                        SingleItem addItem = new SingleItem(addItemNameEdit.toString(), priceDouble);
+                        SingleItem addItem = new SingleItem(addItemNameEdit.getText().toString(), priceDouble);
 
                         mAdapter.add(addItem);
 

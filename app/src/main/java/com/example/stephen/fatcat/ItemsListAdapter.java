@@ -1,10 +1,15 @@
 package com.example.stephen.fatcat;
 
+import java.lang.ref.WeakReference;
+import java.math.BigDecimal;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.text.DecimalFormat;
 
 import android.content.Context;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +27,9 @@ import android.widget.Button;
 
 
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
+
+import static com.example.stephen.fatcat.CreateEventActivity.applyDim;
+import static com.example.stephen.fatcat.CreateEventActivity.clearDim;
 
 public class ItemsListAdapter extends BaseAdapter {
 
@@ -91,7 +99,7 @@ public class ItemsListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
 
-        View dataView = convertView;
+        /*View dataView = convertView;
         final ViewHolder viewHolder;
         final SingleItem item = (SingleItem) getItem(position);
         if (dataView == null) {
@@ -108,26 +116,29 @@ public class ItemsListAdapter extends BaseAdapter {
 
         viewHolder.mtitleItemView.setText(item.getItemName());
         viewHolder.mpayerView.setText(item.getPayerName());
-
         String.valueOf(item.getPrice());
-        viewHolder.mpriceView.setText(String.valueOf(item.getPrice()));
+        viewHolder.mpriceView.setText(String.valueOf(item.getPrice()));*/
 
-        /*LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View dataView = convertView;
         // create layout and mItem
         final SingleItem mItem = mItems.get(position);
         dataView = inflater.inflate(R.layout.single_list_item, null);
         // create title of item
         final TextView titleItemView = (TextView) dataView.findViewById(R.id.titleItemView);
-        titleItemView.setText(mItem.getItemName()); */
+        titleItemView.setText(mItem.getItemName());
         // create price
-        /*final TextView priceView = (TextView) itemLayout.findViewById(R.id.price_view);
+        final TextView priceView = (TextView) dataView.findViewById(R.id.price_view);
         priceView.setText(df2.format(mItem.getPrice()));
         // create "paid for"
-        final TextView payerView = (TextView) itemLayout.findViewById(R.id.paid_for_view);
-        dateView.setText(mItem.getPayerName());
+        final TextView payerView = (TextView) dataView.findViewById(R.id.paid_for_view);
+        payerView.setText(mItem.getPayerName());
+
+
+        final ViewGroup root = (ViewGroup) parent; // Blur?
+
         // create status
-        final CheckBox statusView = (CheckBox) itemLayout.findViewById(R.id.statusCheckBox);
+        final CheckBox statusView = (CheckBox) dataView.findViewById(R.id.statusCheckBox);
         statusView.setChecked(!mItem.getPayerName().equals("Not yet paid for"));
         // set onChangeListener for status
         statusView.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -137,9 +148,12 @@ public class ItemsListAdapter extends BaseAdapter {
                if(checked) {
 
                    LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-                   View popupView = inflater.inflate(R.layout.single_list_enter_name_popup, null, false);
-                   final PopupWindow pw = new PopupWindow(popupView, 440, 440, true); // LayoutParams.WRAP_CONTENT
+                   View popupView = inflater.inflate(R.layout.single_list_enter_name_popup, root, false);
                    EditText name = (EditText) popupView.findViewById(R.id.enter_name_view2);
+
+                   applyDim(root, 0.5f);
+
+                   final PopupWindow pw = new PopupWindow(popupView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
 
                    pw.showAtLocation(popupView, Gravity.CENTER, 0 ,0); //?? popupView
 
@@ -149,6 +163,7 @@ public class ItemsListAdapter extends BaseAdapter {
                        public void onClick(View view) {
                            pw.dismiss();
                            statusView.setChecked(false);
+                           clearDim(root);
                        }
                    });
 
@@ -158,6 +173,7 @@ public class ItemsListAdapter extends BaseAdapter {
                        public void onClick(View view) {
                            pw.dismiss();
                            statusView.setChecked(true);
+                           clearDim(root);
                        }
                    });
 
@@ -166,8 +182,39 @@ public class ItemsListAdapter extends BaseAdapter {
                    mItem.setPayerName("Not yet paid for");
                 }
             }
-        });*/
+        });
         return dataView;
+    }
+
+    public class MoneyTextWatcher implements TextWatcher {
+        private final WeakReference<EditText> editTextWeakReference;
+
+        public MoneyTextWatcher(EditText editText) {
+            editTextWeakReference = new WeakReference<EditText>(editText);
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable editable) {
+            EditText editText = editTextWeakReference.get();
+            if (editText == null) return;
+            String s = editable.toString();
+            if (s.isEmpty()) return;
+            editText.removeTextChangedListener(this);
+            String cleanString = s.replaceAll("[$,.]", "");
+            BigDecimal parsed = new BigDecimal(cleanString).setScale(2, BigDecimal.ROUND_FLOOR).divide(new BigDecimal(100), BigDecimal.ROUND_FLOOR);
+            String formatted = NumberFormat.getCurrencyInstance().format(parsed);
+            editText.setText(formatted);
+            editText.setSelection(formatted.length());
+            editText.addTextChangedListener(this);
+        }
     }
 
     static class ViewHolder {

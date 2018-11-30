@@ -15,12 +15,14 @@
     android:layout_width="wrap_content"
     android:orientation="vertical"
     android:layout_margin="10dp"
+    android:layout_marginTop="5dp"
     android:gravity="center">
 
     <Button
     android:id="@+id/add_another_item_view"
     android:layout_width="wrap_content"
     android:layout_height="35dp"
+    android:layout_marginTop="10dp"
     android:paddingHorizontal="5dp"
     android:background="@drawable/mybutton"
     android:layout_gravity="center_horizontal"
@@ -31,9 +33,10 @@
         android:id="@+id/createEventSubmit"
         android:layout_width="wrap_content"
         android:layout_height="35dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="40dp"
         android:background="@drawable/mybutton"
         android:paddingHorizontal="5dp"
+        android:layout_marginBottom="20dp"
         android:layout_gravity="center_horizontal"
         android:text="Create the Event"
         android:textColor="#fff" />
