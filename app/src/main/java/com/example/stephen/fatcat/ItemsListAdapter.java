@@ -97,6 +97,10 @@ public class ItemsListAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public List<SingleItem> getList() {
+        return mItems;
+    }
+
     // Create a View for the SingleItem at specified position
     // Remember to check whether convertView holds an already allocated View
     // before created a new View.

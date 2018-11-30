@@ -206,7 +206,7 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
                 String startTime = startTimeView.getText().toString();
                 String endTime = endTimeView.getText().toString();
                 mDate = Calendar.getInstance().getTime(); // TODO This is only until the date picker is fully implemented
-                ArrayList<SingleItem> items = new ArrayList<>(); // TODO Must create list
+                ArrayList<SingleItem> items = (ArrayList) mAdapter.getList(); // TODO Must create list
                 FatcatEvent event = new FatcatEvent(name, description, mDate, startTime, endTime, items);
 
                 FirebaseUtils.uploadNewEvent(event, new DatabaseReference.CompletionListener() {
