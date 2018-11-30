@@ -215,7 +215,7 @@ public class CaldendarFragment extends Fragment {
     public void onResume(){
         super.onResume();
         print = "";
-        
+
     }
 
 
