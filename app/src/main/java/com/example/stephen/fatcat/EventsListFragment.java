@@ -62,9 +62,11 @@ public class EventsListFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_events_list, container, false);
         mPager = (ViewPager) v.findViewById(R.id.viewpager);
+        mPager.setSaveFromParentEnabled(true);
         mPager.setAdapter(new EventPageAdapter(getFragmentManager(), getContext()));
         TabLayout tabLayout = (TabLayout) v.findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(mPager);
+        Toast.makeText(getContext(), "Child Count: " + mPager.getChildCount(), Toast.LENGTH_SHORT).show();
         return v;
     }
 
@@ -85,13 +87,6 @@ public class EventsListFragment extends Fragment {
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
-        }
-        if ( mPager == null && getView() != null) {
-            Toast.makeText(getContext(), "Null pager", Toast.LENGTH_SHORT).show();
-            mPager = (ViewPager) getView().findViewById(R.id.viewpager);
-            mPager.setAdapter(new EventPageAdapter(getFragmentManager(), getContext()));
-            TabLayout tabLayout = (TabLayout) getView().findViewById(R.id.sliding_tabs);
-            tabLayout.setupWithViewPager(mPager);
         }
     }
 

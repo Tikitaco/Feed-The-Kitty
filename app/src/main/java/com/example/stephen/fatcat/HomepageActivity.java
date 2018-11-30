@@ -84,7 +84,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                     case R.id.calendarView:
                         //opens calendar fragment
                         if(isCalendar){
-                            setFragment(eventsFragment);
+                            setFragment(new EventsListFragment());
                             item.setIcon(R.mipmap.baseline_calendar_today_white_36);
                             item.setTitle("Calendar View");
                             isCalendar = false;
