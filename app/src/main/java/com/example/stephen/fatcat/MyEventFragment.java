@@ -137,7 +137,7 @@ public class MyEventFragment extends Fragment {
                     + " must implement OnListFragmentInteractionListener");
         }
 
-        Toast.makeText(getContext(), "Attached EventFragment", Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getContext(), "Attached EventFragment", Toast.LENGTH_SHORT).show();
     }
 
     @Override

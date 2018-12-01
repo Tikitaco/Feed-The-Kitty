@@ -133,7 +133,7 @@ public class CaldendarFragment extends Fragment {
         }
         //arraylist is being added to thet calednar view
         mCalendarView.setEvents(mEventDays);
-        Toast.makeText(getActivity(),String.valueOf(counter),Toast.LENGTH_LONG).show();
+        //Toast.makeText(getActivity(),String.valueOf(counter),Toast.LENGTH_LONG).show();
 
         mCalendarView.setOnDayClickListener(new OnDayClickListener() {
             @Override
