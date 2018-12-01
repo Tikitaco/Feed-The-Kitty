@@ -138,6 +138,25 @@ public class FirebaseUtils {
         });
     }
 
+    public static void rsvp_event(FatcatEvent event, final int status, final FatcatListener listener) {
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        final String event_uid = event.getEventID();
+        final DatabaseReference myProfile = FirebaseDatabase.getInstance().getReference("profiles").child(uid);
+        DatabaseReference theEvent = FirebaseDatabase.getInstance().getReference("events").child(event_uid);
+        myProfile.child("invites").child(event_uid).setValue(status);
+        theEvent.child("participants").child(uid).setValue(status, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                myProfile.child("invites").child(event_uid).setValue(status, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                        listener.onReturnData(null);
+                    }
+                });
+            }
+        });
+
+    }
 
     public static void getMyInvites(final FatcatListener<Map<String, Integer>> listener) {
         DatabaseReference profiles = FirebaseDatabase.getInstance().getReference("profiles");

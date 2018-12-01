@@ -1,6 +1,8 @@
 
 package com.example.stephen.fatcat;
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,15 +42,26 @@ public class MyInvitationsListFragmentRecyclerViewAdapter extends RecyclerView.A
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mName.setText(holder.mItem.getEvent().getName());
-        holder.mDate.setText(holder.mItem.getEvent().getDate());
+        final FatcatInvitation invite = holder.mItem;
+        holder.mName.setText(invite.getEvent().getName());
+        holder.mDate.setText(invite.getEvent().getDate());
+        if (invite.getStatus() == FatcatInvitation.ACCEPTED) {
+            holder.mStatus.setText("Going!");
+            holder.mStatus.setTextColor(Color.BLUE);
+        } else if (invite.getStatus() == FatcatInvitation.PENDING) {
+            holder.mStatus.setText("Pending...");
+            holder.mStatus.setTextColor(Color.MAGENTA);
+        } else if (invite.getStatus() == FatcatInvitation.DECLINED) {
+            holder.mStatus.setText("Not Going");
+            holder.mStatus.setTextColor(Color.RED);
+        }
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+                    mListener.onListFragmentInteraction(invite);
                 }
             }
         });

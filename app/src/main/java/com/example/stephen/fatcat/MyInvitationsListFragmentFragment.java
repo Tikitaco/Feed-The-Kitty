@@ -3,6 +3,7 @@ package com.example.stephen.fatcat;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -12,9 +13,13 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatFriend;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatInvitation;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatListener;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FirebaseUtils;
@@ -24,6 +29,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.Text;
 
 import java.util.Vector;
 
@@ -58,13 +65,116 @@ public class MyInvitationsListFragmentFragment extends Fragment {
 
     }
 
-    private void onClickInvite(FatcatInvitation invite) {
+    private void onClickInvite(final FatcatInvitation invite) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View informationView = inflater.inflate(R.layout.activity_invitation_details, null);
+
+        FatcatFriend host = null;
+        for (FatcatFriend friend : MainActivity.globals.friendProfiles) {
+            if (friend.getUID().equals(invite.getEvent().getOwnerUID())) {
+                host = friend;
+                break;
+            }
+        }
+        TextView mEventName = (TextView) informationView.findViewById(R.id.invitation_event_name);
+        TextView mHost = (TextView) informationView.findViewById(R.id.invite_host);
+        TextView mStart = (TextView) informationView.findViewById(R.id.invite_start);
+        TextView mEnd = (TextView) informationView.findViewById(R.id.invite_end);
+        TextView mDescription = (TextView) informationView.findViewById(R.id.invite_description);
+        TextView mDate = (TextView) informationView.findViewById(R.id.invite_date);
+        TextView mItemText = (TextView) informationView.findViewById(R.id.invite_item_request_text);
+        final RadioButton goingButton = informationView.findViewById(R.id.radio_going);
+        final RadioButton declineButton = informationView.findViewById(R.id.radio_decline);
+        final RadioButton pendingButton = informationView.findViewById(R.id.radio_pending);
+        Button confirmButton = informationView.findViewById(R.id.btn_invitation_confirm);
+
+        mEventName.setText(invite.getEvent().getName());
+        mHost.setText("Hosted by " + host.getUsername());
+        mStart.setText("Start Time: " + invite.getEvent().getStartTime());
+        mEnd.setText("End Time: " + invite.getEvent().getEndTime());
+        mDate.setText("Date: " + invite.getEvent().getDate());
+        if (invite.getEvent().getDescription().length() > 0) {
+            mDescription.setText("Description: " + invite.getEvent().getDescription());
+        } else {
+            mDescription.setText("");
+        }
+
+        if (invite.getEvent().getList().size() == 0) {
+            mItemText.setText(""); // Set the label to blank if there are no items
+        }
+        int status = invite.getStatus();
+
+        if (status == FatcatInvitation.ACCEPTED) {
+            goingButton.toggle();
+            goingButton.setBackgroundColor(Color.GREEN);
+        } else if (status == FatcatInvitation.DECLINED) {
+            declineButton.toggle();
+            declineButton.setBackgroundColor(Color.RED);
+            declineButton.setTextColor(Color.WHITE);
+        } else if (status == FatcatInvitation.PENDING) {
+            pendingButton.toggle();
+            pendingButton.setBackgroundColor(Color.YELLOW);
+        }
+
+        pendingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (pendingButton.isChecked()) {
+                    pendingButton.setBackgroundColor(Color.YELLOW);
+                    goingButton.setBackgroundColor(0xFAFAFA);
+                    declineButton.setBackgroundColor(0xFAFAFA);
+                    declineButton.setTextColor(Color.BLACK);
+
+                }
+            }
+        });
+        declineButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (declineButton.isChecked()) {
+                    declineButton.setBackgroundColor(Color.RED);
+                    pendingButton.setBackgroundColor(0xFAFAFA);
+                    goingButton.setBackgroundColor(0xFAFAFA);
+                    declineButton.setTextColor(Color.WHITE);
+                }
+            }
+        });
+        goingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (goingButton.isChecked()) {
+                    goingButton.setBackgroundColor(Color.GREEN);
+                    pendingButton.setBackgroundColor(0xFAFAFA);
+                    declineButton.setBackgroundColor(0xFAFAFA);
+                    declineButton.setTextColor(Color.BLACK);
+
+                }
+            }
+        });
         builder.setView(informationView);
-        builder.show();
+        final AlertDialog dialog = builder.show();
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int newStatus = -1;
+                if (goingButton.isChecked()) {
+                    newStatus = FatcatInvitation.ACCEPTED;
+                } else if (pendingButton.isChecked()) {
+                    newStatus = FatcatInvitation.PENDING;
+                } else if (declineButton.isChecked()) {
+                    newStatus = FatcatInvitation.DECLINED;
+                }
+                FirebaseUtils.rsvp_event(invite.getEvent(), newStatus, new FatcatListener() {
+                    @Override
+                    public void onReturnData(Object data) {
+                        updateList();
+                        dialog.dismiss();
+                    }
+                });
+            }
+        });
        // Intent intent = new Intent(getActivity(), InvitationDetailsActivity.class);
        // intent.putExtra("event_id", invite.getEvent().getEventID());
        // getActivity().startActivity(intent);
