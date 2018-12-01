@@ -11,6 +11,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Vector;
 
@@ -135,7 +136,10 @@ public class FatcatGlobals {
                         @Override
                         public void onReturnData(FatcatEvent data) {
                             if (data != null) {
-                                myInvitations.add(new FatcatInvitation(data, status));
+                                FatcatInvitation newInvitation = new FatcatInvitation(data, status);
+                                if (!myInvitations.contains(newInvitation)) {
+                                    myInvitations.add(new FatcatInvitation(data, status));
+                                }
                             } else {
                                 FirebaseUtils.removeInvite(event_id);
                             }

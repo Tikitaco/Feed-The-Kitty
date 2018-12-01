@@ -9,7 +9,9 @@ import android.widget.TextView;
 import com.example.stephen.fatcat.MyInvitationsListFragmentFragment.OnListFragmentInteractionListener;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatInvitation;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link .} and makes a call to the
@@ -18,11 +20,11 @@ import java.util.List;
  */
 public class MyInvitationsListFragmentRecyclerViewAdapter extends RecyclerView.Adapter<MyInvitationsListFragmentRecyclerViewAdapter.ViewHolder> {
 
-    private final List<FatcatInvitation> mValues;
+    private final Vector<FatcatInvitation> mValues;
     private final OnListFragmentInteractionListener mListener;
     private final MyInvitationsListFragmentFragment mFragment;
 
-    public MyInvitationsListFragmentRecyclerViewAdapter(List<FatcatInvitation> items, MyInvitationsListFragmentFragment fragment, OnListFragmentInteractionListener listener) {
+    public MyInvitationsListFragmentRecyclerViewAdapter(Vector<FatcatInvitation> items, MyInvitationsListFragmentFragment fragment, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
         mFragment = fragment;

@@ -24,4 +24,14 @@ public class FatcatInvitation {
     public FatcatEvent getEvent() {
         return mEvent;
     }
+
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof FatcatInvitation) {
+            FatcatInvitation invite = (FatcatInvitation) other;
+            return invite.getEvent().getEventID().equals(mEvent.getEventID());
+        } else {
+            return false;
+        }
+    }
 }

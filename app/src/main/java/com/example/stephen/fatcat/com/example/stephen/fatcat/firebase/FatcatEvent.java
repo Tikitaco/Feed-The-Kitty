@@ -121,4 +121,14 @@ public class FatcatEvent {
 
     public ArrayList<SingleItem> getList() { return items;}
 
+    @Override
+    public boolean equals(Object other) {
+        if (other instanceof FatcatEvent) {
+            FatcatEvent event = (FatcatEvent) other;
+            return event.getEventID().equals(eventID);
+        } else {
+            return false;
+        }
+    }
+
 }
