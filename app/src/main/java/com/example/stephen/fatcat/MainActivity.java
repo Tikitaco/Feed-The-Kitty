@@ -69,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent accountIntent = new Intent(MainActivity.this, CreateAccountActivity.class);
                 startActivity(accountIntent);
+                overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_from_right);
+
             }
         });
 
@@ -136,6 +138,7 @@ public class MainActivity extends AppCompatActivity {
                                 dialog.dismiss();
                                 done[0] = true;
                                 startActivity(accountIntent);
+                                overridePendingTransition(R.anim.slide_in_right_fast,R.anim.slide_out_from_left);
                             }
                         }
                     });

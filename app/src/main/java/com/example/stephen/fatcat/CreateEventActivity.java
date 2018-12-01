@@ -16,6 +16,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.telecom.Call;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
@@ -158,7 +159,6 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
                             SingleItem addItem = new SingleItem(addItemNameEdit.getText().toString(), priceDouble);
 
                             mAdapter.add(addItem);
-
                             pw.dismiss();
                             clearDim(root);
                         }
@@ -219,6 +219,7 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
                             setResult(RESULT_OK);
                             finishActivity(HomepageActivity.CREATE_ACTIVITY_REQUEST_CODE); // Finish and signify the list fragment to update
                             finish();
+
                         } else { // If the upload failed...
                             Toast.makeText(CreateEventActivity.this, "Error: " + databaseError.getMessage(), Toast.LENGTH_SHORT).show();
                         }
@@ -226,6 +227,17 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
                 });
             }
         });
+    }
+    @Override
+    public void onPause(){
+        super.onPause();
+        if(isFinishing()){
+            overridePendingTransition(R.anim.stay_still,R.anim.slide_out_bottom);
+        }
+    }
+    public void onBackPressed(){
+        super.onBackPressed();
+        overridePendingTransition(R.anim.stay_still,R.anim.slide_out_bottom);
     }
 
     public class MoneyTextWatcher implements TextWatcher {

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -44,13 +43,18 @@ public class CreateAccountActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startSignIn();
+                overridePendingTransition(R.anim.slide_in_right_fast,R.anim.slide_out_from_left);
                 finish();
             }
         });
 
 
     }
-
+    @Override
+    public void onBackPressed(){
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_right_fast,R.anim.slide_out_from_left);
+    }
 
     private void startSignIn() {
         if (!mPasswordFiedl.getText().toString().trim().equals(mPasswordFied2.getText().toString().trim())) {

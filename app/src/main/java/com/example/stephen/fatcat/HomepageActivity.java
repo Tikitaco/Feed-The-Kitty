@@ -1,11 +1,8 @@
 package com.example.stephen.fatcat;
 
-import android.app.Fragment;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -13,27 +10,17 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.CalendarView;
 import android.widget.FrameLayout;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.applandeo.materialcalendarview.EventDay;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatFriend;
-import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatGlobals;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatInvitation;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatListener;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -84,12 +71,12 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                     case R.id.calendarView:
                         //opens calendar fragment
                         if(isCalendar){
-                            setFragment(eventsFragment = new EventsListFragment());
+                            setFragmentCal(eventsFragment = new EventsListFragment());
                             item.setIcon(R.mipmap.baseline_calendar_today_white_36);
                             item.setTitle("Calendar View");
                             isCalendar = false;
                         }else{
-                            setFragment(calendarFragment);
+                            setFragmentCal(calendarFragment);
                             item.setIcon(R.mipmap.baseline_list_black_36);
                             item.setTitle("List View");
                             isCalendar = true;
@@ -98,6 +85,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                     case R.id.createEvent:
                         //opens create event would like to change this to a fragment if possible
                         startActivityForResult(new Intent(HomepageActivity.this, CreateEventActivity.class), CREATE_ACTIVITY_REQUEST_CODE);
+                        overridePendingTransition(R.anim.slide_in_bottom,R.anim.stay_still);
                         break;
                 }
                 return true;
@@ -138,6 +126,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
             case R.id.nav_logout:
                 FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(HomepageActivity.this, MainActivity.class));
+                overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_from_right);
                 finish();
                 break;
             case R.id.nav_events:
@@ -217,9 +206,15 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         fragmentTransaction.replace(R.id.main_frame,fragment).addToBackStack(null);
         fragmentTransaction.commit();
     }
-    private void setFragmentSave(android.support.v4.app.Fragment fragment) {
+    private void setFragmentCal(android.support.v4.app.Fragment fragment) {
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        if(isCalendar) {
+            fragmentTransaction.setCustomAnimations(R.anim.slide_in_left_fast, R.anim.slide_out_from_right_fast);
+        }else{
+            fragmentTransaction.setCustomAnimations(R.anim.slide_in_right_fast, R.anim.slide_out_from_left_fast);
+        }
         fragmentTransaction.replace(R.id.main_frame,fragment);
+
         fragmentTransaction.commit();
     }
 
