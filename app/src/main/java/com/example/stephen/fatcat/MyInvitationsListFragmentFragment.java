@@ -1,6 +1,8 @@
 package com.example.stephen.fatcat;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -56,6 +58,18 @@ public class MyInvitationsListFragmentFragment extends Fragment {
 
     }
 
+    private void onClickInvite(FatcatInvitation invite) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        // Get the layout inflater
+        LayoutInflater inflater = getActivity().getLayoutInflater();
+        View informationView = inflater.inflate(R.layout.activity_invitation_details, null);
+        builder.setView(informationView);
+        builder.show();
+       // Intent intent = new Intent(getActivity(), InvitationDetailsActivity.class);
+       // intent.putExtra("event_id", invite.getEvent().getEventID());
+       // getActivity().startActivity(intent);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -70,7 +84,7 @@ public class MyInvitationsListFragmentFragment extends Fragment {
             recyclerView.setAdapter(new MyInvitationsListFragmentRecyclerViewAdapter(MainActivity.globals.myInvitations, this, new OnListFragmentInteractionListener() {
                 @Override
                 public void onListFragmentInteraction(FatcatInvitation item) {
-                    
+                    onClickInvite(item);
                 }
             }));
             Log.i("Utils", "Invites: " + MainActivity.globals.myInvitations.size());
@@ -99,7 +113,7 @@ public class MyInvitationsListFragmentFragment extends Fragment {
         mList.setAdapter(new MyInvitationsListFragmentRecyclerViewAdapter(MainActivity.globals.myInvitations, this, new OnListFragmentInteractionListener() {
             @Override
             public void onListFragmentInteraction(FatcatInvitation item) {
-
+                onClickInvite(item);
             }
         }));
         mList.getAdapter().notifyDataSetChanged();

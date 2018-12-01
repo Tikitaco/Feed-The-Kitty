@@ -165,8 +165,8 @@ public class FirebaseUtils {
      */
     public static void getAllMyEvents(final FatcatListener<Vector<FatcatEvent>> listener) {
         final Vector<FatcatEvent> events = new Vector<>();
-        DatabaseReference profiles = FirebaseDatabase.getInstance().getReference("profiles");
-        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        final DatabaseReference profiles = FirebaseDatabase.getInstance().getReference("profiles");
+        final String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         profiles.child(uid).child("my_events").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -178,15 +178,18 @@ public class FirebaseUtils {
                 final int size = event_ids.size();
                 synchronized(counter) { // Prevent concurrency errors
                     if (size > 0) {
-                        for (String event_id : event_ids) {
+                        for (final String event_id : event_ids) {
                             getEventInformation(event_id, new FatcatListener<FatcatEvent>() {
                                 @Override
                                 public void onReturnData(FatcatEvent data) {
                                     if (data != null) { // If the event exists, add it
                                         if (data.getName() == null) {
-                                            Log.i("Utils", "Deleted Event detected");
                                         }
                                         events.add(data);
+                                    } else {
+                                        Log.i("Utils", "Deleted Event detected");
+                                        profiles.child(uid).child("my_events").child(event_id).removeValue(); // Remove hanging event
+
                                     }
                                     counter[0]++;
                                     if (counter[0] == size) {
