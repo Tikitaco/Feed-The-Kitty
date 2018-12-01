@@ -158,6 +158,24 @@ public class FirebaseUtils {
 
     }
 
+    public static void deleteInvitation(FatcatInvitation invitation, final FatcatDeletionListener listener) {
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        final String event_uid = invitation.getEvent().getEventID();
+        final DatabaseReference myProfile = FirebaseDatabase.getInstance().getReference("profiles").child(uid);
+        DatabaseReference theEvent = FirebaseDatabase.getInstance().getReference("events").child(event_uid);
+        theEvent.child("participants").child(uid).removeValue(new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                myProfile.child("invites").child(event_uid).removeValue(new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                        listener.onFinishDeletion(true);
+                    }
+                });
+            }
+        });
+    }
+
     public static void getMyInvites(final FatcatListener<Map<String, Integer>> listener) {
         DatabaseReference profiles = FirebaseDatabase.getInstance().getReference("profiles");
         String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();

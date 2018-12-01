@@ -2,6 +2,7 @@ package com.example.stephen.fatcat;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatDeletionListener;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatFriend;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatInvitation;
@@ -89,7 +91,7 @@ public class MyInvitationsListFragmentFragment extends Fragment {
         final RadioButton declineButton = informationView.findViewById(R.id.radio_decline);
         final RadioButton pendingButton = informationView.findViewById(R.id.radio_pending);
         Button confirmButton = informationView.findViewById(R.id.btn_invitation_confirm);
-
+        Button deleteButton = informationView.findViewById(R.id.btn_invite_delete);
         mEventName.setText(invite.getEvent().getName());
         mHost.setText("Hosted by " + host.getUsername());
         mStart.setText("Start Time: " + invite.getEvent().getStartTime());
@@ -173,6 +175,40 @@ public class MyInvitationsListFragmentFragment extends Fragment {
                         dialog.dismiss();
                     }
                 });
+            }
+        });
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                FirebaseUtils.deleteInvitation(invite, new FatcatDeletionListener() {
+                                    @Override
+                                    public void onFinishDeletion(boolean success) {
+                                        MainActivity.globals.getInvitations(new FatcatListener<Vector<FatcatInvitation>>() {
+                                            @Override
+                                        public void onReturnData(Vector<FatcatInvitation> data) {
+                                                updateList();
+                                                dialog.dismiss();
+                                            }
+                                        });
+
+                                    }
+                                });
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setMessage("Are you sure you want to delete this invitation?").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
             }
         });
        // Intent intent = new Intent(getActivity(), InvitationDetailsActivity.class);
