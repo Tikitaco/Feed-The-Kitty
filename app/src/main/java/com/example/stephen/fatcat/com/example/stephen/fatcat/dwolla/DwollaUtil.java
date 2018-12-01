@@ -2,6 +2,7 @@ package com.example.stephen.fatcat.com.example.stephen.fatcat.dwolla;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -13,11 +14,15 @@ import io.swagger.client.ApiClient;
 import io.swagger.client.ApiException;
 import io.swagger.client.api.CustomersApi;
 import io.swagger.client.api.FundingsourcesApi;
+import io.swagger.client.api.TransfersApi;
 import io.swagger.client.model.Amount;
 import io.swagger.client.model.CreateCustomer;
 import io.swagger.client.model.CreateFundingSourceRequest;
 import io.swagger.client.model.FundingSource;
+import io.swagger.client.model.HalLink;
 import io.swagger.client.model.MicroDeposits;
+import io.swagger.client.model.Transfer;
+import io.swagger.client.model.TransferRequestBody;
 import io.swagger.client.model.Unit$;
 import io.swagger.client.model.VerifyMicroDepositsRequest;
 import okhttp3.MediaType;
@@ -81,6 +86,61 @@ public class DwollaUtil {
         try {
             result = fundingApi.createCustomerFundingSource(fund, customerId);
             return result.getId();
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+
+    }
+
+    public String createTransfer(String fundingSource, String customerDest, String sAmount) throws IOException {
+
+        Map<String, HalLink> links = new HashMap<String, HalLink>();
+
+        HalLink source = new HalLink();
+        source.setHref("https://api-sandbox.dwolla.com/funding-sources/" + fundingSource);
+        links.put("source", source);
+
+        HalLink destination = new HalLink();
+        destination.setHref("https://api-sandbox.dwolla.com/customers/" + customerDest);
+        links.put("destination", destination);
+
+        Amount amount = new Amount();
+        amount.setCurrency("USD");
+        amount.setValue(sAmount);
+
+        TransfersApi transfersApi = new TransfersApi(getApiClient());
+
+        TransferRequestBody transfer = new TransferRequestBody();
+        transfer.setLinks(links);
+        transfer.setAmount(amount);
+
+        Unit$ result;
+        try {
+            result = transfersApi.create(transfer);
+
+            Pattern pattern = Pattern.compile("transfers/(.*)$");
+            Matcher matcher = pattern.matcher(result.getLocationHeader());
+
+            return matcher.group(1);
+        } catch (ApiException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+
+    }
+
+    public String getTransferStatus(String transferId) throws IOException {
+
+        TransfersApi transfersApi = new TransfersApi(getApiClient());
+
+        Transfer transfer;
+        try {
+            transfer = transfersApi.byId(transferId);
+
+            return transfer.getStatus();
         } catch (ApiException e) {
             e.printStackTrace();
         }
@@ -172,4 +232,3 @@ public class DwollaUtil {
 
     }
 }
-
