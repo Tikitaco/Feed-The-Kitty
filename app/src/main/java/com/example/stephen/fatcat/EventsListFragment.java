@@ -66,7 +66,6 @@ public class EventsListFragment extends Fragment {
         mPager.setAdapter(new EventPageAdapter(getFragmentManager(), getContext()));
         TabLayout tabLayout = (TabLayout) v.findViewById(R.id.sliding_tabs);
         tabLayout.setupWithViewPager(mPager);
-        Toast.makeText(getContext(), "Child Count: " + mPager.getChildCount(), Toast.LENGTH_SHORT).show();
         return v;
     }
 

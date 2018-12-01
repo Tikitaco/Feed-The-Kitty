@@ -2,6 +2,7 @@ package com.example.stephen.fatcat;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -9,8 +10,20 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatInvitation;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatListener;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FirebaseUtils;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.Vector;
 
 /**
  * A fragment representing a list of Items.
@@ -21,6 +34,7 @@ import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatInvi
 public class MyInvitationsListFragmentFragment extends Fragment {
 
     private OnListFragmentInteractionListener mListener;
+    private RecyclerView mList;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -51,8 +65,9 @@ public class MyInvitationsListFragmentFragment extends Fragment {
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
             RecyclerView recyclerView = (RecyclerView) view;
+            mList = recyclerView;
             recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            recyclerView.setAdapter(new MyInvitationsListFragmentRecyclerViewAdapter(MainActivity.globals.myInvitations, new OnListFragmentInteractionListener() {
+            recyclerView.setAdapter(new MyInvitationsListFragmentRecyclerViewAdapter(MainActivity.globals.myInvitations, this, new OnListFragmentInteractionListener() {
                 @Override
                 public void onListFragmentInteraction(FatcatInvitation item) {
                     
@@ -60,6 +75,8 @@ public class MyInvitationsListFragmentFragment extends Fragment {
             }));
             Log.i("Utils", "Invites: " + MainActivity.globals.myInvitations.size());
         }
+
+        setupListener();
         return view;
     }
 
@@ -73,6 +90,45 @@ public class MyInvitationsListFragmentFragment extends Fragment {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
         }
+    }
+
+    public void updateList() {
+        // Update the adapter and list.
+        Log.i("Utils", "Size of inv: " + MainActivity.globals.myInvitations.size());
+
+        mList.setAdapter(new MyInvitationsListFragmentRecyclerViewAdapter(MainActivity.globals.myInvitations, this, new OnListFragmentInteractionListener() {
+            @Override
+            public void onListFragmentInteraction(FatcatInvitation item) {
+
+            }
+        }));
+        mList.getAdapter().notifyDataSetChanged();
+    }
+
+    private void setupListener() {
+        DatabaseReference info = FirebaseDatabase.getInstance().getReference().child("profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        info.child("invites").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                final int number_of_invitations = MainActivity.globals.myInvitations.size();
+                Log.i("Utils", "You received an invitation!! (" + number_of_invitations + ")");
+                final long new_invitation_number = dataSnapshot.getChildrenCount();
+                MainActivity.globals.getInvitations(new FatcatListener<Vector<FatcatInvitation>>() {
+                    @Override
+                    public void onReturnData(Vector<FatcatInvitation> data) {
+                        if (new_invitation_number > number_of_invitations) {
+                            Toast.makeText(getContext(), "You received a new invitation!", Toast.LENGTH_SHORT).show();
+                            updateList();
+                        }
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override

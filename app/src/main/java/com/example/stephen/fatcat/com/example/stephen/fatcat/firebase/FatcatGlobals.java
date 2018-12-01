@@ -11,6 +11,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Vector;
 
 public class FatcatGlobals {
@@ -109,28 +110,49 @@ public class FatcatGlobals {
         });
     }
 
+    public void updateMyInvites(final FatcatListener listener) {
+        FirebaseUtils.getMyInvites(new FatcatListener<Map<String, Integer>>() {
+            @Override
+            public void onReturnData(Map<String, Integer> data) {
+                myProfile.invites.clear();
+                myProfile.invites.putAll(data);
+                listener.onReturnData(null);
+            }
+        });
+    }
+
     public void getInvitations(final FatcatListener<Vector<FatcatInvitation>> listener) {
-        final int counter[] = {0};
-        final int number_events = myProfile.invites.size();
-        Log.i("Utils", "Getting " + number_events + " events");
-        for (String event_id : myProfile.invites.keySet()) {
-            final int status = myProfile.invites.get(event_id);
-            FirebaseUtils.getEventInformation(event_id, new FatcatListener<FatcatEvent>() {
-                @Override
-                public void onReturnData(FatcatEvent data) {
-                    myInvitations.add(new FatcatInvitation(data, status));
-                    counter[0]++;
-                    Log.i("Utils", "Added event # " + counter[0]);
-                    if (counter[0] == number_events) {
-                        listener.onReturnData(myInvitations);
-                        return;
-                    }
+        myInvitations.clear();
+        updateMyInvites(new FatcatListener() {
+            @Override
+            public void onReturnData(Object data) {
+                final int counter[] = {0};
+                final int number_events = myProfile.invites.size();
+                Log.i("Utils", "Getting " + number_events + " invitations");
+                for (final String event_id : myProfile.invites.keySet()) {
+                    final int status = myProfile.invites.get(event_id);
+                    FirebaseUtils.getEventInformation(event_id, new FatcatListener<FatcatEvent>() {
+                        @Override
+                        public void onReturnData(FatcatEvent data) {
+                            if (data != null) {
+                                myInvitations.add(new FatcatInvitation(data, status));
+                            } else {
+                                FirebaseUtils.removeInvite(event_id);
+                            }
+                            counter[0]++;
+                            if (counter[0] == number_events) {
+                                listener.onReturnData(myInvitations);
+                                return;
+                            }
+                        }
+                    });
                 }
-            });
-        }
-        // Just return if there are no invites
-        listener.onReturnData(myInvitations);
-        return;
+                // Just return if there are no invites
+                listener.onReturnData(myInvitations);
+                return;
+            }
+        });
+
     }
 
     /**

@@ -11,6 +11,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.stephen.fatcat.MainActivity;
+import com.example.stephen.fatcat.SingleItem;
 import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -40,6 +41,8 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.Vector;
 
@@ -81,7 +84,6 @@ public class FirebaseUtils {
     }
 
     public static void inviteFriendToEvent(FatcatEvent event, FatcatFriend friend) {
-        Log.i("Utils", "Adding " + friend.getUsername() + " to " + event.getName());
         DatabaseReference events = FirebaseDatabase.getInstance().getReference("events");
         // Add this user to the participants list of the event
         events.child(event.getEventID()).child("participants").child(friend.getUID()).setValue(FatcatInvitation.PENDING);
@@ -101,18 +103,22 @@ public class FirebaseUtils {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 FatcatEvent event = dataSnapshot.getValue(FatcatEvent.class);
-                if (dataSnapshot.hasChild("participants")) {
-                    for (DataSnapshot participant : dataSnapshot.child("participants").getChildren()) {
-                        String user = participant.getKey();
-                        int status = Integer.parseInt(participant.getValue().toString());
-                        event.participants.put(user, status);
+                if (event != null) {
+
+                    if (dataSnapshot.hasChild("participants")) {
+                        for (DataSnapshot participant : dataSnapshot.child("participants").getChildren()) {
+                            String user = participant.getKey();
+                            int status = Integer.parseInt(participant.getValue().toString());
+                            event.participants.put(user, status);
+                        }
                     }
+                    if (event != null && dataSnapshot.getKey() != null) {
+                        event.setEventID(dataSnapshot.getKey());
+                    }
+                    listener.onReturnData(event);
+                } else {
+                    listener.onReturnData(null);
                 }
-                if (event != null && dataSnapshot.getKey() != null) {
-                    event.setEventID(dataSnapshot.getKey());
-                }
-                listener.onReturnData(event);
-                return;
             }
 
             @Override
@@ -122,6 +128,37 @@ public class FirebaseUtils {
         });
     }
 
+    public static void removeInvite(String event_id) {
+        DatabaseReference profiles = FirebaseDatabase.getInstance().getReference("profiles");
+        profiles.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("invites").child(event_id).removeValue(new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                Log.i(TAG, "Removed event from invites");
+            }
+        });
+    }
+
+
+    public static void getMyInvites(final FatcatListener<Map<String, Integer>> listener) {
+        DatabaseReference profiles = FirebaseDatabase.getInstance().getReference("profiles");
+        String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        profiles.child(uid).child("invites").addListenerForSingleValueEvent(new ValueEventListener() {
+
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Map<String, Integer> invites = new HashMap<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    invites.put(snapshot.getKey(), snapshot.getValue(Integer.class));
+                }
+                listener.onReturnData(invites);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
     /**
      * Retrieves event information of all events the user is hosting
      * @param listener used for callback once the information is retrieved
@@ -140,24 +177,29 @@ public class FirebaseUtils {
                 final int[] counter = {0};
                 final int size = event_ids.size();
                 synchronized(counter) { // Prevent concurrency errors
-                    for (String event_id : event_ids) {
-                        getEventInformation(event_id, new FatcatListener<FatcatEvent>() {
-                            @Override
-                            public void onReturnData(FatcatEvent data) {
-                                if (data != null) { // If the event exists, add it
-                                    events.add(data);
+                    if (size > 0) {
+                        for (String event_id : event_ids) {
+                            getEventInformation(event_id, new FatcatListener<FatcatEvent>() {
+                                @Override
+                                public void onReturnData(FatcatEvent data) {
+                                    if (data != null) { // If the event exists, add it
+                                        if (data.getName() == null) {
+                                            Log.i("Utils", "Deleted Event detected");
+                                        }
+                                        events.add(data);
+                                    }
+                                    counter[0]++;
+                                    if (counter[0] == size) {
+                                        listener.onReturnData(events);
+                                        return;
+                                    }
                                 }
-                                counter[0]++;
-                                if (counter[0] == size) {
-                                    listener.onReturnData(events);
-                                    return;
-                                }
-                            }
-                        });
+                            });
+                        }
+                    } else {
+                        listener.onReturnData(events); // If it's empty, just return.
+                        return;
                     }
-
-                    listener.onReturnData(events); // If it's empty, just return.
-                    return;
                 }
             }
 
@@ -183,6 +225,19 @@ public class FirebaseUtils {
             mdb.child("events").child(new_event_id).setValue(evt);
         } else {
             mdb.child("events").child(new_event_id).setValue(evt, listener);
+        }
+        // Add items of the event if there are any
+        if (evt.getList().size() > 0) {
+            Log.i("Utils", "Added items");
+            for (int i = 0; i < evt.getList().size(); i++) {
+
+                SingleItem item = evt.getList().get(i);
+                DatabaseReference newItem = mdb.child("events").child(new_event_id).child("items").child(Integer.toString(i));
+                newItem.child("item_name").setValue(item.getItemName());
+                if (item.getPayerName() != null) {
+                    newItem.child("payer_id").setValue(item.getPayerName());
+                }
+            }
         }
     }
 
@@ -293,7 +348,6 @@ public class FirebaseUtils {
                     profile.setUID(uid);
                     profile.setEmail(email);
                     if (snapshot.hasChild("invites")) {
-                        Log.i(TAG, "We do have invites");
                         for (DataSnapshot invite : snapshot.child("invites").getChildren()) {
                             profile.invites.put(invite.getKey(), invite.getValue(Integer.class));
                         }

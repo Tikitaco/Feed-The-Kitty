@@ -44,9 +44,9 @@
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".CreateEventActivity"
-            android:theme="@style/Theme.AppCompat.NoActionBar"
             android:label="Create Event"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar">
 
             <!-- THIS MIGHT BE CREATING TWO APPS INSTEAD OF ONE SO I COMMENTED IT OUT FOR NOW -->
 
@@ -63,6 +63,9 @@
             android:name=".EventDetailsActivity"
             android:label="@string/title_activity_event_details"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".InvitationDetailsActivity"
+            android:label="@string/title_activity_invitation_details"></activity>
     </application>
 
 </manifest>

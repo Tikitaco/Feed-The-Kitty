@@ -80,11 +80,9 @@ public class MyEventFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstance) {
         super.onActivityCreated(savedInstance);
-        Toast.makeText(getContext(), "Created MyEventFragment", Toast.LENGTH_SHORT).show();
     }
 
     private void showInvitationDialog(final FatcatEvent eventClicked) {
-        Toast.makeText(getContext(), "Inviting to event", Toast.LENGTH_SHORT).show();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         // Get the layout inflater
         LayoutInflater inflater = getActivity().getLayoutInflater();

@@ -20,10 +20,12 @@ public class MyInvitationsListFragmentRecyclerViewAdapter extends RecyclerView.A
 
     private final List<FatcatInvitation> mValues;
     private final OnListFragmentInteractionListener mListener;
+    private final MyInvitationsListFragmentFragment mFragment;
 
-    public MyInvitationsListFragmentRecyclerViewAdapter(List<FatcatInvitation> items, OnListFragmentInteractionListener listener) {
+    public MyInvitationsListFragmentRecyclerViewAdapter(List<FatcatInvitation> items, MyInvitationsListFragmentFragment fragment, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
+        mFragment = fragment;
     }
 
     @Override
