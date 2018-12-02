@@ -358,6 +358,10 @@ public class FirebaseUtils {
                     getUserProfile(friendUID, listener);
                     break; // We only need the first element of this iterable
                 }
+
+                if (dataSnapshot.getChildrenCount() == 0) {
+                    listener.onReturnData(null);
+                }
     }
 
             @Override
