@@ -1,5 +1,7 @@
 package com.example.stephen.fatcat;
 
+import android.util.Log;
+
 public class SingleItem {
     private String mItemName;
     private double mPrice;
@@ -51,6 +53,7 @@ public class SingleItem {
     }
 
     public boolean hasBeenPaidFor() {
+        Log.i("Utils", getPayerName());
         return getPayerName().equals("Not yet paid for");
     }
 

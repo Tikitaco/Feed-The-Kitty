@@ -118,9 +118,4 @@ public class InvitationDetailsActivity extends Activity {
             }
         });
     }
-
-    public void onToggle(View view) {
-
-    }
-
 }

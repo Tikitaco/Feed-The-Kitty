@@ -39,6 +39,7 @@ import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.ParseException;
 import java.util.ArrayList;
 
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
@@ -50,6 +51,7 @@ import com.google.firebase.database.DatabaseReference;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class CreateEventActivity extends ListActivity{
 
@@ -145,7 +147,15 @@ public class CreateEventActivity extends ListActivity{
                             Toast.makeText(CreateEventActivity.this,  "Item name or price not entered",Toast.LENGTH_LONG).show();
                         } else {
                             String value = priceStr.substring(1);
-                            Double priceDouble = Double.valueOf(value);
+                            NumberFormat format = NumberFormat.getInstance();
+                            Number number = null;
+                            try {
+                                number = format.parse(value);
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            double d = number.doubleValue();
+                            Double priceDouble = d;
 
                             SingleItem addItem = new SingleItem(addItemNameEdit.getText().toString(), priceDouble);
 

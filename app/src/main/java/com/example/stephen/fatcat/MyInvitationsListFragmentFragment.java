@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -34,6 +35,8 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
+import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Vector;
 
 /**
@@ -80,6 +83,11 @@ public class MyInvitationsListFragmentFragment extends Fragment {
                 break;
             }
         }
+
+        if (host == null) {
+            Toast.makeText(getActivity(), "This invitation is invalid", Toast.LENGTH_SHORT).show();
+            return;
+        }
         TextView mEventName = (TextView) informationView.findViewById(R.id.invitation_event_name);
         TextView mHost = (TextView) informationView.findViewById(R.id.invite_host);
         TextView mStart = (TextView) informationView.findViewById(R.id.invite_start);
@@ -87,6 +95,7 @@ public class MyInvitationsListFragmentFragment extends Fragment {
         TextView mDescription = (TextView) informationView.findViewById(R.id.invite_description);
         TextView mDate = (TextView) informationView.findViewById(R.id.invite_date);
         TextView mItemText = (TextView) informationView.findViewById(R.id.invite_item_request_text);
+        final RecyclerView itemList = (RecyclerView) informationView.findViewById(R.id.requested_items_list);
         final RadioButton goingButton = informationView.findViewById(R.id.radio_going);
         final RadioButton declineButton = informationView.findViewById(R.id.radio_decline);
         final RadioButton pendingButton = informationView.findViewById(R.id.radio_pending);
@@ -97,6 +106,11 @@ public class MyInvitationsListFragmentFragment extends Fragment {
         mStart.setText("Start Time: " + invite.getEvent().getStartTime());
         mEnd.setText("End Time: " + invite.getEvent().getEndTime());
         mDate.setText("Date: " + invite.getEvent().getDate());
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mList.getContext(), DividerItemDecoration.VERTICAL);
+        itemList.addItemDecoration(dividerItemDecoration);
+        Log.i("Utils", String.valueOf(invite.getEvent().getList().size()));
+        itemList.setAdapter(new ItemInvitationAdapter(invite.getEvent().getList()));
+        itemList.setLayoutManager(new LinearLayoutManager(getActivity()));
         if (invite.getEvent().getDescription().length() > 0) {
             mDescription.setText("Description: " + invite.getEvent().getDescription());
         } else {
@@ -157,6 +171,7 @@ public class MyInvitationsListFragmentFragment extends Fragment {
         });
         builder.setView(informationView);
         final AlertDialog dialog = builder.show();
+        final FatcatFriend finalHost = host;
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -168,13 +183,64 @@ public class MyInvitationsListFragmentFragment extends Fragment {
                 } else if (declineButton.isChecked()) {
                     newStatus = FatcatInvitation.DECLINED;
                 }
-                FirebaseUtils.rsvp_event(invite.getEvent(), newStatus, new FatcatListener() {
-                    @Override
-                    public void onReturnData(Object data) {
-                        updateList();
-                        dialog.dismiss();
+                final ArrayList<SingleItem> payingFor = new ArrayList<>(); // List of all items the user is paying for
+                // Check each checkbox to see if the user offered to pay for anything
+                for (int i = 0; i < itemList.getAdapter().getItemCount(); i++) {
+                    ItemInvitationAdapter.ViewHolder holder = (ItemInvitationAdapter.ViewHolder) itemList.findViewHolderForAdapterPosition(i);
+                    if (holder.mPayForItem.isChecked()) {
+                        payingFor.add(holder.mItem);
                     }
-                });
+                }
+                if (payingFor.size() > 0) { // If paying for any money
+                    double total = 0;
+                    for (SingleItem item : payingFor) {
+                        total += item.getPrice();
+                    }
+
+                    final int finalNewStatus = newStatus;
+                    DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int which) {
+                            switch (which){
+                                case DialogInterface.BUTTON_POSITIVE:
+                                    boolean success = true; // TODO set this to calling Pay API
+                                    if (success) { // If successful, Update database with payment and RSVP
+                                        for (SingleItem item : payingFor) {
+                                            FirebaseUtils.paidForItem(invite.getEvent(), item); // Update who paid for it in backend
+                                        }
+                                        FirebaseUtils.rsvp_event(invite.getEvent(), finalNewStatus, new FatcatListener() {
+                                            @Override
+                                            public void onReturnData(Object data) {
+                                                MainActivity.globals.getInvitations(new FatcatListener() {
+                                                    @Override
+                                                    public void onReturnData(Object data) {
+                                                        updateList();
+                                                        dialog.dismiss();
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                    break;
+
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    break;
+                            }
+                        }
+                    };
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                    builder.setMessage("Pay " + NumberFormat.getCurrencyInstance().format(total) + " to " + finalHost.getUsername() + " for items?").setPositiveButton("Yes", dialogClickListener)
+                            .setNegativeButton("No", dialogClickListener).show();
+                } else {
+                    FirebaseUtils.rsvp_event(invite.getEvent(), newStatus, new FatcatListener() {
+                        @Override
+                        public void onReturnData(Object data) {
+                            updateList();
+                            dialog.dismiss();
+                        }
+                    });
+                }
             }
         });
         deleteButton.setOnClickListener(new View.OnClickListener() {

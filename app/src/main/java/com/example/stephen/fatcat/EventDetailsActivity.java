@@ -1,11 +1,13 @@
 package com.example.stephen.fatcat;
 
+import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.ListActivity;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -14,6 +16,9 @@ import android.os.Bundle;
 import android.app.Activity;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
@@ -30,7 +35,11 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 import android.content.Intent;
 
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatDeletionListener;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatFriend;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatInvitation;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatListener;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FirebaseUtils;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -41,6 +50,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Vector;
 
 public class EventDetailsActivity extends ListActivity {
 
@@ -48,12 +58,14 @@ public class EventDetailsActivity extends ListActivity {
     private Button mStartTimeButton;
     private Button mEndTimeButton;
     private Button mSubmitEvent;
+    private Button mDeleteButton;
     private static Date mDate;
     private static TextView dateView;
     private static TextView startTimeView;
     private static TextView endTimeView;
     private static String dateString;
     private static String timeString;
+    private Button inviteFriendsButton;
     private static boolean setEnd = false;
     private Context mContext = this;
 
@@ -95,11 +107,21 @@ public class EventDetailsActivity extends ListActivity {
         startTimeView = (TextView) v.findViewById(R.id.StartTime);
         endTimeView = (TextView) v.findViewById(R.id.EndTime);
 
+        inviteFriendsButton = (Button) v.findViewById(R.id.btn_invite);
+        mDeleteButton = (Button) v.findViewById(R.id.btn_delete);
+
         mEventName.setText(event.getName());
         mDescription.setText(event.getDescription());
         dateView.setText(event.getDate());
         startTimeView.setText(event.getStartTime());
         endTimeView.setText(event.getEndTime());
+
+        inviteFriendsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showInvitationDialog(event);
+            }
+        });
 
         View footerView = getLayoutInflater().inflate(R.layout.single_list_footer_view_without_create, null);
         getListView().addFooterView(footerView);
@@ -107,6 +129,40 @@ public class EventDetailsActivity extends ListActivity {
         final ViewGroup root = (ViewGroup) getWindow().getDecorView().getRootView(); // Blur?
 
         Button addAnotherItem = (Button) findViewById(R.id.addAnotherItemView);
+        mDeleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int which) {
+                        switch (which){
+                            case DialogInterface.BUTTON_POSITIVE:
+                                FirebaseUtils.deleteEvent(event.getEventID(), new FatcatDeletionListener() {
+                                    @Override
+                                    public void onFinishDeletion(boolean success) {
+                                        if (success) {
+                                            MainActivity.globals.getMyEvents(new FatcatListener<Vector<FatcatEvent>>() {
+                                                @Override
+                                                public void onReturnData(Vector<FatcatEvent> data) {
+                                                    finish();
+                                                }
+                                            });
+                                        }
+                                    }
+                                });
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(EventDetailsActivity.this);
+                builder.setMessage("Are you sure you want to delete this event?").setPositiveButton("Yes", dialogClickListener)
+                        .setNegativeButton("No", dialogClickListener).show();
+            }
+        });
         addAnotherItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -203,6 +259,40 @@ public class EventDetailsActivity extends ListActivity {
                 } else {
                     Toast.makeText(mContext, "Only event creator can edit this", Toast.LENGTH_LONG).show();
                 }
+            }
+        });
+
+    }
+
+    private void showInvitationDialog(final FatcatEvent eventClicked) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        // Get the layout inflater
+        LayoutInflater inflater = getLayoutInflater();
+        View informationView = inflater.inflate(R.layout.popup_invite_list, null);
+        final RecyclerView list = informationView.findViewById(R.id.invitation_list);
+        Button inviteButton = informationView.findViewById(R.id.invite_add_button);
+        list.setLayoutManager(new LinearLayoutManager(this));
+        list.setAdapter(new InviteFriendListAdapter(MainActivity.globals.friendProfiles, this));
+        // Add a divider between each item to make it look nice
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
+        list.addItemDecoration(dividerItemDecoration);
+        builder.setView(informationView);
+        final AlertDialog dialog = builder.show();
+        inviteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ArrayList<FatcatFriend> invites = new ArrayList<>();
+                for (int i = 0; i < list.getAdapter().getItemCount(); i++) {
+                    InviteFriendListAdapter.ViewHolder holder = (InviteFriendListAdapter.ViewHolder) list.findViewHolderForAdapterPosition(i);
+                    if (holder.mAdd.isChecked()) {
+                        invites.add(holder.mItem);
+                    }
+                }
+                for (FatcatFriend friend : invites) {
+                    FirebaseUtils.inviteFriendToEvent(eventClicked, friend);
+                }
+                dialog.dismiss();
+
             }
         });
 

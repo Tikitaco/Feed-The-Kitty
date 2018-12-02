@@ -265,6 +265,11 @@ public class FirebaseUtils {
         });
 
     }
+
+    public static void paidForItem(FatcatEvent event, SingleItem item) {
+        DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference().child("events").child(event.getEventID());
+        eventRef.child("items").child(String.valueOf(item.indexInDatabase)).child("payer_id").setValue(MainActivity.globals.myProfile.getUsername());
+    }
     /**
      * Uploads a New Event and adds the user as its owner
      * @param evt The event object being uploaded

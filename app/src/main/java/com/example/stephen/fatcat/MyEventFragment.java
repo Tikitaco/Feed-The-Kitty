@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.DividerItemDecoration;
@@ -19,9 +20,18 @@ import android.widget.Toast;
 
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatFriend;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatInvitation;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatListener;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FirebaseUtils;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  * A fragment representing a list of Items.
@@ -75,6 +85,7 @@ public class MyEventFragment extends Fragment {
         // Add a divider between each item to make it look nice
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mList.getContext(), DividerItemDecoration.VERTICAL);
         mList.addItemDecoration(dividerItemDecoration);
+        setupListener();
         return view;
     }
 
@@ -83,39 +94,7 @@ public class MyEventFragment extends Fragment {
         super.onActivityCreated(savedInstance);
     }
 
-    private void showInvitationDialog(final FatcatEvent eventClicked) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        // Get the layout inflater
-        LayoutInflater inflater = getActivity().getLayoutInflater();
-        View informationView = inflater.inflate(R.layout.popup_invite_list, null);
-        final RecyclerView list = informationView.findViewById(R.id.invitation_list);
-        Button inviteButton = informationView.findViewById(R.id.invite_add_button);
-        list.setLayoutManager(new LinearLayoutManager(getContext()));
-        list.setAdapter(new InviteFriendListAdapter(MainActivity.globals.friendProfiles));
-        // Add a divider between each item to make it look nice
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mList.getContext(), DividerItemDecoration.VERTICAL);
-        list.addItemDecoration(dividerItemDecoration);
-        builder.setView(informationView);
-        final AlertDialog dialog = builder.show();
-        inviteButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ArrayList<FatcatFriend> invites = new ArrayList<>();
-                for (int i = 0; i < list.getAdapter().getItemCount(); i++) {
-                    InviteFriendListAdapter.ViewHolder holder = (InviteFriendListAdapter.ViewHolder) list.findViewHolderForAdapterPosition(i);
-                    if (holder.mAdd.isChecked()) {
-                        invites.add(holder.mItem);
-                    }
-                }
-                for (FatcatFriend friend : invites) {
-                    FirebaseUtils.inviteFriendToEvent(eventClicked, friend);
-                }
-                dialog.dismiss();
 
-            }
-        });
-
-    }
 
     private void showDetailsOfEvent(FatcatEvent event) {
         Intent i = new Intent(getActivity(), EventDetailsActivity.class);
@@ -151,6 +130,26 @@ public class MyEventFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    private void setupListener() {
+        DatabaseReference info = FirebaseDatabase.getInstance().getReference().child("events");
+        info.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                MainActivity.globals.getMyEvents(new FatcatListener<Vector<FatcatEvent>>() {
+                    @Override
+                    public void onReturnData(Vector<FatcatEvent> data) {
+                        updateList();
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     /**

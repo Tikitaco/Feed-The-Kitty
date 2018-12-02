@@ -1,5 +1,7 @@
 package com.example.stephen.fatcat;
 
+import android.content.Context;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
@@ -18,9 +20,11 @@ import java.util.List;
 public class InviteFriendListAdapter extends RecyclerView.Adapter<InviteFriendListAdapter.ViewHolder> {
 
     private final List<FatcatFriend> mValues;
+    private Context mContext;
 
-    public InviteFriendListAdapter(List<FatcatFriend> items) {
+    public InviteFriendListAdapter(List<FatcatFriend> items, Context context) {
         mValues = items;
+        mContext = context;
     }
 
     @NonNull
@@ -50,6 +54,8 @@ public class InviteFriendListAdapter extends RecyclerView.Adapter<InviteFriendLi
         });
         if (profile.getProfilePicture() != null) {
             holder.mImage.setImageBitmap(profile.getProfilePicture());
+        } else {
+            holder.mImage.setImageBitmap(BitmapFactory.decodeResource(mContext.getResources(), R.mipmap.baseline_person_black_24dp));
         }
     }
 

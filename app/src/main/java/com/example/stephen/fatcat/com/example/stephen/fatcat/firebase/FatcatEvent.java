@@ -30,6 +30,7 @@ public class FatcatEvent implements Comparable<FatcatEvent>{
     private String mStartTime;
     private String mEndTime;
     private String mOwnerUID;
+    @Exclude
     private ArrayList<SingleItem> items;
     private String eventID;
     public int indexInDatabase = 0;
@@ -133,6 +134,7 @@ public class FatcatEvent implements Comparable<FatcatEvent>{
         return eventID;
     }
 
+    @Exclude
     public ArrayList<SingleItem> getList() { return items;}
 
     @Override
@@ -145,6 +147,7 @@ public class FatcatEvent implements Comparable<FatcatEvent>{
         }
     }
 
+    @Exclude
     public FatcatFriend getOwner() {
         for (FatcatFriend friend : MainActivity.globals.friendProfiles) {
             if (friend.getUID().equals(getOwnerUID())) {

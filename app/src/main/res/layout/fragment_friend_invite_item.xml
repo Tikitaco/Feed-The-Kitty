@@ -18,10 +18,12 @@
 
     <CheckBox
         android:id="@+id/invite_checkbox"
+        style="@android:style/Widget.Material.CompoundButton.CheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
+        android:buttonTint="#737373"
         android:clickable="false"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
