@@ -75,6 +75,16 @@ public class FatcatEvent implements Comparable<FatcatEvent>{
         }
     }
 
+    public int getNumberOfPeopleGoing() {
+        int number = 0;
+        for (String key : participants.keySet()) {
+            if (participants.get(key) == FatcatInvitation.ACCEPTED) {
+                number++;
+            }
+        }
+        return number;
+    }
+
     public String getOwnerUID() {
         return mOwnerUID;
     }

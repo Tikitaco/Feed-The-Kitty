@@ -138,11 +138,32 @@
             android:id="@+id/List"
             android:layout_width="122dp"
             android:layout_height="wrap_content"
-            android:text="List"
+            android:text="Item List"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="#737373"
             android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/show_invitation_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@android:color/holo_blue_dark"
+        android:text="Show RSVP List" />
+
+    <Button
+        android:id="@+id/btn_invite"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#1BB89C"
+        android:text="Invite Friends" />
+
+    <Button
+        android:id="@+id/btn_delete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FF5252"
+        android:text="Delete Event" />
 
 </LinearLayout>

@@ -30,7 +30,6 @@ public class SingleItem {
                     intent.getDoubleExtra(PAYERNAME);
 
         }*/
-
     public String getItemName() {
         return mItemName;
     }
@@ -49,6 +48,10 @@ public class SingleItem {
 
     public void setPrice(Double price) {
         mPrice = price;
+    }
+
+    public boolean hasBeenPaidFor() {
+        return getPayerName().equals("Not yet paid for");
     }
 
     public void setPayerName(String name) {

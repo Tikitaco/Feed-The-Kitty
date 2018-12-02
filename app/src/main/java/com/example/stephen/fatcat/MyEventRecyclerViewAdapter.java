@@ -46,8 +46,13 @@ public class MyEventRecyclerViewAdapter extends RecyclerView.Adapter<MyEventRecy
         holder.mItem = mValues.get(position);
         holder.mEventName.setText(mValues.get(position).getName());
         holder.mEventDate.setText(mValues.get(position).getDate());
+        if (holder.mItem.participants.size() > 0) {
+            int invites = holder.mItem.participants.size();
+            int accepts = holder.mItem.getNumberOfPeopleGoing();
+            holder.mPeopleGoing.setText(accepts + "/" + invites + " Going");
+        }
         //holder.mContentView.setText(mValues.get(position).content);
-        holder.mDeleteButton.setOnClickListener(new View.OnClickListener() {
+        /*holder.mDeleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FirebaseUtils.deleteEvent(holder.mItem.getEventID(), new FatcatDeletionListener() {
@@ -64,7 +69,7 @@ public class MyEventRecyclerViewAdapter extends RecyclerView.Adapter<MyEventRecy
                     }
                 });
             }
-        });
+        }); */
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,7 +91,7 @@ public class MyEventRecyclerViewAdapter extends RecyclerView.Adapter<MyEventRecy
         public final View mView;
         public final TextView mEventName;
         public final TextView mEventDate;
-        public final ImageView mDeleteButton;
+        public final TextView mPeopleGoing;
         public FatcatEvent mItem;
 
         public ViewHolder(View view) {
@@ -94,7 +99,7 @@ public class MyEventRecyclerViewAdapter extends RecyclerView.Adapter<MyEventRecy
             mView = view;
             mEventName = (TextView) view.findViewById(R.id.list_event_name);
             mEventDate = (TextView) view.findViewById(R.id.list_event_date);
-            mDeleteButton = (ImageView) view.findViewById(R.id.deleteButton);
+            mPeopleGoing = (TextView) view.findViewById(R.id.going_number);
         }
 
         @Override
