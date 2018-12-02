@@ -4,6 +4,7 @@ public class SingleItem {
     private String mItemName;
     private double mPrice;
     private String mPayerName;
+    public int indexInDatabase = -1;
 
     public SingleItem() {
         mItemName = "NoItemName";

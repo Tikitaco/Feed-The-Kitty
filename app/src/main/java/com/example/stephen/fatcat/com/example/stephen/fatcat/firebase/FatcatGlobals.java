@@ -11,22 +11,27 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Vector;
 
+/**
+ * This is a class meant to share important variables such as friendProfiles, events, and inventations with the rest of the app
+ */
 public class FatcatGlobals {
     public FatcatFriend myProfile;
     public Vector<FatcatFriend> friendProfiles = new Vector<>();
     public Vector<FatcatEvent> myEvents = new Vector<>();
     public Vector<FatcatInvitation> myInvitations = new Vector<>();
     /**
-     * Load friends at the beginning of the app, so we don't have to continually grab them.
+     * Load friends, invitations, and events at the beginning of the app, so we don't have to continually grab them.
      */
     public void initializeGlobals(final FatcatListener listener) {
         friendProfiles.clear();
         myEvents.clear();
         myInvitations.clear();
+        // Thread-safe completion tracking
         final boolean profileDone[] = {false};
         final boolean friendsDone[] = {false};
         final boolean eventsDone[] = {false};
@@ -87,6 +92,7 @@ public class FatcatGlobals {
             public void onReturnData(Vector<FatcatEvent> data) {
                 myEvents = new Vector<>(data); // Copy all event data into local vector
                 if (listener != null) {
+                    Collections.sort(myEvents);
                     listener.onReturnData(myEvents);
                     return;
                 }
@@ -111,6 +117,10 @@ public class FatcatGlobals {
         });
     }
 
+    /**
+     * Updates specifically the User's invitations without updating anything else
+     * @param listener
+     */
     public void updateMyInvites(final FatcatListener listener) {
         FirebaseUtils.getMyInvites(new FatcatListener<Map<String, Integer>>() {
             @Override
@@ -122,6 +132,10 @@ public class FatcatGlobals {
         });
     }
 
+    /**
+     * Retreieves invitations from database
+     * @param listener
+     */
     public void getInvitations(final FatcatListener<Vector<FatcatInvitation>> listener) {
         myInvitations.clear();
         updateMyInvites(new FatcatListener() {
@@ -145,6 +159,7 @@ public class FatcatGlobals {
                             }
                             counter[0]++;
                             if (counter[0] == number_events) {
+                                Collections.sort(myInvitations);
                                 listener.onReturnData(myInvitations);
                                 return;
                             }

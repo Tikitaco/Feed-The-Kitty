@@ -112,6 +112,21 @@ public class FirebaseUtils {
                             event.participants.put(user, status);
                         }
                     }
+
+                    if (dataSnapshot.hasChild("items")) {
+                        for (DataSnapshot item : dataSnapshot.child("items").getChildren()) {
+                            int index = Integer.parseInt(item.getKey());
+                            SingleItem newItem = new SingleItem();
+                            newItem.setItemName(item.child("item_name").getValue().toString());
+                            newItem.setPayerName(item.child("payer_id").getValue().toString());
+                            if (item.hasChild("price")) {
+                                newItem.setPrice(Double.parseDouble(item.child("price").getValue().toString()));
+                            }
+                            newItem.indexInDatabase = index;
+                            event.getList().add(newItem);
+
+                        }
+                    }
                     if (event != null && dataSnapshot.getKey() != null) {
                         event.setEventID(dataSnapshot.getKey());
                     }
@@ -274,6 +289,8 @@ public class FirebaseUtils {
                 SingleItem item = evt.getList().get(i);
                 DatabaseReference newItem = mdb.child("events").child(new_event_id).child("items").child(Integer.toString(i));
                 newItem.child("item_name").setValue(item.getItemName());
+                newItem.child("price").setValue(item.getPrice());
+                Log.i("Utils", "Made New Item in DB");
                 if (item.getPayerName() != null) {
                     newItem.child("payer_id").setValue(item.getPayerName());
                 }

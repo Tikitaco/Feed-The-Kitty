@@ -1,6 +1,8 @@
 package com.example.stephen.fatcat.com.example.stephen.fatcat.firebase;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
+
 import com.example.stephen.fatcat.SingleItem;
 
 import com.google.firebase.database.DatabaseReference;
@@ -19,7 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class FatcatEvent {
+public class FatcatEvent implements Comparable<FatcatEvent>{
 
     private String mName;
     private String mDescription;
@@ -29,6 +31,7 @@ public class FatcatEvent {
     private String mOwnerUID;
     private ArrayList<SingleItem> items;
     private String eventID;
+    public int indexInDatabase = 0;
 
     @Exclude
     public Map<String, Integer> participants = new HashMap<>();
@@ -131,4 +134,19 @@ public class FatcatEvent {
         }
     }
 
+    /**
+     * Allow the events list to be sorted by date
+     * @param event
+     * @return
+     */
+    @Override
+    public int compareTo(@NonNull FatcatEvent event) {
+        Date now = Calendar.getInstance().getTime();
+        try {
+            return dateFormat.parse(event.getDate()).compareTo(dateFormat.parse(getDate()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
 }

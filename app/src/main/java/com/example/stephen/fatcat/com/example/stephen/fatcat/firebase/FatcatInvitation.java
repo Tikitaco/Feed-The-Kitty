@@ -1,6 +1,8 @@
 package com.example.stephen.fatcat.com.example.stephen.fatcat.firebase;
 
-public class FatcatInvitation {
+import android.support.annotation.NonNull;
+
+public class FatcatInvitation implements Comparable<FatcatInvitation>{
     private int mStatus = PENDING;
     private FatcatEvent mEvent;
 
@@ -33,5 +35,10 @@ public class FatcatInvitation {
         } else {
             return false;
         }
+    }
+
+    @Override
+    public int compareTo(@NonNull FatcatInvitation fatcatInvitation) {
+        return getEvent().compareTo(fatcatInvitation.getEvent());
     }
 }
