@@ -65,8 +65,8 @@ public class MyPaymentsRecyclerViewAdapter extends RecyclerView.Adapter<MyPaymen
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mIdView = (TextView) view.findViewById(R.id.payment_id);
+            mContentView = (TextView) view.findViewById(R.id.payment_amount);
         }
 
         @Override
