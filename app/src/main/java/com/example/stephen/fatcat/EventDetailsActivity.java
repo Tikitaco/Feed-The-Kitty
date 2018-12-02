@@ -292,7 +292,6 @@ public class EventDetailsActivity extends ListActivity {
                     FirebaseUtils.inviteFriendToEvent(eventClicked, friend);
                 }
                 dialog.dismiss();
-
             }
         });
 

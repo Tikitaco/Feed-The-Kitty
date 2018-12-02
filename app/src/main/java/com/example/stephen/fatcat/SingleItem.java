@@ -26,12 +26,6 @@ public class SingleItem {
         mPayerName = payerName;
     }
 
-        /*public SingleItem(Intent intent) {
-            mItemName = intent.getStringExtra(ITEMNAME);
-            mPrice =
-                    intent.getDoubleExtra(PAYERNAME);
-
-        }*/
     public String getItemName() {
         return mItemName;
     }
