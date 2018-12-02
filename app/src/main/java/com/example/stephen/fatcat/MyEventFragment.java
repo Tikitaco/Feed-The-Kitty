@@ -2,6 +2,7 @@ package com.example.stephen.fatcat;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
@@ -64,7 +65,7 @@ public class MyEventFragment extends Fragment {
             mAdapter = new MyEventRecyclerViewAdapter(MainActivity.globals.myEvents, new OnListFragmentInteractionListener() {
                 @Override
                 public void onListFragmentInteraction(FatcatEvent item) {
-                    showInvitationDialog(item);
+                    showDetailsOfEvent(item);
                 }
             }, this);
             recyclerView.setAdapter(mAdapter);
@@ -116,12 +117,18 @@ public class MyEventFragment extends Fragment {
 
     }
 
+    private void showDetailsOfEvent(FatcatEvent event) {
+        Intent i = new Intent(getActivity(), EventDetailsActivity.class);
+        i.putExtra("event_id", event.getEventID());
+        startActivity(i);
+    }
     public void updateList() {
         // Update the adapter and list.
         mList.setAdapter(mAdapter = new MyEventRecyclerViewAdapter(MainActivity.globals.myEvents, new OnListFragmentInteractionListener() {
             @Override
             public void onListFragmentInteraction(FatcatEvent item) {
-                showInvitationDialog(item);
+                //showInvitationDialog(item);
+                showDetailsOfEvent(item);
             }
         }, this));
         mAdapter.notifyDataSetChanged();

@@ -65,8 +65,19 @@ public class EventDetailsActivity extends ListActivity {
 
         //TODO get event using intent and replace new FatcatEvent with the actual event
         Intent intent = getIntent();
-        final FatcatEvent event = new FatcatEvent();
+        String event_id = intent.getExtras().get("event_id").toString();
 
+        FatcatEvent findEvent = null;
+        for (FatcatEvent fe : MainActivity.globals.myEvents) {
+            if (fe.getEventID().equals(event_id)) {
+                findEvent = fe;
+                break;
+            }
+        }
+        if (findEvent == null) {
+            Toast.makeText(this, "Couldn't find event details", Toast.LENGTH_SHORT).show();
+        }
+        final FatcatEvent event = findEvent;
         mAdapter = new ItemsListAdapter(getApplicationContext(), event.getList());
 
         View v = (View) getLayoutInflater().inflate(R.layout.activity_event_details, null);

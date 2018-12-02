@@ -252,6 +252,9 @@ public class MyInvitationsListFragmentFragment extends Fragment {
         }
     }
 
+    /**
+     * Updates the list when there's been a change in invitations
+     */
     public void updateList() {
         // Update the adapter and list.
         Log.i("Utils", "Size of inv: " + MainActivity.globals.myInvitations.size());
@@ -265,6 +268,10 @@ public class MyInvitationsListFragmentFragment extends Fragment {
         mList.getAdapter().notifyDataSetChanged();
     }
 
+
+    /**
+     * Sets up listener for changes in the invitations database
+     */
     private void setupListener() {
         DatabaseReference info = FirebaseDatabase.getInstance().getReference().child("profiles").child(FirebaseAuth.getInstance().getCurrentUser().getUid());
         info.child("invites").addValueEventListener(new ValueEventListener() {
