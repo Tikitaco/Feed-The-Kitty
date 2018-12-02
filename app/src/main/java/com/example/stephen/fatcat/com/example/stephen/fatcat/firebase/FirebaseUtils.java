@@ -438,6 +438,23 @@ public class FirebaseUtils {
                             profile.invites.put(invite.getKey(), invite.getValue(Integer.class));
                         }
                     }
+
+                    if (snapshot.hasChild("dwolla_id")) {
+                        profile.customerId = snapshot.child("dwolla_id").getValue().toString();
+                    }
+
+                    if (snapshot.hasChild("funding_sources")) {
+                        for (DataSnapshot source : snapshot.child("funding_sources").getChildren()) {
+                            profile.fundingSources.put(source.getKey(), source.getValue().toString());
+                        }
+                    }
+
+                    if (snapshot.hasChild("transfers")) {
+                        for (DataSnapshot source : snapshot.child("transfers").getChildren()) {
+                            profile.transfers.put(source.getKey(), source.getValue().toString());
+                        }
+                    }
+
                     getProfilePicture(uid, new FatcatListener<Bitmap>() {
                         @Override
                         public void onReturnData(Bitmap data) {
