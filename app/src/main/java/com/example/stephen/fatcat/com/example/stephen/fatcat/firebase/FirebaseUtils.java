@@ -270,6 +270,26 @@ public class FirebaseUtils {
         DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference().child("events").child(event.getEventID());
         eventRef.child("items").child(String.valueOf(item.indexInDatabase)).child("payer_id").setValue(MainActivity.globals.myProfile.getUsername());
     }
+
+    // Dwolla related methods
+    public static void createdDwollaCustomer(String customerId) {
+        DatabaseReference mdb = FirebaseDatabase.getInstance().getReference().child("profiles").child(MainActivity.globals.myProfile.getUID());
+        mdb.child("dwolla_id").setValue(customerId);
+    }
+    public static void addedFundingSource(String fundSourceId, String name) {
+        DatabaseReference mdb = FirebaseDatabase.getInstance().getReference().child("profiles").child(MainActivity.globals.myProfile.getUID()).child("funding_sources");
+        mdb.child(fundSourceId).setValue(name);
+    }
+    public static void sentPayment(String transferId, String amount, FatcatFriend receiver) {
+        DatabaseReference mdb = FirebaseDatabase.getInstance().getReference().child("profiles");
+
+        // Sender
+        mdb.child(MainActivity.globals.myProfile.getUID()).child("transfers").child(transferId).setValue("-" + amount);
+        // Receiver
+        mdb.child(receiver.getUID()).child("transfers").child(transferId).setValue("+" + amount);
+    }
+
+
     /**
      * Uploads a New Event and adds the user as its owner
      * @param evt The event object being uploaded
