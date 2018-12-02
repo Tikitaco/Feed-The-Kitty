@@ -61,7 +61,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         eventsFragment = new EventsListFragment();
         paymentsFragment = new PaymentsFragment();
         fundingSourcesFragment = new FundingSourcesFragment();
-
+        mNavigationView = (NavigationView) findViewById(R.id.navigation_view) ;
         mMainNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -82,11 +82,15 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                             setFragmentCal(eventsFragment = new EventsListFragment());
                             item.setIcon(R.mipmap.baseline_calendar_today_white_36);
                             item.setTitle("Calendar View");
+                            mNavigationView.getMenu().getItem(0).setIcon(R.mipmap.baseline_list_black_36);
+                            mNavigationView.getMenu().getItem(0).setTitle("List View");
                             isCalendar = false;
                         }else{
                             setFragmentCal(calendarFragment);
                             item.setIcon(R.mipmap.baseline_list_black_36);
                             item.setTitle("List View");
+                            mNavigationView.getMenu().getItem(0).setIcon(R.mipmap.baseline_calendar_today_white_36);
+                            mNavigationView.getMenu().getItem(0).setTitle("Event Calendar");
                             isCalendar = true;
                         }
                         return true;
@@ -102,7 +106,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
 
 
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-        mNavigationView = (NavigationView) findViewById(R.id.navigation_view) ;
+
 
         mNavigationView.setNavigationItemSelectedListener(this);
 
@@ -122,6 +126,11 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         int id = item.getItemId();
         switch (id){
             case R.id.nav_account:
+                if (isCalendar) {
+                    setFragment(calendarFragment);
+                } else {
+                    setFragment(eventsFragment = new EventsListFragment());
+                }
                 break;
             case R.id.nav_settings:
                 setFragment(settingsFragment);
@@ -249,6 +258,11 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 }
             });
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+
     }
 
     @Override
