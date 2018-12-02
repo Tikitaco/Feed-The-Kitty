@@ -198,11 +198,13 @@ public class MyInvitationsListFragmentFragment extends Fragment {
                     }
 
                     final int finalNewStatus = newStatus;
+                    final double finalTotal = total;
                     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int which) {
                             switch (which){
                                 case DialogInterface.BUTTON_POSITIVE:
+                                    double amount_to_pay = finalTotal; // The amount the user has to send
                                     boolean success = true; // TODO set this to calling Pay API
                                     if (success) { // If successful, Update database with payment and RSVP
                                         for (SingleItem item : payingFor) {
