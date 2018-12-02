@@ -3,58 +3,56 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/graylight"
+    android:background="#FFFF"
     android:orientation="vertical"
-    tools:context=".EventDetailsActivity">
+    tools:context=".CreateEventActivity">
 
     <LinearLayout
-        android:layout_width="360dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"
-        android:orientation="horizontal">
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:background="?attr/colorPrimary"
+        android:orientation="vertical">
 
         <TextView
-            android:id="@+id/EventName"
-            android:layout_width="122dp"
+            android:id="@+id/name_of_event"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Event name: "
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#737373"
-            android:textSize="20sp"
-            android:textStyle="bold" />
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="15dp"
+            android:text="Name of Event"
+            style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+            android:textColor="@color/startblue" />
 
-        <TextView
-            android:id="@+id/EventNameData"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:singleLine="true" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="360dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:orientation="horizontal">
+        android:orientation="vertical"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp">
 
         <TextView
             android:id="@+id/Description"
             android:layout_width="122dp"
             android:layout_height="wrap_content"
-            android:text="Description"
+            android:text="Description: "
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="#737373"
             android:textSize="20sp"
             android:textStyle="bold" />
 
         <TextView
-            android:id="@+id/EventDescriptionData"
+            android:id="@+id/EnterEventDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="top|start"
-            android:lines="1"
-            android:maxLines="4"
-            android:minLines="1" />
+            style="@android:style/TextAppearance.DeviceDefault.Medium"
+            android:textColorHint="#999999"
+            android:textColor="#000000"
+            android:visibility="visible"/>
     </LinearLayout>
 
     <LinearLayout
@@ -62,22 +60,26 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginStart="10dp">
+
+        <Button
+            android:id="@+id/chooseDate"
+            android:layout_width="55dp"
+            android:layout_height="35dp"
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/mybutton"
+            android:text="Date"
+            android:textColor="#fff" />
 
         <TextView
             android:id="@+id/Date"
-            android:layout_width="122dp"
-            android:layout_height="wrap_content"
-            android:text="Date"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#737373"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/DateData"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            style="@android:style/TextAppearance.DeviceDefault.Medium"
+            android:textColor="#000000"
+            android:visibility="visible"
+            android:text="January 1, 2018" />
     </LinearLayout>
 
     <LinearLayout
@@ -85,22 +87,26 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginStart="10dp">
+
+        <Button
+            android:id="@+id/chooseStartTime"
+            android:layout_width="100dp"
+            android:layout_height="35dp"
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/mybutton"
+            android:text="Start time"
+            android:textColor="#fff" />
 
         <TextView
             android:id="@+id/StartTime"
-            android:layout_width="122dp"
-            android:layout_height="wrap_content"
-            android:text="Start time"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#737373"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/StartTimeData"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            style="@android:style/TextAppearance.DeviceDefault.Medium"
+            android:textColor="#000000"
+            android:visibility="visible"
+            android:text="12:00pm" />
     </LinearLayout>
 
     <LinearLayout
@@ -108,30 +114,35 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginStart="10dp">
+
+        <Button
+            android:id="@+id/chooseEndTime"
+            android:layout_width="100dp"
+            android:layout_height="35dp"
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/mybutton"
+            android:text="End time"
+            android:textColor="#fff" />
 
         <TextView
             android:id="@+id/EndTime"
-            android:layout_width="122dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/mybutton"
-            android:text="End time"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:textColor="#737373"
-            android:textSize="20sp"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/EndTimeData"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            style="@android:style/TextAppearance.DeviceDefault.Medium"
+            android:textColor="#000000"
+            android:visibility="visible"
+            android:text="1:00pm" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="360dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
-        android:layout_gravity="center">
+        android:layout_marginBottom="15dp"
+        android:layout_gravity="center"
+        android:layout_marginStart="10dp">
 
         <TextView
             android:id="@+id/List"
@@ -143,12 +154,5 @@
             android:textSize="20sp"
             android:textStyle="bold" />
     </LinearLayout>
-
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/ScrollList"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_marginStart="5dp">
-    </ScrollView>
 
 </LinearLayout>

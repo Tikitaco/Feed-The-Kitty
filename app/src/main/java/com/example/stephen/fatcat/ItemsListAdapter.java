@@ -39,6 +39,11 @@ public class ItemsListAdapter extends BaseAdapter {
 
     }
 
+    public ItemsListAdapter(Context context, List<SingleItem> list) {
+        mContext = context;
+        mItems.addAll(list);
+    }
+
     // Add a SingleItem to the adapter
     // Notify observers that the data set has changed
 

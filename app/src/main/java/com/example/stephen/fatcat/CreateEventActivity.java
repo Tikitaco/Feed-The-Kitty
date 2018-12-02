@@ -52,12 +52,7 @@ import org.w3c.dom.Text;
 import java.util.Calendar;
 import java.util.Date;
 
-public class CreateEventActivity extends ListActivity implements NavigationView.OnNavigationItemSelectedListener{
-    private DrawerLayout mDrawerLayout;
-    private ActionBarDrawerToggle mToggle;
-
-    // 7 days in milliseconds - 7 * 24 * 60 * 60 * 1000
-    private static final int SEVEN_DAYS = 604800000;
+public class CreateEventActivity extends ListActivity{
 
     private Button mDateButton;
     private Button mStartTimeButton;
@@ -70,9 +65,7 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
     private static String dateString;
     private static String timeString;
     private static boolean setEnd = false;
-    private static final int ADD_ITEM_REQUEST = 0;
     private Context mContext = this;
-    private static DecimalFormat df2 = new DecimalFormat(".##");
 
     ItemsListAdapter mAdapter;
 
@@ -107,7 +100,7 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
 
         final ViewGroup root = (ViewGroup) getWindow().getDecorView().getRootView(); // Blur?
 
-        Button addAnotherItem = (Button) findViewById(R.id.add_another_item_view);
+        Button addAnotherItem = (Button) findViewById(R.id.addAnotherItemView);
         addAnotherItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -227,6 +220,7 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
             }
         });
     }
+
     @Override
     public void onPause(){
         super.onPause();
@@ -422,31 +416,6 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
         newFragment.show(getFragmentManager(), "timePicker");
     }
 
-
-    public boolean onNavigationItemSelected(@NonNull MenuItem item){
-        int id = item.getItemId();
-        switch (id){
-            case R.id.nav_account:
-                break;
-            case R.id.nav_settings:
-                break;
-            case R.id.nav_logout:
-                FirebaseAuth.getInstance().signOut();
-                startActivity(new Intent(CreateEventActivity.this, MainActivity.class));
-                finish();
-                break;
-
-        }
-        mDrawerLayout.closeDrawer(GravityCompat.START);
-        return true;
-    }
-
-    public boolean onOptionsItemSelected(MenuItem item){
-        if(mToggle.onOptionsItemSelected(item)){
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
 
 }
