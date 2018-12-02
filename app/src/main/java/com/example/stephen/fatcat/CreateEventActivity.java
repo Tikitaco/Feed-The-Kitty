@@ -169,8 +169,8 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
 
 
 
-        final Button datePickerButton = (Button) findViewById(R.id.chooseDate);
-        datePickerButton.setOnClickListener(new View.OnClickListener() {
+        mDateButton = (Button) findViewById(R.id.chooseDate);
+        mDateButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -178,8 +178,8 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
             }
         });
 
-        final Button timePickerButton = (Button) findViewById(R.id.chooseStartTime);
-        timePickerButton.setOnClickListener(new View.OnClickListener() {
+        mStartTimeButton = (Button) findViewById(R.id.chooseStartTime);
+        mStartTimeButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -187,8 +187,8 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
             }
         });
 
-        final Button timePickerButton2 = (Button) findViewById(R.id.chooseEndTime);
-        timePickerButton2.setOnClickListener(new View.OnClickListener() {
+        mEndTimeButton = (Button) findViewById(R.id.chooseEndTime);
+        mEndTimeButton.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
@@ -197,16 +197,16 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
             }
         });
 
-        final Button submit = (Button) findViewById(R.id.createEventSubmit);
-        submit.setOnClickListener(new View.OnClickListener() {
+        mSubmitEvent = (Button) findViewById(R.id.createEventSubmit);
+        mSubmitEvent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String name = mEnterEventName.getText().toString();
                 String description = mEnterDescription.getText().toString();
                 String startTime = startTimeView.getText().toString();
                 String endTime = endTimeView.getText().toString();
-                mDate = Calendar.getInstance().getTime(); // TODO This is only until the date picker is fully implemented
-                ArrayList<SingleItem> items = (ArrayList) mAdapter.getList(); // TODO Must create list
+                //mDate = Calendar.getInstance().getTime();
+                ArrayList<SingleItem> items = (ArrayList) mAdapter.getList();
                 FatcatEvent event = new FatcatEvent(name, description, mDate, startTime, endTime, items);
 
                 FirebaseUtils.uploadNewEvent(event, new DatabaseReference.CompletionListener() {
@@ -285,22 +285,6 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
         overlay.clear();
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        // TODO - Check result code and request code
-        // if user submitted a new ToDoItem
-        // Create a new ToDoItem from the data Intent
-        // and then add it to the adapter
-
-        if (requestCode == ADD_ITEM_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                //FatcatEvent.SingleItem res = new FatcatEvent.SingleItem(data);
-                //mAdapter.add(res);
-            }
-        }
-    }
-
     private static void setTimeString(int hourOfDay, int minute) {
         String min = "" + minute;
         String amPm = "am";
@@ -318,6 +302,8 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
     }
 
     private static void setDateString(int year, int monthOfYear, int dayOfMonth) {
+
+        mDate = new Date(year, monthOfYear, dayOfMonth);
 
         // Increment monthOfYear for Calendar/Date -> Time Format setting
         monthOfYear++;
