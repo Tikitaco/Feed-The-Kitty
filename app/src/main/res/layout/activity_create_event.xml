@@ -183,7 +183,7 @@
             android:id="@+id/List"
             android:layout_width="122dp"
             android:layout_height="wrap_content"
-            android:text="List"
+            android:text="Item List"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:textColor="#737373"
             android:textSize="20sp"
