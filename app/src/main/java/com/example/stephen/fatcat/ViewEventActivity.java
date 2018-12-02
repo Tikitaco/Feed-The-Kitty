@@ -39,6 +39,7 @@ import android.widget.Toast;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatDeletionListener;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatFriend;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatInvitation;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatListener;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FirebaseUtils;
 
@@ -494,22 +495,32 @@ public class ViewEventActivity extends Activity {
     }
 
     private void showRsvpDialog() {
+        if (evt.participants.size() == 0) {
+            Toast.makeText(this, "Invite some friends!", Toast.LENGTH_SHORT).show();
+            return;
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         // Get the layout inflater
         LayoutInflater inflater = getLayoutInflater();
         View informationView = inflater.inflate(R.layout.pop_rsvp_list, null);
         final RecyclerView list = informationView.findViewById(R.id.rsvp_list);
         Button closeButton = informationView.findViewById(R.id.rsvp_close_button);
+        TextView amount = informationView.findViewById(R.id.amountComing);
         list.setLayoutManager(new LinearLayoutManager(this));
         ArrayList<FatcatFriend> participants = new ArrayList<FatcatFriend>();
+        int coming = 0;
         for (String uid : evt.participants.keySet()) {
             for (FatcatFriend friend : MainActivity.globals.friendProfiles) {
                 if (friend.getUID().equals(uid)) {
                     participants.add(friend);
+                    if (evt.participants.get(uid) == FatcatInvitation.ACCEPTED) {
+                        coming++;
+                    }
                     break;
                 }
             }
         }
+        amount.setText(coming + "/" + evt.participants.size() + " are coming");
         list.setAdapter(new RsvpAdapter(participants, evt, this));
         // Add a divider between each item to make it look nice
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);

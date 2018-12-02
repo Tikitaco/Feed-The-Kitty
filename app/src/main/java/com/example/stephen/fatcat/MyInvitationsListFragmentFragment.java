@@ -85,7 +85,12 @@ public class MyInvitationsListFragmentFragment extends Fragment {
         }
 
         if (host == null) {
-            Toast.makeText(getActivity(), "This invitation is invalid", Toast.LENGTH_SHORT).show();
+            FirebaseUtils.getUserProfile(invite.getEvent().getOwnerUID(), new FatcatListener<FatcatFriend>() {
+                @Override
+                public void onReturnData(FatcatFriend data) {
+                    Toast.makeText(getActivity(), "You must be friends with the user at " + data.getEmail() + " to accept the invitation", Toast.LENGTH_LONG).show();
+                }
+            });
             return;
         }
         TextView mEventName = (TextView) informationView.findViewById(R.id.invitation_event_name);
