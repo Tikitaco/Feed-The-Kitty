@@ -60,8 +60,9 @@ public class DwollaUtil {
         try {
             result = customersApi.create(cust);
 
-            Pattern pattern = Pattern.compile("customers/(.*)$");
+            Pattern pattern = Pattern.compile(".*customers/(.*)");
             Matcher matcher = pattern.matcher(result.getLocationHeader());
+            matcher.matches();
 
             return matcher.group(1);
         } catch (ApiException e) {
@@ -85,7 +86,12 @@ public class DwollaUtil {
         FundingSource result;
         try {
             result = fundingApi.createCustomerFundingSource(fund, customerId);
-            return result.getId();
+
+            Pattern pattern = Pattern.compile(".*funding-sources/(.*)");
+            Matcher matcher = pattern.matcher(result.getLocationHeader());
+            matcher.matches();
+
+            return matcher.group(1);
         } catch (ApiException e) {
             e.printStackTrace();
         }
@@ -120,8 +126,9 @@ public class DwollaUtil {
         try {
             result = transfersApi.create(transfer);
 
-            Pattern pattern = Pattern.compile("transfers/(.*)$");
+            Pattern pattern = Pattern.compile(".*transfers/(.*)$");
             Matcher matcher = pattern.matcher(result.getLocationHeader());
+            matcher.matches();
 
             return matcher.group(1);
         } catch (ApiException e) {
@@ -155,7 +162,7 @@ public class DwollaUtil {
 
         MicroDeposits result;
         try {
-            result =  fundingApi.microDeposits(null, fundId);
+            result = fundingApi.microDeposits(null, fundId);
             return true;
         } catch (ApiException e) {
             e.printStackTrace();

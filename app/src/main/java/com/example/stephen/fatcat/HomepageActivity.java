@@ -64,7 +64,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()){
-                    case R.id.delete:
+                    case R.id.payments:
                         //allows people to delete from the list view
 
                         return true;

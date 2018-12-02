@@ -65,7 +65,13 @@
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".InvitationDetailsActivity"
-            android:label="@string/title_activity_invitation_details"></activity>
+            android:label="@string/title_activity_invitation_details" />
+
+        <activity
+            android:name=".PaymentSetupActivity"
+            android:label="@string/title_activity_payment_setup"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+
     </application>
 
 </manifest>
