@@ -65,8 +65,8 @@ public class MyFundingSourcesRecyclerViewAdapter extends RecyclerView.Adapter<My
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mIdView = (TextView) view.findViewById(R.id.funding_source_id);
+            mContentView = (TextView) view.findViewById(R.id.funding_source_name);
         }
 
         @Override

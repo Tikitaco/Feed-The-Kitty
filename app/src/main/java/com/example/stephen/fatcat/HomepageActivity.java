@@ -70,7 +70,13 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 switch (item.getItemId()){
                     case R.id.payments:
                         //allows people to delete from the list view
-                        setFragment(paymentsFragment);
+                        if (MainActivity.globals.myProfile.customerId == null) {
+                            Intent i = new Intent(getApplicationContext(), PaymentSetupActivity.class);
+                            startActivity(i);
+                        } else {
+
+                        }
+                        //setFragment(paymentsFragment);
                         return true;
                     case R.id.calendarView:
                         //opens calendar fragment
