@@ -11,7 +11,7 @@ public class SingleItem {
     public SingleItem() {
         mItemName = "NoItemName";
         mPrice = 0.00;
-        mPayerName = "NoPayer";
+        mPayerName = "Not yet paid for";
     }
 
     public SingleItem(String itemName, double price) {
