@@ -97,8 +97,8 @@ public class MyEventFragment extends Fragment {
 
 
     private void showDetailsOfEvent(FatcatEvent event) {
-        Intent i = new Intent(getActivity(), EventDetailsActivity.class);
-        i.putExtra("event_id", event.getEventID());
+        Intent i = new Intent(getActivity(), ViewEventActivity.class);
+        i.putExtra("event_id", event.getEventID()); // Pass on the event_id, so it knows which one to display
         startActivity(i);
     }
     public void updateList() {

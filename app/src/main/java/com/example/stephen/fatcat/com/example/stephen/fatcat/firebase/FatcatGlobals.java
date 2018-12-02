@@ -151,7 +151,7 @@ public class FatcatGlobals {
                         public void onReturnData(FatcatEvent data) {
                             if (data != null) {
                                 FatcatInvitation newInvitation = new FatcatInvitation(data, status);
-                                if (!myInvitations.contains(newInvitation)) {
+                                if (!myInvitations.contains(newInvitation) && newInvitation.getEvent().getEventID() != null) {
                                     myInvitations.add(new FatcatInvitation(data, status));
                                 }
                             } else {

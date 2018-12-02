@@ -126,12 +126,20 @@ public class ItemsListAdapter extends BaseAdapter {
         }
         // create "paid for"
         final TextView payerView = (TextView) dataView.findViewById(R.id.paid_for_view);
-        payerView.setText(mItem.getPayerName());
+        // payerView.setText(mItem.getPayerName());
 
         // create status
         final CheckBox statusView = (CheckBox) dataView.findViewById(R.id.statusCheckBox);
         statusView.setChecked(!mItem.getPayerName().equals("Not yet paid for"));
+        statusView.setClickable(false);
+        Log.i("Utils", mItem.getPayerName());
+        if (!mItem.hasBeenPaidFor()) {
+            payerView.setText("Paid for by " + mItem.getPayerName());
+        } else {
+            payerView.setText("Not yet paid for");
+        }
         // set onChangeListener for status
+        /*
         statusView.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean checked) {
@@ -146,7 +154,7 @@ public class ItemsListAdapter extends BaseAdapter {
                    payerView.setText("Not yet paid for");
                 }
             }
-        });
+        }); */
         return dataView;
     }
 

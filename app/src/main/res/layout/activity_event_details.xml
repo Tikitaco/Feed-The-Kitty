@@ -7,6 +7,14 @@
     android:orientation="vertical"
     tools:context=".CreateEventActivity">
 
+    <Button
+        android:id="@+id/btn_invite"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="#1BB89C"
+        android:text="Invite Friends" />
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="55dp"
@@ -145,19 +153,30 @@
             android:textStyle="bold" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/show_invitation_list"
+    <ListView
+        android:id="@+id/itemList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/holo_blue_dark"
-        android:text="Show RSVP List" />
+        android:layout_height="wrap_content">
 
-    <Button
-        android:id="@+id/btn_invite"
+    </ListView>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="#1BB89C"
-        android:text="Invite Friends" />
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/show_invitation_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/holo_blue_dark"
+            android:text="Show RSVP List" />
+    </LinearLayout>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="10dp" />
 
     <Button
         android:id="@+id/btn_delete"
