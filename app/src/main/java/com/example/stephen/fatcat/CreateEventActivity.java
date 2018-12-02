@@ -303,7 +303,9 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
 
     private static void setDateString(int year, int monthOfYear, int dayOfMonth) {
 
-        mDate = new Date(year, monthOfYear, dayOfMonth);
+        Calendar cal = Calendar.getInstance();
+        cal.set(year, monthOfYear, dayOfMonth,0,0,0);
+        mDate = cal.getTime();
 
         // Increment monthOfYear for Calendar/Date -> Time Format setting
         monthOfYear++;

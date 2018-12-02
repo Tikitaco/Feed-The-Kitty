@@ -26,12 +26,6 @@ import android.widget.PopupWindow;
 import android.widget.Button;
 
 
-import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
-import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatListener;
-
-import static com.example.stephen.fatcat.CreateEventActivity.applyDim;
-import static com.example.stephen.fatcat.CreateEventActivity.clearDim;
-
 public class ItemsListAdapter extends BaseAdapter {
 
     private final List<SingleItem> mItems = new ArrayList<>();
