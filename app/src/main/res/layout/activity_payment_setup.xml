@@ -7,7 +7,7 @@
     tools:context=".PaymentSetupActivity">
 
     <LinearLayout
-        android:layout_width="360dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation = "vertical"
         android:layout_gravity="top"
@@ -19,13 +19,13 @@
             android:orientation="horizontal"
             android:layout_gravity="top">
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="First Name: "
                 android:textColor="#000000"/>
             <EditText
                 android:id="@+id/first_name"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="John"
                 android:textColorHint="#999999"
@@ -39,13 +39,13 @@
             android:orientation="horizontal"
             android:layout_gravity="top">
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Last Name: "
                 android:textColor="#000000"/>
             <EditText
                 android:id="@+id/last_name"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="Smith"
                 android:textColorHint="#999999"
@@ -59,13 +59,13 @@
             android:orientation="horizontal"
             android:layout_gravity="top">
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Address Line 1: "
                 android:textColor="#000000"/>
             <EditText
                 android:id="@+id/address_1"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="8169 Paint Branch Dr"
                 android:textColorHint="#999999"
@@ -79,13 +79,13 @@
             android:orientation="horizontal"
             android:layout_gravity="top">
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Address Line 2: "
                 android:textColor="#000000"/>
             <EditText
                 android:id="@+id/address_2"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="(Optional)"
                 android:textColorHint="#999999"
@@ -99,13 +99,13 @@
             android:orientation="horizontal"
             android:layout_gravity="top">
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="City: "
                 android:textColor="#000000"/>
             <EditText
                 android:id="@+id/city"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="College Park"
                 android:textColorHint="#999999"
@@ -119,13 +119,13 @@
             android:orientation="horizontal"
             android:layout_gravity="top">
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="State: "
                 android:textColor="#000000"/>
             <android.support.v7.widget.AppCompatSpinner
                 android:id="@+id/state_spinner"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawSelectorOnTop="true"
                 android:entries="@array/state_codes" />
@@ -137,13 +137,13 @@
             android:orientation="horizontal"
             android:layout_gravity="top">
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Zip Code: "
                 android:textColor="#000000"/>
             <EditText
                 android:id="@+id/postal_code"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="20740"
                 android:textColorHint="#999999"
@@ -157,13 +157,13 @@
             android:orientation="horizontal"
             android:layout_gravity="top">
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Date of Birth: "
                 android:textColor="#000000"/>
             <DatePicker
                 android:id="@+id/date_of_birth"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:calendarViewShown="false"
                 android:datePickerMode="spinner"
@@ -176,13 +176,13 @@
             android:orientation="horizontal"
             android:layout_gravity="top">
             <TextView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="SSN: "
                 android:textColor="#000000"/>
             <EditText
                 android:id="@+id/ssn"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:hint="Last four digits"
                 android:textColorHint="#999999"
