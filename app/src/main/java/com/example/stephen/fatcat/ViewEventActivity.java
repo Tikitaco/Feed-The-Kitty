@@ -103,9 +103,11 @@ public class ViewEventActivity extends Activity {
 
         final TextView mEventName;
         final TextView mDescription;
+        final TextView mDescriptionText;
 
         mEventName = (TextView) v.findViewById(R.id.NameOfEvent);
         mDescription = (TextView) v.findViewById(R.id.Description);
+        mDescriptionText = (TextView) v.findViewById(R.id.EventDescriptionText);
 
         dateView = (TextView) v.findViewById(R.id.Date);
         startTimeView = (TextView) v.findViewById(R.id.StartTime);
@@ -115,7 +117,7 @@ public class ViewEventActivity extends Activity {
         mDeleteButton = (Button) v.findViewById(R.id.btn_delete);
         showRsvpButton = (Button) v.findViewById(R.id.show_invitation_list);
         mEventName.setText(event.getName());
-        mDescription.setText(event.getDescription());
+        mDescriptionText.setText(event.getDescription());
         dateView.setText(event.getDate());
         startTimeView.setText(event.getStartTime());
         endTimeView.setText(event.getEndTime());
