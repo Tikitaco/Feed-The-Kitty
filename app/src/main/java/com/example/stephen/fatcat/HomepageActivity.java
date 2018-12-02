@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Vector;
 
 public class HomepageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
-        CaldendarFragment.OnFragmentInteractionListener,ListFragment.OnFragmentInteractionListener, FriendListFragment.OnListFragmentInteractionListener,
+        CaldendarFragment.OnFragmentInteractionListener, FriendListFragment.OnListFragmentInteractionListener,
         SettingsFragment.OnFragmentInteractionListener, EventsListFragment.OnFragmentInteractionListener, MyEventFragment.OnListFragmentInteractionListener,
         MyInvitationsListFragmentFragment.OnListFragmentInteractionListener{
     private DrawerLayout mDrawerLayout;
@@ -37,7 +37,6 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
     private BottomNavigationView mMainNav;
     private FrameLayout mMainFrame;
     private CaldendarFragment calendarFragment;
-    private ListFragment listFragment;
     private FriendListFragment friendFragment;
     private SettingsFragment settingsFragment;
     private EventsListFragment eventsFragment;
@@ -56,7 +55,6 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         mMainFrame = findViewById(R.id.main_frame);
         mMainNav = findViewById(R.id.Bottom_Nav);
 
-        listFragment = new ListFragment();
         settingsFragment = new SettingsFragment();
         calendarFragment = new CaldendarFragment();
         friendFragment = new FriendListFragment();
