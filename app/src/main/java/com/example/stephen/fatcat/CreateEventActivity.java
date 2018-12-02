@@ -80,7 +80,6 @@ public class CreateEventActivity extends ListActivity implements NavigationView.
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_create_event);
 
         mAdapter = new ItemsListAdapter(getApplicationContext());
 

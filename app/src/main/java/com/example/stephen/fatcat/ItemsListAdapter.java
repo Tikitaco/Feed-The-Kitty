@@ -32,6 +32,7 @@ public class ItemsListAdapter extends BaseAdapter {
     private final Context mContext;
     private static DecimalFormat df2 = new DecimalFormat(".##");
 
+
     public ItemsListAdapter(Context context) {
 
         mContext = context;
@@ -98,8 +99,6 @@ public class ItemsListAdapter extends BaseAdapter {
     // Create a View for the SingleItem at specified position
     // Remember to check whether convertView holds an already allocated View
     // before created a new View.
-    // Consider using the ViewHolder pattern to make scrolling more efficient
-    // See: http://developer.android.com/training/improving-layouts/smooth-scrolling.html
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
