@@ -1,6 +1,7 @@
 package com.example.stephen.fatcat;
 
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.view.View;
@@ -47,34 +48,53 @@ public class PaymentSetupActivity extends Activity {
                 calendar.set(dateOfBirth.getYear(), dateOfBirth.getMonth(), dateOfBirth.getDayOfMonth());
                 SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
-                DwollaUtil util = new DwollaUtil();
+                String[] strings = new String[10];
+                strings[0] = user.getEmail();
+                strings[1] = firstName.getText().toString();
+                strings[2] = lastName.getText().toString();
+                strings[3] = address1.getText().toString();
+                strings[4] = address2.getText().toString() == "" ? null : address2.getText().toString();
+                strings[5] = city.getText().toString();
+                strings[6] = state.getSelectedItem().toString();
+                strings[7] = zip.getText().toString();
+                strings[8] = dateFormatter.format(calendar.getTime());
+                strings[9] = ssn.getText().toString();
 
-                String customerId = null;
-                try {
-                    customerId = util.createCustomer(user.getEmail(),
-                                                            firstName.getText().toString(),
-                                                            lastName.getText().toString(),
-                                                            address1.getText().toString(),
-                                                            address2.getText().toString() == "" ? null : address2.getText().toString(),
-                                                            city.getText().toString(),
-                                                            state.getSelectedItem().toString(),
-                                                            zip.getText().toString(),
-                                                            dateFormatter.format(calendar.getTime()),
-                                                            ssn.getText().toString());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                if (null == customerId) {
-                    Toast.makeText(getApplicationContext(), "Unable to enable payments at this time", Toast.LENGTH_LONG).show();
-                } else {
-                    FirebaseUtils firebaseUtils = new FirebaseUtils();
-                    firebaseUtils.createdDwollaCustomer(customerId);
-                }
+                DwollaCreationTask creationTask = new DwollaCreationTask();
+                creationTask.execute(strings);
 
                 finish();
             }
         });
+    }
+
+    private class DwollaCreationTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... strings) {
+            DwollaUtil util = new DwollaUtil();
+
+            String customerId = null;
+            try {
+                customerId = util.createCustomer(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], strings[7], strings[8], strings[9]);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (null != customerId) {
+                FirebaseUtils firebaseUtils = new FirebaseUtils();
+                firebaseUtils.createdDwollaCustomer(customerId);
+            }
+            return customerId;
+        }
+
+        @Override
+        protected void onPostExecute(String customerId) {
+            if (null == customerId) {
+                Toast.makeText(getApplicationContext(), "Unable to enable payments at this time", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getApplicationContext(), "Dwolla account created successfully", Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
 }
