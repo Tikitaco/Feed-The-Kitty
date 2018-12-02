@@ -15,9 +15,9 @@ public class FatcatFriend {
     private ArrayList<FatcatEvent> events = new ArrayList<>();
     public Map<String, Integer> invites = new HashMap<>();
     //Dwolla api information
-    String customerId;
-    Map<String, String> fundingSources = new HashMap<>();
-    Map<String, String> transfers = new HashMap<>();
+    public String customerId;
+    public Map<String, String> fundingSources = new HashMap<>();
+    public Map<String, String> transfers = new HashMap<>();
 
     // Empty constructor for firebase instances
     public FatcatFriend() {
