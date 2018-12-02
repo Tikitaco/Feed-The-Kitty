@@ -283,6 +283,11 @@ public class FirebaseUtils {
         eventRef.child("items").child(String.valueOf(item.indexInDatabase)).child("payer_id").setValue(MainActivity.globals.myProfile.getUsername());
     }
 
+    public static void unpaidForItem(FatcatEvent event, SingleItem item) {
+        DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference().child("events").child(event.getEventID());
+        eventRef.child("items").child(String.valueOf(item.indexInDatabase)).child("payer_id").setValue("Not yet paid for");
+    }
+
     // Dwolla related methods
     public static void createdDwollaCustomer(String customerId) {
         DatabaseReference mdb = FirebaseDatabase.getInstance().getReference().child("profiles").child(MainActivity.globals.myProfile.getUID());

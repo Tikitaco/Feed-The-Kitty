@@ -71,7 +71,7 @@ public class ViewEventActivity extends Activity {
     private Context mContext = this;
     private FatcatEvent evt;
 
-    ItemsListAdapter mAdapter;
+    EditItemsListAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {  //TODO Contribution options, Firebase integration, Dwolla integration
@@ -93,7 +93,7 @@ public class ViewEventActivity extends Activity {
         }
         final FatcatEvent event = findEvent;
         evt = event;
-        mAdapter = new ItemsListAdapter(getApplicationContext(), event.getList());
+        mAdapter = new EditItemsListAdapter(getApplicationContext(), event.getList(), event);
 
         View v = (View) getLayoutInflater().inflate(R.layout.activity_view_event, null);
         setContentView(v);

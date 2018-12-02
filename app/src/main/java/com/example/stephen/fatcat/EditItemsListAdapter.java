@@ -10,6 +10,8 @@ import java.text.DecimalFormat;
 import java.util.Locale;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -27,26 +29,29 @@ import android.widget.TextView;
 import android.widget.PopupWindow;
 import android.widget.Button;
 
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FirebaseUtils;
 import com.google.firebase.database.FirebaseDatabase;
 
 
-public class ItemsListAdapter extends BaseAdapter {
+public class EditItemsListAdapter extends BaseAdapter {
 
     private final List<SingleItem> mItems = new ArrayList<>();
     private final Context mContext;
     private static DecimalFormat df2 = new DecimalFormat(".##");
+    private FatcatEvent event; // Event being edited
 
 
-    public ItemsListAdapter(Context context) {
+    public EditItemsListAdapter(Context context) {
 
         mContext = context;
 
     }
 
-    public ItemsListAdapter(Context context, List<SingleItem> list) {
+    public EditItemsListAdapter(Context context, List<SingleItem> list, FatcatEvent event) {
         mContext = context;
         mItems.addAll(list);
+        this.event = event;
     }
 
     // Add a SingleItem to the adapter
@@ -140,10 +145,10 @@ public class ItemsListAdapter extends BaseAdapter {
         // create status
         final CheckBox statusView = (CheckBox) dataView.findViewById(R.id.statusCheckBox);
         statusView.setChecked(!mItem.getPayerName().equals("Not yet paid for"));
-        if (!mItem.hasBeenPaidFor()) {
+        if (!mItem.hasBeenPaidFor() && !mItem.getPayerName().equals(MainActivity.globals.myProfile.getUsername())) {
             statusView.setClickable(false);
+            statusView.setButtonTintList(ColorStateList.valueOf(Color.LTGRAY));
         }
-        Log.i("Utils", mItem.getPayerName());
         if (!mItem.hasBeenPaidFor()) {
             payerView.setText("Paid for by " + mItem.getPayerName());
         } else {
@@ -154,13 +159,15 @@ public class ItemsListAdapter extends BaseAdapter {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean checked) {
 
-               if(checked) {
-                   String username = MainActivity.globals.myProfile.getUsername();
-                   mItem.setPayerName(username);
-                   payerView.setText("Paid for by " + username);
+                if(checked) {
+                    String username = MainActivity.globals.myProfile.getUsername();
+                    mItem.setPayerName(username);
+                    payerView.setText("Paid for by " + username);
+                    FirebaseUtils.paidForItem(event, mItem);
                 } else {
-                   mItem.setPayerName("Not yet paid for");
-                   payerView.setText("Not yet paid for");
+                    mItem.setPayerName("Not yet paid for");
+                    payerView.setText("Not yet paid for");
+                    FirebaseUtils.unpaidForItem(event, mItem);
                 }
             }
         });
