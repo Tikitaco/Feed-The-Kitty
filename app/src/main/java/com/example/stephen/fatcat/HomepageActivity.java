@@ -41,6 +41,8 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
     private FriendListFragment friendFragment;
     private SettingsFragment settingsFragment;
     private EventsListFragment eventsFragment;
+    private PaymentsFragment paymentsFragment;
+    private FundingSourcesFragment fundingSourcesFragment;
     private CalendarView mCalendarView;
     private List<EventDay> mEventDays = new ArrayList<EventDay>();
     boolean isCalendar = false;
@@ -59,6 +61,8 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
         calendarFragment = new CaldendarFragment();
         friendFragment = new FriendListFragment();
         eventsFragment = new EventsListFragment();
+        paymentsFragment = new PaymentsFragment();
+        fundingSourcesFragment = new FundingSourcesFragment();
 
         mMainNav.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -66,7 +70,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 switch (item.getItemId()){
                     case R.id.payments:
                         //allows people to delete from the list view
-
+                        setFragment(paymentsFragment);
                         return true;
                     case R.id.calendarView:
                         //opens calendar fragment
@@ -133,7 +137,9 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
 
                 startActivity(new Intent(HomepageActivity.this, CreateEventActivity.class));
                 break;
+            case R.id.nav_bank:
 
+                break;
         }
         mDrawerLayout.closeDrawer(GravityCompat.START);
         return true;
