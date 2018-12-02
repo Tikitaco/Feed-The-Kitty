@@ -2,10 +2,12 @@ package com.example.stephen.fatcat;
 
 import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.text.DecimalFormat;
+import java.util.Locale;
 
 import android.content.Context;
 import android.text.Editable;
@@ -120,7 +122,11 @@ public class ItemsListAdapter extends BaseAdapter {
         final TextView priceView = (TextView) dataView.findViewById(R.id.price_view);
         Double value = mItem.getPrice();
         if (value != 0.0) {
-            priceView.setText(df2.format(mItem.getPrice()));
+            DecimalFormat formatter = (DecimalFormat) NumberFormat.getCurrencyInstance(Locale.US);
+            DecimalFormatSymbols symbols = formatter.getDecimalFormatSymbols();
+            symbols.setCurrencySymbol(""); // Don't use null.
+            formatter.setDecimalFormatSymbols(symbols);
+            priceView.setText(formatter.format(value));
         } else {
             priceView.setText("0.00");
         }
