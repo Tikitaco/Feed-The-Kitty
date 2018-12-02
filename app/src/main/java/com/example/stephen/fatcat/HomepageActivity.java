@@ -138,7 +138,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 startActivity(new Intent(HomepageActivity.this, CreateEventActivity.class));
                 break;
             case R.id.nav_bank:
-                
+
                 break;
         }
         mDrawerLayout.closeDrawer(GravityCompat.START);
