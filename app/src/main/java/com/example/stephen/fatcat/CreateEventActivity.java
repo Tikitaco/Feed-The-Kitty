@@ -47,7 +47,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
-import org.w3c.dom.Text;
 
 import java.util.Calendar;
 import java.util.Date;

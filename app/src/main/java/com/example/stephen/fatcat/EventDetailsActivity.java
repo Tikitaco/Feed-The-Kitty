@@ -13,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.app.Activity;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.Gravity;
@@ -29,9 +30,15 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 import android.content.Intent;
 
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FirebaseUtils;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+
 import java.lang.ref.WeakReference;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -53,12 +60,14 @@ public class EventDetailsActivity extends ListActivity {
     ItemsListAdapter mAdapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        /*super.onCreate(savedInstanceState);
+    protected void onCreate(Bundle savedInstanceState) {  //TODO Contribution options, Firebase integration, Dwolla integration
+        super.onCreate(savedInstanceState);
 
-        mAdapter = new ItemsListAdapter(getApplicationContext());
-
+        //TODO get event using intent and replace new FatcatEvent with the actual event
         Intent intent = getIntent();
+        final FatcatEvent event = new FatcatEvent();
+
+        mAdapter = new ItemsListAdapter(getApplicationContext(), event.getList());
 
         View v = (View) getLayoutInflater().inflate(R.layout.activity_event_details, null);
         getListView().setBackgroundColor(Color.WHITE);
@@ -67,24 +76,26 @@ public class EventDetailsActivity extends ListActivity {
 
         final TextView mEventName;
         final TextView mDescription;
-        final EditText mEnterEventName;
-        final EditText mEnterDescription;
 
-        mEventName = (TextView) v.findViewById(R.id.EventName);
-        mEnterEventName = (EditText) v.findViewById(R.id.EnterEventName);
+        mEventName = (TextView) v.findViewById(R.id.NameOfEvent);
         mDescription = (TextView) v.findViewById(R.id.Description);
-        mEnterDescription = (EditText) v.findViewById(R.id.EnterEventDescription);
 
         dateView = (TextView) v.findViewById(R.id.Date);
         startTimeView = (TextView) v.findViewById(R.id.StartTime);
         endTimeView = (TextView) v.findViewById(R.id.EndTime);
 
-        View footerView = getLayoutInflater().inflate(R.layout.single_list_footer_view, null);
+        mEventName.setText(event.getName());
+        mDescription.setText(event.getDescription());
+        dateView.setText(event.getDate());
+        startTimeView.setText(event.getStartTime());
+        endTimeView.setText(event.getEndTime());
+
+        View footerView = getLayoutInflater().inflate(R.layout.single_list_footer_view_without_create, null);
         getListView().addFooterView(footerView);
 
         final ViewGroup root = (ViewGroup) getWindow().getDecorView().getRootView(); // Blur?
 
-        Button addAnotherItem = (Button) findViewById(R.id.add_another_item_view);
+        Button addAnotherItem = (Button) findViewById(R.id.addAnotherItemView);
         addAnotherItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -105,7 +116,7 @@ public class EventDetailsActivity extends ListActivity {
                 pw.showAtLocation(popupView, Gravity.CENTER, 0 ,0); //?? popupView
 
                 addItemPriceEdit.setRawInputType(Configuration.KEYBOARD_12KEY);
-                addItemPriceEdit.addTextChangedListener(new CreateEventActivity.MoneyTextWatcher(addItemPriceEdit));
+                addItemPriceEdit.addTextChangedListener(new EventDetailsActivity.MoneyTextWatcher(addItemPriceEdit));
 
                 Button cancel = (Button) popupView.findViewById(R.id.cancel_new_item);
                 cancel.setOnClickListener(new View.OnClickListener() {
@@ -127,7 +138,7 @@ public class EventDetailsActivity extends ListActivity {
                         // Check for null edittext
                         if(priceStr.equals(null) || priceStr.equals("") || itemNameEdit.equals(null) || itemNameEdit.equals(""))
                         {
-                            Toast.makeText(CreateEventActivity.this,  "Item name or price not entered",Toast.LENGTH_LONG).show();
+                            Toast.makeText(EventDetailsActivity.this,  "Item name or price not entered",Toast.LENGTH_LONG).show();
                         } else {
                             String value = priceStr.substring(1);
                             Double priceDouble = Double.valueOf(value);
@@ -141,13 +152,53 @@ public class EventDetailsActivity extends ListActivity {
                     }
                 });
             }
-        });*/
+        });
+
+        mDateButton = (Button) findViewById(R.id.chooseDate);
+        mDateButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (MainActivity.globals.myProfile.getUID() == event.getOwnerUID()) {
+                    showDatePickerDialog();
+                } else {
+                    Toast.makeText(mContext, "Only event creator can edit this", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        mStartTimeButton = (Button) findViewById(R.id.chooseStartTime);
+        mStartTimeButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                if (MainActivity.globals.myProfile.getUID() == event.getOwnerUID()) {
+                    showTimePickerDialog();
+                } else {
+                    Toast.makeText(mContext, "Only event creator can edit this", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        mEndTimeButton = (Button) findViewById(R.id.chooseEndTime);
+        mEndTimeButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+
+                if (MainActivity.globals.myProfile.getUID() == event.getOwnerUID()) {
+                    setEnd = true;
+                    showTimePickerDialog();
+                } else {
+                    Toast.makeText(mContext, "Only event creator can edit this", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
 
     }
 
-    //TODO Contribution options, Firebase integration, Dwolla integration
 
-    /*@Override
+    @Override
     public void onPause(){
         super.onPause();
         if(isFinishing()){
@@ -340,5 +391,5 @@ public class EventDetailsActivity extends ListActivity {
     private void showTimePickerDialog() {
         DialogFragment newFragment = new CreateEventActivity.TimePickerFragment();
         newFragment.show(getFragmentManager(), "timePicker");
-    }*/
+    }
 }
