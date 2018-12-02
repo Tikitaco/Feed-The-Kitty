@@ -46,7 +46,6 @@ public class ItemInvitationAdapter extends RecyclerView.Adapter<ItemInvitationAd
         }
     }
 
-
     @Override
     public int getItemCount() {
         return mItems.size();
