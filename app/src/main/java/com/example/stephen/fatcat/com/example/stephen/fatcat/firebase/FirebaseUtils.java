@@ -118,7 +118,11 @@ public class FirebaseUtils {
                             int index = Integer.parseInt(item.getKey());
                             SingleItem newItem = new SingleItem();
                             newItem.setItemName(item.child("item_name").getValue().toString());
-                            newItem.setPayerName(item.child("payer_id").getValue().toString());
+                            if (item.hasChild("payer_id")) {
+                                newItem.setPayerName(item.child("payer_id").getValue().toString());
+                            } else {
+                                newItem.setPayerName("Not yet paid for");
+                            }
                             if (item.hasChild("price")) {
                                 newItem.setPrice(Double.parseDouble(item.child("price").getValue().toString()));
                             }
@@ -263,6 +267,14 @@ public class FirebaseUtils {
 
             }
         });
+
+    }
+
+    public static void addNewItemToEvent(FatcatEvent event, SingleItem item) {
+        DatabaseReference eventRef = FirebaseDatabase.getInstance().getReference().child("events").child(event.getEventID());
+        eventRef.child("items").child(String.valueOf(item.indexInDatabase)).child("item_name").setValue(item.getItemName());
+        eventRef.child("items").child(String.valueOf(item.indexInDatabase)).child("price").setValue(item.getPrice());
+        eventRef.child("items").child(String.valueOf(item.indexInDatabase)).child("payer_id").setValue(item.getPayerName());
 
     }
 

@@ -221,7 +221,13 @@ public class ViewEventActivity extends Activity {
                             Double priceDouble = Double.valueOf(value);
 
                             SingleItem addItem = new SingleItem(addItemNameEdit.getText().toString(), priceDouble);
-
+                            int index = 0;
+                            for (SingleItem item : event.getList()) {
+                                index = Math.max(index, item.indexInDatabase);
+                            }
+                            index += 1; // Make sure the index is one higher than any other
+                            addItem.indexInDatabase = index + 1;
+                            FirebaseUtils.addNewItemToEvent(event, addItem); // Upload new item to database
                             mAdapter.add(addItem);
                             pw.dismiss();
                             clearDim(root);
