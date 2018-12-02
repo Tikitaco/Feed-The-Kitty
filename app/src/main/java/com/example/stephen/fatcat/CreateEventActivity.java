@@ -59,7 +59,7 @@ public class CreateEventActivity extends ListActivity{
     private Button mStartTimeButton;
     private Button mEndTimeButton;
     private Button mSubmitEvent;
-    private static Date mDate;
+    private static Date mDate = Calendar.getInstance().getTime();
     private static TextView dateView;
     private static TextView startTimeView;
     private static TextView endTimeView;
