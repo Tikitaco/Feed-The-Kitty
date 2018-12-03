@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:46803692175:android:e5a3d0c5390ff9cb",
         "android_client_info": {
-          "package_name": "com.example.stephen.fatcat"
+          "package_name": "edu.umd.cs.fatcat"
         }
       },
       "oauth_client": [

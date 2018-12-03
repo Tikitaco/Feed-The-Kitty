@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.stephen.fatcat">
+    package="edu.umd.cs.fatcat">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -30,7 +30,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name="edu.umd.cs.fatcat.MainActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -38,12 +38,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".HomepageActivity" />
+        <activity android:name="edu.umd.cs.fatcat.HomepageActivity" />
         <activity
-            android:name=".CreateAccountActivity"
+            android:name="edu.umd.cs.fatcat.CreateAccountActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
-            android:name=".CreateEventActivity"
+            android:name="edu.umd.cs.fatcat.CreateEventActivity"
             android:label="Create Event"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar">
@@ -60,11 +60,11 @@
 
         </activity>
         <activity
-            android:name=".PaymentSetupActivity"
+            android:name="edu.umd.cs.fatcat.PaymentSetupActivity"
             android:label="@string/title_activity_payment_setup"
             android:theme="@style/AppBaseTheme" />
         <activity
-            android:name=".ViewEventActivity"
+            android:name="edu.umd.cs.fatcat.ViewEventActivity"
             android:label="@string/title_activity_view_event"></activity>
     </application>
 
