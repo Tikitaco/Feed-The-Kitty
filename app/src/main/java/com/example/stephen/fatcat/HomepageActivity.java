@@ -28,8 +28,9 @@ import java.util.Vector;
 
 public class HomepageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         CaldendarFragment.OnFragmentInteractionListener, FriendListFragment.OnListFragmentInteractionListener,
-        SettingsFragment.OnFragmentInteractionListener, EventsListFragment.OnFragmentInteractionListener, MyEventFragment.OnListFragmentInteractionListener,
-        MyInvitationsListFragmentFragment.OnListFragmentInteractionListener, FundingSourcesFragment.OnListFragmentInteractionListener {
+        SettingsFragment.OnFragmentInteractionListener, EventsListFragment.OnFragmentInteractionListener,
+        MyEventFragment.OnListFragmentInteractionListener, MyInvitationsListFragmentFragment.OnListFragmentInteractionListener,
+        FundingSourcesFragment.OnListFragmentInteractionListener, PaymentsFragment.OnListFragmentInteractionListener {
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private ActionBarDrawerToggle mToggle;
@@ -73,9 +74,8 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                             startActivity(i);
                             overridePendingTransition(R.anim.slide_in_bottom,R.anim.stay_still);
                         } else {
-
+                            setFragment(paymentsFragment);
                         }
-                        //setFragment(paymentsFragment);
                         return true;
                     case R.id.calendarView:
                         //opens calendar fragment
@@ -284,6 +284,11 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     public void onListFragmentInteraction(FundingSourcesItem item) {
+
+    }
+
+    @Override
+    public void onListFragmentInteraction(PaymentsItem item) {
 
     }
 }

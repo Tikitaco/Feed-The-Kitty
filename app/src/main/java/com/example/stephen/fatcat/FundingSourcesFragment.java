@@ -162,7 +162,6 @@ public class FundingSourcesFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // Do nothing
         void onListFragmentInteraction(FundingSourcesItem item);
     }
 

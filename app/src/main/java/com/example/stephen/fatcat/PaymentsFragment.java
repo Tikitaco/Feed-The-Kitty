@@ -13,7 +13,9 @@ import android.view.ViewGroup;
 import com.example.stephen.fatcat.dummy.DummyContent;
 import com.example.stephen.fatcat.dummy.DummyContent.DummyItem;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A fragment representing a list of Items.
@@ -23,7 +25,6 @@ import java.util.List;
  */
 public class PaymentsFragment extends Fragment {
 
-    private static final String ARG_COLUMN_COUNT = "column-count";
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
 
@@ -34,23 +35,15 @@ public class PaymentsFragment extends Fragment {
     public PaymentsFragment() {
     }
 
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static PaymentsFragment newInstance(int columnCount) {
         PaymentsFragment fragment = new PaymentsFragment();
-        Bundle args = new Bundle();
-        args.putInt(ARG_COLUMN_COUNT, columnCount);
-        fragment.setArguments(args);
         return fragment;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (getArguments() != null) {
-            mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
-        }
     }
 
     @Override
@@ -67,7 +60,14 @@ public class PaymentsFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyPaymentsRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+
+            Map<String, String> transfers = MainActivity.globals.myProfile.transfers;
+            List<PaymentsItem> paymentsItems = new ArrayList();
+            for(String key : transfers.keySet()) {
+                paymentsItems.add(new PaymentsItem(key, transfers.get(key)));
+            }
+
+            recyclerView.setAdapter(new MyPaymentsRecyclerViewAdapter(paymentsItems, mListener));
         }
         return view;
     }
@@ -101,7 +101,6 @@ public class PaymentsFragment extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(PaymentsItem item);
     }
 }

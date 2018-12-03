@@ -39,6 +39,7 @@ import com.google.firebase.database.ValueEventListener;
 import org.w3c.dom.Text;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Map;
@@ -225,7 +226,8 @@ public class MyInvitationsListFragmentFragment extends Fragment {
                                         final Map<String, String> fundSources = MainActivity.globals.myProfile.fundingSources;
                                         final String[] fundNames = fundSources.values().toArray(new String[fundSources.size()]);
 
-                                        final String amount_to_pay = finalTotal.toString(); // The amount the user has to send
+                                        DecimalFormat decimalFormatter = new DecimalFormat("#.00");
+                                        final String amount_to_pay = decimalFormatter.format(finalTotal); // The amount the user has to send
 
                                         AlertDialog.Builder fundSelectDialogBuilder = new AlertDialog.Builder(getActivity());
                                         fundSelectDialogBuilder.setTitle("Select Fund");
