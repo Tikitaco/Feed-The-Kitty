@@ -209,6 +209,7 @@ public class CreateEventActivity extends ListActivity{
                 //mDate = Calendar.getInstance().getTime();
                 ArrayList<SingleItem> items = (ArrayList) mAdapter.getList();
                 FatcatEvent event = new FatcatEvent(name, description, mDate, startTime, endTime, items);
+                event.setOwnerUID(MainActivity.globals.myProfile.getUID());
 
                 FirebaseUtils.uploadNewEvent(event, new DatabaseReference.CompletionListener() {
                     @Override

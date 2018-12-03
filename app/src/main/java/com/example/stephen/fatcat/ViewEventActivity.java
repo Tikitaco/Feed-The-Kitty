@@ -244,7 +244,7 @@ public class ViewEventActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                if (MainActivity.globals.myProfile.getUID() == event.getOwnerUID()) {
+                if (MainActivity.globals.myProfile.getUID().equals(event.getOwnerUID())) {
                     showDatePickerDialog();
                 } else {
                     Toast.makeText(mContext, "Only event creator can edit this", Toast.LENGTH_LONG).show();
@@ -257,7 +257,7 @@ public class ViewEventActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-                if (MainActivity.globals.myProfile.getUID() == event.getOwnerUID()) {
+                if (MainActivity.globals.myProfile.getUID().equals(event.getOwnerUID())) {
                     showTimePickerDialog();
                 } else {
                     Toast.makeText(mContext, "Only event creator can edit this", Toast.LENGTH_LONG).show();
@@ -271,7 +271,7 @@ public class ViewEventActivity extends Activity {
             @Override
             public void onClick(View v) {
 
-                if (MainActivity.globals.myProfile.getUID() == event.getOwnerUID()) {
+                if (MainActivity.globals.myProfile.getUID().equals(event.getOwnerUID())) {
                     setEnd = true;
                     showTimePickerDialog();
                 } else {
