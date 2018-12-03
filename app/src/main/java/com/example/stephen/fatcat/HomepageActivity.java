@@ -67,7 +67,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                 switch (item.getItemId()){
                     case R.id.payments:
-                        //allows people to delete from the list view
+                        // Prompts user to create a payment account or shows existing payments
                         if (MainActivity.globals.myProfile.customerId == null) {
                             Intent i = new Intent(getApplicationContext(), PaymentSetupActivity.class);
                             startActivity(i);

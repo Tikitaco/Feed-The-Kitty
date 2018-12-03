@@ -14,6 +14,7 @@ public class FatcatFriend {
     private Bitmap mProfilePicture;
     private ArrayList<FatcatEvent> events = new ArrayList<>();
     public Map<String, Integer> invites = new HashMap<>();
+
     //Dwolla api information
     public String customerId;
     public Map<String, String> fundingSources = new HashMap<>();
@@ -36,6 +37,11 @@ public class FatcatFriend {
             mProfilePicture = copy.getProfilePicture().copy(copy.getProfilePicture().getConfig(), true);
         }
         invites.putAll(copy.invites);
+
+        customerId = new String(copy.customerId);
+        fundingSources.putAll(copy.fundingSources);
+        transfers.putAll(copy.transfers);
+
     }
 
     public FatcatFriend(String username) {
