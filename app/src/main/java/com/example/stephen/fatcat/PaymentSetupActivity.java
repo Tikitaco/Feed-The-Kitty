@@ -34,6 +34,10 @@ public class PaymentSetupActivity extends Activity {
         final EditText address2 = findViewById(R.id.address_2);
         final EditText city = findViewById(R.id.city);
         final Spinner state = findViewById(R.id.state_spinner);
+
+        // Set default spinner value to MD
+        state.setSelection(23);
+
         final EditText zip = findViewById(R.id.postal_code);
         final DatePicker dateOfBirth = findViewById(R.id.date_of_birth);
         final EditText ssn = findViewById(R.id.ssn);
@@ -48,42 +52,47 @@ public class PaymentSetupActivity extends Activity {
                 calendar.set(dateOfBirth.getYear(), dateOfBirth.getMonth(), dateOfBirth.getDayOfMonth());
                 SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd");
 
-                String[] strings = new String[10];
-                strings[0] = user.getEmail();
-                strings[1] = firstName.getText().toString();
-                strings[2] = lastName.getText().toString();
-                strings[3] = address1.getText().toString();
-                strings[4] = address2.getText().toString() == "" ? null : address2.getText().toString();
-                strings[5] = city.getText().toString();
-                strings[6] = state.getSelectedItem().toString();
-                strings[7] = zip.getText().toString();
-                strings[8] = dateFormatter.format(calendar.getTime());
-                strings[9] = ssn.getText().toString();
+                String[] args = new String[10];
+                args[0] = user.getEmail();
+                args[1] = firstName.getText().toString();
+                args[2] = lastName.getText().toString();
+                args[3] = address1.getText().toString();
+                args[4] = address2.getText().toString() == "" ? null : address2.getText().toString();
+                args[5] = city.getText().toString();
+                args[6] = state.getSelectedItem().toString();
+                args[7] = zip.getText().toString();
+                args[8] = dateFormatter.format(calendar.getTime());
+                args[9] = ssn.getText().toString();
 
-                DwollaCreationTask creationTask = new DwollaCreationTask();
-                creationTask.execute(strings);
+                DwollaCustomerCreationTask creationTask = new DwollaCustomerCreationTask();
+                creationTask.execute(args);
 
                 finish();
             }
         });
     }
 
-    private class DwollaCreationTask extends AsyncTask<String, Void, String> {
+    private class DwollaCustomerCreationTask extends AsyncTask<String, Void, String> {
 
         @Override
-        protected String doInBackground(String... strings) {
+        protected String doInBackground(String... args) {
             DwollaUtil util = new DwollaUtil();
 
             String customerId = null;
             try {
-                customerId = util.createCustomer(strings[0], strings[1], strings[2], strings[3], strings[4], strings[5], strings[6], strings[7], strings[8], strings[9]);
+                customerId = util.createCustomer(args[0], args[1], args[2], args[3],
+                                                 args[4], args[5], args[6], args[7],
+                                                 args[8], args[9]);
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
+            // Save to Firebase
             if (null != customerId) {
                 FirebaseUtils firebaseUtils = new FirebaseUtils();
                 firebaseUtils.createdDwollaCustomer(customerId);
             }
+
             return customerId;
         }
 
@@ -92,9 +101,10 @@ public class PaymentSetupActivity extends Activity {
             if (null == customerId) {
                 Toast.makeText(getApplicationContext(), "Unable to enable payments at this time", Toast.LENGTH_LONG).show();
             } else {
-                Toast.makeText(getApplicationContext(), "Dwolla account created successfully", Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), "Payment account created successfully", Toast.LENGTH_LONG).show();
             }
         }
+
     }
 
 }

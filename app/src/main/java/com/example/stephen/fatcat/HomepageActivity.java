@@ -71,6 +71,7 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                         if (MainActivity.globals.myProfile.customerId == null) {
                             Intent i = new Intent(getApplicationContext(), PaymentSetupActivity.class);
                             startActivity(i);
+                            overridePendingTransition(R.anim.slide_in_bottom,R.anim.stay_still);
                         } else {
 
                         }

@@ -11,13 +11,29 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="top"
-        android:background="#FFFFFF"
         android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+            android:background="?attr/colorPrimary"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="15dp"
+                android:text="Setup Payment Account"
+                style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+                android:textColor="@color/startblue" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
+            android:layout_marginLeft="15dp"
             android:orientation="horizontal">
 
             <TextView
@@ -30,7 +46,7 @@
                 android:id="@+id/first_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="John"
+                android:hint="e.g. John"
                 android:textColor="#000000"
                 android:textColorHint="#999999"
                 android:visibility="visible" />
@@ -40,6 +56,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
+            android:layout_marginLeft="15dp"
             android:orientation="horizontal">
 
             <TextView
@@ -52,7 +69,7 @@
                 android:id="@+id/last_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="Smith"
+                android:hint="e.g. Smith"
                 android:textColor="#000000"
                 android:textColorHint="#999999"
                 android:visibility="visible" />
@@ -62,6 +79,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
+            android:layout_marginLeft="15dp"
             android:orientation="horizontal">
 
             <TextView
@@ -74,7 +92,7 @@
                 android:id="@+id/address_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="8169 Paint Branch Dr"
+                android:hint="e.g. 8169 Paint Branch Dr"
                 android:textColor="#000000"
                 android:textColorHint="#999999"
                 android:visibility="visible" />
@@ -84,6 +102,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
+            android:layout_marginLeft="15dp"
             android:orientation="horizontal">
 
             <TextView
@@ -96,7 +115,7 @@
                 android:id="@+id/address_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="(Optional)"
+                android:hint="e.g. CSIC 1115 (Optional)"
                 android:textColor="#000000"
                 android:textColorHint="#999999"
                 android:visibility="visible" />
@@ -106,6 +125,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
+            android:layout_marginLeft="15dp"
             android:orientation="horizontal">
 
             <TextView
@@ -118,7 +138,7 @@
                 android:id="@+id/city"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:hint="College Park"
+                android:hint="e.g. College Park"
                 android:textColor="#000000"
                 android:textColorHint="#999999"
                 android:visibility="visible" />
@@ -128,6 +148,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
+            android:layout_marginLeft="15dp"
             android:orientation="horizontal">
 
             <TextView
@@ -141,8 +162,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:drawSelectorOnTop="true"
-                android:background="#FFFFFF"
-                android:textColor="#000000"
                 android:entries="@array/state_codes" />
         </LinearLayout>
 
@@ -150,6 +169,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
+            android:layout_marginLeft="15dp"
             android:orientation="horizontal">
 
             <TextView
@@ -172,6 +192,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
+            android:layout_marginLeft="15dp"
             android:orientation="horizontal">
 
             <TextView
@@ -186,8 +207,6 @@
                 android:layout_height="wrap_content"
                 android:calendarViewShown="false"
                 android:datePickerMode="spinner"
-                android:background="#FFFFFF"
-                android:textColor="#000000"
                 android:spinnersShown="true" />
         </LinearLayout>
 
@@ -195,6 +214,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="top"
+            android:layout_marginLeft="15dp"
             android:orientation="horizontal">
 
             <TextView
@@ -222,7 +242,7 @@
             android:layout_marginTop="15dp"
             android:background="@drawable/mybutton"
             android:text="Enable Payments"
-            android:textColor="#fff"
+            android:textColor="#FFFFFF"
             android:textSize="20dp"
             android:textStyle="bold" />
 
