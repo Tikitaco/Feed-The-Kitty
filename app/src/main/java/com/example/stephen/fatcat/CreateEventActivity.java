@@ -294,6 +294,8 @@ public class CreateEventActivity extends ListActivity{
         if (hourOfDay >= 13) {
             hourOfDay -= 12;
             amPm = "pm";
+        } else if (hourOfDay == 12) {
+            amPm = "pm";
         }
         if (minute < 10)
             min = "0" + minute;
