@@ -297,13 +297,13 @@ public class FirebaseUtils {
         DatabaseReference mdb = FirebaseDatabase.getInstance().getReference().child("profiles").child(MainActivity.globals.myProfile.getUID()).child("funding_sources");
         mdb.child(fundSourceId).setValue(name);
     }
-    public static void sentPayment(String transferId, String amount, FatcatFriend receiver) {
+    public static void sentPayment(String transferId, String amount, String receiverUID) {
         DatabaseReference mdb = FirebaseDatabase.getInstance().getReference().child("profiles");
 
         // Sender
         mdb.child(MainActivity.globals.myProfile.getUID()).child("transfers").child(transferId).setValue("-" + amount);
         // Receiver
-        mdb.child(receiver.getUID()).child("transfers").child(transferId).setValue("+" + amount);
+        mdb.child(receiverUID).child("transfers").child(transferId).setValue("+" + amount);
     }
 
 

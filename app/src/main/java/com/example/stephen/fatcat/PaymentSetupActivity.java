@@ -86,8 +86,7 @@ public class PaymentSetupActivity extends Activity {
 
             // Save to Firebase
             if (null != customerId) {
-                FirebaseUtils firebaseUtils = new FirebaseUtils();
-                firebaseUtils.createdDwollaCustomer(customerId);
+                FirebaseUtils.createdDwollaCustomer(customerId);
             }
 
             return customerId;

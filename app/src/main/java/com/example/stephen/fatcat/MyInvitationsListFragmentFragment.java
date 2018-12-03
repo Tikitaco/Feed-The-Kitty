@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -20,9 +21,11 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.stephen.fatcat.com.example.stephen.fatcat.dwolla.DwollaUtil;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatDeletionListener;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatEvent;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatFriend;
+import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatGlobals;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatInvitation;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatListener;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FirebaseUtils;
@@ -35,8 +38,10 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Vector;
 
 /**
@@ -203,14 +208,50 @@ public class MyInvitationsListFragmentFragment extends Fragment {
                     }
 
                     final int finalNewStatus = newStatus;
-                    final double finalTotal = total;
+                    final Double finalTotal = total;
                     DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int which) {
                             switch (which){
                                 case DialogInterface.BUTTON_POSITIVE:
-                                    double amount_to_pay = finalTotal; // The amount the user has to send
-                                    boolean success = true; // TODO set this to calling Pay API
+
+                                    boolean success = true;
+                                    // Check if payments are set up
+                                    if (null == MainActivity.globals.myProfile.customerId
+                                        || null == finalHost.customerId
+                                        || MainActivity.globals.myProfile.fundingSources.size() == 0) {
+                                        success = false;
+                                    } else { // Otherwise continue with fund selection and task execution
+                                        final Map<String, String> fundSources = MainActivity.globals.myProfile.fundingSources;
+                                        final String[] fundNames = fundSources.values().toArray(new String[fundSources.size()]);
+
+                                        final String amount_to_pay = finalTotal.toString(); // The amount the user has to send
+
+                                        AlertDialog.Builder fundSelectDialogBuilder = new AlertDialog.Builder(getActivity());
+                                        fundSelectDialogBuilder.setTitle("Select Fund");
+                                        fundSelectDialogBuilder.setItems(fundNames, new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialogInterface, int i) {
+                                                for (String key : fundSources.keySet()) {
+                                                    if (fundSources.get(key).equals(fundNames[i])) {
+                                                        String[] args = new String[4];
+                                                        args[0] = key;
+                                                        args[1] = finalHost.customerId;
+                                                        args[2] = amount_to_pay;
+                                                        args[3] = finalHost.getUID();
+
+                                                        DwollaTransferTask transferTask = new DwollaTransferTask();
+                                                        transferTask.execute(args);
+
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        });
+
+                                        fundSelectDialogBuilder.show();
+                                    }
+
                                     if (success) { // If successful, Update database with payment and RSVP
                                         for (SingleItem item : payingFor) {
                                             FirebaseUtils.paidForItem(invite.getEvent(), item); // Update who paid for it in backend
@@ -227,6 +268,8 @@ public class MyInvitationsListFragmentFragment extends Fragment {
                                                 });
                                             }
                                         });
+                                    } else {
+                                        Toast.makeText(getActivity(), "Sender or receiver does not have payments set up", Toast.LENGTH_LONG).show();
                                     }
                                     break;
 
@@ -390,5 +433,36 @@ public class MyInvitationsListFragmentFragment extends Fragment {
     public interface OnListFragmentInteractionListener {
         // TODO: Update argument type and name
         void onListFragmentInteraction(FatcatInvitation item);
+    }
+
+    private class DwollaTransferTask extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... args) {
+            DwollaUtil util = new DwollaUtil();
+
+            String transferId = null;
+            try {
+                transferId = util.createTransfer(args[0], args[1], args[2]);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if (null != transferId) {
+                FirebaseUtils.sentPayment(transferId, args[2], args[3]);
+            }
+
+            return transferId;
+        }
+
+        @Override
+        protected void onPostExecute(String transferId) {
+            if (null == transferId) {
+                Toast.makeText(getActivity(), "Unable to make payment, please contact support", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getActivity(), "Payment sent", Toast.LENGTH_LONG).show();
+            }
+        }
+
     }
 }

@@ -183,8 +183,7 @@ public class FundingSourcesFragment extends Fragment {
             }
 
             if (null != fundId) {
-                FirebaseUtils firebaseUtils = new FirebaseUtils();
-                firebaseUtils.addedFundingSource(fundId, args[4]);
+                FirebaseUtils.addedFundingSource(fundId, args[4]);
             }
 
             return fundId;
