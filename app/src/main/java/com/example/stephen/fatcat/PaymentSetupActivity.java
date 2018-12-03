@@ -1,6 +1,5 @@
 package com.example.stephen.fatcat;
 
-import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
@@ -8,13 +7,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.example.stephen.fatcat.com.example.stephen.fatcat.dwolla.DwollaUtil;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatFriend;
-import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FatcatGlobals;
 import com.example.stephen.fatcat.com.example.stephen.fatcat.firebase.FirebaseUtils;
 
 import java.io.IOException;

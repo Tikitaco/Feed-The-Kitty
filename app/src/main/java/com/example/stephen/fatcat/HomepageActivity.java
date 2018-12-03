@@ -29,7 +29,7 @@ import java.util.Vector;
 public class HomepageActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,
         CaldendarFragment.OnFragmentInteractionListener, FriendListFragment.OnListFragmentInteractionListener,
         SettingsFragment.OnFragmentInteractionListener, EventsListFragment.OnFragmentInteractionListener, MyEventFragment.OnListFragmentInteractionListener,
-        MyInvitationsListFragmentFragment.OnListFragmentInteractionListener{
+        MyInvitationsListFragmentFragment.OnListFragmentInteractionListener, FundingSourcesFragment.OnListFragmentInteractionListener {
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
     private ActionBarDrawerToggle mToggle;
@@ -152,7 +152,13 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
                 startActivity(new Intent(HomepageActivity.this, CreateEventActivity.class));
                 break;
             case R.id.nav_bank:
-
+                if (MainActivity.globals.myProfile.customerId == null) {
+                    Intent i = new Intent(getApplicationContext(), PaymentSetupActivity.class);
+                    startActivity(i);
+                    overridePendingTransition(R.anim.slide_in_left,R.anim.slide_out_from_right);
+                } else {
+                    setFragment(fundingSourcesFragment);
+                }
                 break;
         }
         mDrawerLayout.closeDrawer(GravityCompat.START);
@@ -273,6 +279,11 @@ public class HomepageActivity extends AppCompatActivity implements NavigationVie
 
     @Override
     public void onListFragmentInteraction(FatcatInvitation item) {
+
+    }
+
+    @Override
+    public void onListFragmentInteraction(FundingSourcesItem item) {
 
     }
 }
