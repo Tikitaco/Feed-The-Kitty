@@ -38,7 +38,9 @@ public class FatcatFriend {
         }
         invites.putAll(copy.invites);
 
-        customerId = new String(copy.customerId);
+        if (copy.customerId != null) {
+            customerId = new String(copy.customerId);
+        }
         fundingSources.putAll(copy.fundingSources);
         transfers.putAll(copy.transfers);
 
