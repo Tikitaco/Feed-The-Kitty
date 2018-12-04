@@ -113,8 +113,8 @@ public class FatcatEvent implements Comparable<FatcatEvent>{
     }
 
     public String getDate() {
-
-       int day = mDate.getDay();
+        return dateFormat.format(mDate);
+/*       int day = mDate.getDay();
        int month = mDate.getMonth();
        int year = mDate.getYear() +1900;
 
@@ -162,7 +162,7 @@ public class FatcatEvent implements Comparable<FatcatEvent>{
 
 
         }
-        return  mon + " " + dayString + ", " + year;
+        return  mon + " " + dayString + ", " + year; */
 
     }
 
